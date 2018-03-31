@@ -2,7 +2,7 @@
 
 [![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Scrutinizer Code Quality][scrutinizer-image]][scrutinizer-url] [![Code Climate][codeclimate-image]][codeclimate-url]  [![Clear architecture][clear-architecture-image]][clear-architecture-url]
 
-> PHP library for translating HTML responsive images to CSS (sort of ...)
+> PHP library for translating HTML5 responsive images to CSS background images (sort of ...)
 
 ## Documentation
 

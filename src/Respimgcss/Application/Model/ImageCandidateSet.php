@@ -53,7 +53,7 @@ class ImageCandidateSet extends \Jkphl\Respimgcss\Domain\Model\ImageCandidateSet
      *
      * @var string
      */
-    protected $type;
+    protected $type = null;
     /**
      * Image candidate values
      *
@@ -115,10 +115,20 @@ class ImageCandidateSet extends \Jkphl\Respimgcss\Domain\Model\ImageCandidateSet
     /**
      * Return all image candidates as an array
      *
-     * @return array
+     * @return array Image candidates
      */
     public function toArray(): array
     {
         return $this->imageCandidates;
+    }
+
+    /**
+     * Return the image candidate set type
+     *
+     * @return string|null Image candidate set type
+     */
+    public function getType(): string
+    {
+        return $this->type;
     }
 }

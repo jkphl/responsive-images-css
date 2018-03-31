@@ -45,9 +45,16 @@ namespace Jkphl\Respimgcss\Application\Contract;
 interface ImageCandidateSetInterface extends \Jkphl\Respimgcss\Domain\Contract\ImageCandidateSetInterface
 {
     /**
+     * Return the image candidate set type
+     *
+     * @return string|null Image candidate set type
+     */
+    public function getType(): string;
+
+    /**
      * Return all image candidates as an array
      *
-     * @return array
+     * @return array Image candidates
      */
     public function toArray(): array;
 }

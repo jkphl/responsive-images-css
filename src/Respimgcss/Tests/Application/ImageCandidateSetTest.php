@@ -37,6 +37,7 @@
 namespace Jkphl\Respimgcss\Tests\Application;
 
 use Jkphl\Respimgcss\Application\Model\ImageCandidateSet;
+use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
 use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
 use Jkphl\Respimgcss\Domain\Model\WidthImageCandidate;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
@@ -59,6 +60,7 @@ class ImageCandidateSetTest extends AbstractTestBase
     {
         $imageCandidateSet = new ImageCandidateSet(new DensityImageCandidate('image.jpg', 1));
         $this->assertInstanceOf(ImageCandidateSet::class, $imageCandidateSet);
+        $this->assertEquals(ImageCandidateInterface::TYPE_DENSITY, $imageCandidateSet->getType());
 
         $imageCandidateSet[] = new DensityImageCandidate('image.jpg', 2);
         $imageCandidateSet[] = new DensityImageCandidate('image.jpg', 3);
