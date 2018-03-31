@@ -36,7 +36,6 @@
 
 namespace Jkphl\Respimgcss\Application\Service;
 
-use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException;
 
 /**
@@ -93,38 +92,110 @@ class LengthNormalizerService
      */
     public function normalize(float $value, string $unit)
     {
-        $normalized = null;
-
-        switch ($unit) {
-            case UnitLengthInterface::UNIT_PIXEL:
-                $normalized = $value;
-                break;
-            case UnitLengthInterface::UNIT_REM:
-            case UnitLengthInterface::UNIT_EM:
-                $normalized = $value * $this->emPixel;
-                break;
-            case UnitLengthInterface::UNIT_CM:
-                $normalized = round($value * static::DEFAULT_DPI / static::INCH_IN_CM);
-                break;
-            case UnitLengthInterface::UNIT_MM:
-                $normalized = round($value * static::DEFAULT_DPI / (static::INCH_IN_CM * 10));
-                break;
-            case UnitLengthInterface::UNIT_IN:
-                $normalized = $value * static::DEFAULT_DPI;
-                break;
-            case UnitLengthInterface::UNIT_PT:
-                $normalized = round($value / static::PX_IN_PT);
-                break;
-            case UnitLengthInterface::UNIT_PC:
-                $normalized = round($value * 12 / static::PX_IN_PT);
-                break;
-            default:
-                throw new InvalidArgumentException(
-                    sprintf(InvalidArgumentException::INVALID_UNIT_STR, $unit),
-                    InvalidArgumentException::INVALID_UNIT
-                );
+        $normalizeMethod = 'normalize'.ucfirst($unit).'Value';
+        if (is_callable([$this, $normalizeMethod])) {
+            return $this->$normalizeMethod($value);
         }
 
-        return $normalized;
+        throw new InvalidArgumentException(
+            sprintf(InvalidArgumentException::INVALID_UNIT_STR, $unit),
+            InvalidArgumentException::INVALID_UNIT
+        );
+    }
+
+    /**
+     * Normalize a pixel value
+     *
+     * @param float $value Value
+     *
+     * @return float Normalized value
+     */
+    protected function normalizePxValue($value): float
+    {
+        return $value;
+    }
+
+    /**
+     * Normalize a rem value
+     *
+     * @param float $value Value
+     *
+     * @return float Normalized value
+     */
+    protected function normalizeRemValue($value): float
+    {
+        return $value * $this->emPixel;
+    }
+
+    /**
+     * Normalize a em value
+     *
+     * @param float $value Value
+     *
+     * @return float Normalized value
+     */
+    protected function normalizeEmValue($value): float
+    {
+        return $value * $this->emPixel;
+    }
+
+    /**
+     * Normalize a cm value
+     *
+     * @param float $value Value
+     *
+     * @return float Normalized value
+     */
+    protected function normalizeCmValue($value): float
+    {
+        return round($value * static::DEFAULT_DPI / static::INCH_IN_CM);
+    }
+
+    /**
+     * Normalize a mm value
+     *
+     * @param float $value Value
+     *
+     * @return float Normalized value
+     */
+    protected function normalizeMmValue($value): float
+    {
+        return round($value * static::DEFAULT_DPI / (static::INCH_IN_CM * 10));
+    }
+
+    /**
+     * Normalize a in value
+     *
+     * @param float $value Value
+     *
+     * @return float Normalized value
+     */
+    protected function normalizeInValue($value): float
+    {
+        return $value * static::DEFAULT_DPI;
+    }
+
+    /**
+     * Normalize a pt value
+     *
+     * @param float $value Value
+     *
+     * @return float Normalized value
+     */
+    protected function normalizePtValue($value): float
+    {
+        return round($value / static::PX_IN_PT);
+    }
+
+    /**
+     * Normalize a pc value
+     *
+     * @param float $value Value
+     *
+     * @return float Normalized value
+     */
+    protected function normalizePcValue($value): float
+    {
+        return round($value * 12 / static::PX_IN_PT);
     }
 }
