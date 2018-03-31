@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
+ * @subpackage Jkphl\Respimgcss\Tests\Ports
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,40 +34,33 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Ports;
+namespace Jkphl\Respimgcss\Tests\Ports;
+
+use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
+use Jkphl\Respimgcss\Ports\Generator;
+use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
- * Responsive image CSS generator
+ * Generator test
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
+ * @subpackage Jkphl\Respimgcss\Tests
  */
-class Generator extends \Jkphl\Respimgcss\Infrastructure\Generator
+class GeneratorTest extends AbstractTestBase
 {
     /**
-     * Generator constructor
-     *
-     * @param string[] $breakPoints List of breakpoint length strings
-     * @param int $emPixel          EM to pixel ratio
-     *
-     * @api
+     * Test the generator
      */
-    public function __construct($breakPoints, int $emPixel = 16)
+    public function testGenerator()
     {
-        parent::__construct($breakPoints, $emPixel);
-    }
+        $generator = new Generator(['24em', '800px', '72em'], 16);
+        $this->assertInstanceOf(Generator::class, $generator);
 
-    /**
-     * Register an image candidate
-     *
-     * @param string $file            Image candidate file path and name
-     * @param string|null $descriptor Image candidate descriptor
-     *
-     * @return GeneratorInterface Self reference
-     * @api
-     */
-    public function registerImageCandidate(string $file, string $descriptor = null): GeneratorInterface
-    {
-        return parent::registerImageCandidate($file, $descriptor);
+        $generator->registerImageCandidate('image.jpg');
+        $generator->registerImageCandidate('image.jpg', '2x');
+        $imageCandidates = $generator->getImageCandidates();
+        $this->assertTrue(is_array($imageCandidates));
+        $this->assertEquals(2, count($imageCandidates));
+        $this->assertInstanceOf(ImageCandidateInterface::class, current($imageCandidates));
     }
 }

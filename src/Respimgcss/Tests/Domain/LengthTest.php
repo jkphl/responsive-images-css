@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
+ * @subpackage Jkphl\Respimgcss\Tests\Domain
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,40 +34,27 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Ports;
+namespace Jkphl\Respimgcss\Tests\Domain;
+
+use Jkphl\Respimgcss\Domain\Model\Length;
+use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
- * Responsive image CSS generator
+ * Length tests
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
+ * @subpackage Jkphl\Respimgcss\Tests
  */
-class Generator extends \Jkphl\Respimgcss\Infrastructure\Generator
+class LengthTest extends AbstractTestBase
 {
     /**
-     * Generator constructor
-     *
-     * @param string[] $breakPoints List of breakpoint length strings
-     * @param int $emPixel          EM to pixel ratio
-     *
-     * @api
+     * Test the length
      */
-    public function __construct($breakPoints, int $emPixel = 16)
+    public function testLength()
     {
-        parent::__construct($breakPoints, $emPixel);
-    }
-
-    /**
-     * Register an image candidate
-     *
-     * @param string $file            Image candidate file path and name
-     * @param string|null $descriptor Image candidate descriptor
-     *
-     * @return GeneratorInterface Self reference
-     * @api
-     */
-    public function registerImageCandidate(string $file, string $descriptor = null): GeneratorInterface
-    {
-        return parent::registerImageCandidate($file, $descriptor);
+        $value  = rand(1, getrandmax());
+        $length = new Length($value);
+        $this->assertInstanceOf(Length::class, $length);
+        $this->assertEquals($value, $length->getValue());
     }
 }

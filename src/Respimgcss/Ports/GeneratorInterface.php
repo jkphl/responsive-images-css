@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Infrastructure
+ * @subpackage Jkphl\Respimgcss\Ports
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,58 +34,18 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Infrastructure;
+namespace Jkphl\Respimgcss\Ports;
 
-use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
-use Jkphl\Respimgcss\Application\Factory\ImageCandidateFactory;
-use Jkphl\Respimgcss\Application\Factory\LengthFactory;
-use Jkphl\Respimgcss\Application\Service\ImageCandidateSetValidator;
 use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
-use Jkphl\Respimgcss\Ports\GeneratorInterface;
 
 /**
- * Responsive image CSS generator (internal)
+ * GeneratorInterface
  *
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Ports
  */
-abstract class Generator implements GeneratorInterface
+interface GeneratorInterface
 {
-    /**
-     * Breakpoints
-     *
-     * @var UnitLengthInterface[]
-     */
-    protected $breakPoints;
-    /**
-     * EM to pixel ratio
-     *
-     * @var int
-     */
-    protected $emPixel;
-    /**
-     * Image candidates
-     *
-     * @var ImageCandidateInterface[]
-     */
-    protected $imageCandidates = [];
-
-    /**
-     * Generator constructor
-     *
-     * @param string[] $breakPoints List of breakpoint length strings
-     * @param int $emPixel          EM to pixel ratio
-     */
-    public function __construct(array $breakPoints, int $emPixel)
-    {
-        $this->emPixel     = $emPixel;
-        $this->breakPoints = array_map(
-            [LengthFactory::class, 'createLengthFromString'],
-            $breakPoints,
-            array_fill(0, count($breakPoints), $this->emPixel)
-        );
-    }
-
     /**
      * Register an image candidate
      *
@@ -95,27 +55,12 @@ abstract class Generator implements GeneratorInterface
      * @return GeneratorInterface Self reference
      * @api
      */
-    public function registerImageCandidate(string $file, string $descriptor = null): GeneratorInterface
-    {
-        $imageCandidate = ($descriptor === null) ?
-            ImageCandidateFactory::createImageCandidateFromString($file) :
-            ImageCandidateFactory::createImageCandidateFromFileAndDescriptor($file, $descriptor);
-
-        $imageCandidateSetValidator = new ImageCandidateSetValidator($imageCandidate, ...$this->imageCandidates);
-        if ($imageCandidateSetValidator->validate()) {
-            $this->imageCandidates[] = $imageCandidate;
-        }
-
-        return $this;
-    }
+    public function registerImageCandidate(string $file, string $descriptor = null): GeneratorInterface;
 
     /**
      * Return the registered image candidates
      *
      * @return ImageCandidateInterface[] Image candidates
      */
-    public function getImageCandidates(): array
-    {
-        return $this->imageCandidates;
-    }
+    public function getImageCandidates(): array;
 }

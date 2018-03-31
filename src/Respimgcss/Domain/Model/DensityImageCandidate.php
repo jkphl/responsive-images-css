@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
+ * @subpackage Jkphl\Respimgcss\Domain\Model
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,40 +34,20 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Ports;
+namespace Jkphl\Respimgcss\Domain\Model;
 
 /**
- * Responsive image CSS generator
+ * Pixel density based image candidate
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
+ * @subpackage Jkphl\Respimgcss\Domain
  */
-class Generator extends \Jkphl\Respimgcss\Infrastructure\Generator
+class DensityImageCandidate extends AbstractImageCandidate
 {
     /**
-     * Generator constructor
+     * Image candidate type
      *
-     * @param string[] $breakPoints List of breakpoint length strings
-     * @param int $emPixel          EM to pixel ratio
-     *
-     * @api
+     * @var string
      */
-    public function __construct($breakPoints, int $emPixel = 16)
-    {
-        parent::__construct($breakPoints, $emPixel);
-    }
-
-    /**
-     * Register an image candidate
-     *
-     * @param string $file            Image candidate file path and name
-     * @param string|null $descriptor Image candidate descriptor
-     *
-     * @return GeneratorInterface Self reference
-     * @api
-     */
-    public function registerImageCandidate(string $file, string $descriptor = null): GeneratorInterface
-    {
-        return parent::registerImageCandidate($file, $descriptor);
-    }
+    protected $type = self::TYPE_DENSITY;
 }

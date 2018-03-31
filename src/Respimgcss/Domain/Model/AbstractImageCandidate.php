@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Application\Exceptions
+ * @subpackage Jkphl\Respimgcss\Application\Model
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,98 +34,86 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Application\Exceptions;
+namespace Jkphl\Respimgcss\Domain\Model;
+
+use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
 
 /**
- * Invalid argument exception
+ * Abstract image candidate
  *
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Application
  */
-class InvalidArgumentException extends \Jkphl\Respimgcss\Domain\Exceptions\InvalidArgumentException
+abstract class AbstractImageCandidate implements ImageCandidateInterface
 {
     /**
-     * Invalid length
+     * Image candidate file
      *
      * @var string
      */
-    const INVALID_LENGTH_STR = 'Invalid length "%s"';
+    protected $file;
     /**
-     * Invalid length
+     * Image candidate value
      *
      * @var int
      */
-    const INVALID_LENGTH = 1522492102;
+    protected $value;
     /**
-     * Invalid unit
+     * Image candidate type
      *
      * @var string
      */
-    const INVALID_UNIT_STR = 'Invalid unit "%s"';
+    protected $type;
+
     /**
-     * Invalid unit
+     * Image candidate constructor
      *
-     * @var int
+     * @param string $file Image candidate file path and name
+     * @param int $value   Image candidate value
      */
-    const INVALID_UNIT = 1522493474;
+    public function __construct(string $file, int $value)
+    {
+        $this->file  = $file;
+        $this->value = $value;
+    }
+
     /**
-     * Invalid image candidate string
+     * Return the image candidate file path and name
      *
-     * @var string
+     * @return string Image candidate file path and name
      */
-    const INVALID_IMAGE_CANDIDATE_STRING_STR = 'Invalid image candidate string "%s"';
+    public function getFile(): string
+    {
+        return $this->file;
+    }
+
     /**
-     * Invalid image candidate string
+     * Return the image candidate value
      *
-     * @var int
+     * @return int Image candidate value
      */
-    const INVALID_IMAGE_CANDIDATE_STRING = 1522500150;
+    public function getValue(): int
+    {
+        return $this->value;
+    }
+
     /**
-     * Invalid image candidate file
+     * Return the image candidate type
      *
-     * @var string
+     * @return string Image candidate type
      */
-    const INVALID_IMAGE_CANDIDATE_FILE_STR = 'Invalid image candidate file "%s"';
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
     /**
-     * Invalid image candidate file
+     * Return the image candidate string
      *
-     * @var int
+     * @return string Image candidate string
      */
-    const INVALID_IMAGE_CANDIDATE_FILE = 1522502569;
-    /**
-     * Invalid image candidate descriptor
-     *
-     * @var string
-     */
-    const INVALID_IMAGE_CANDIDATE_DESCRIPTOR_STR = 'Invalid image candidate descriptor "%s"';
-    /**
-     * Invalid image candidate descriptor
-     *
-     * @var int
-     */
-    const INVALID_IMAGE_CANDIDATE_DESCRIPTOR = 1522502721;
-    /**
-     * Inconsistent image candidate types
-     *
-     * @var string
-     */
-    const INCONSISTENT_IMAGE_CANDIDATE_TYPES_STR = 'Inconsistent image candidate types';
-    /**
-     * Inconsistent image candidate types
-     *
-     * @var int
-     */
-    const INCONSISTENT_IMAGE_CANDIDATE_TYPES = 1522504523;
-    /**
-     * Overlapping image candidate value
-     *
-     * @var string
-     */
-    const OVERLAPPING_IMAGE_CANDIDATE_VALUE_STR = 'Overlapping image candidate value "%s"';
-    /**
-     * Overlapping image candidate value
-     *
-     * @var int
-     */
-    const OVERLAPPING_IMAGE_CANDIDATE_VALUE = 1522504652;
+    public function __toString(): string
+    {
+        return $this->file.' '.$this->value.$this->type;
+    }
 }
