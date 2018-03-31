@@ -78,4 +78,11 @@ interface UnitLengthInterface extends LengthInterface
      * @return float Absolute length
      */
     public function isAbsolute();
+
+    /**
+     * Return the serialized length
+     *
+     * @return string Serialized length
+     */
+    public function __toString();
 }

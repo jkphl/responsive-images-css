@@ -63,8 +63,8 @@ abstract class AbstractLength extends Length implements UnitLengthInterface
     /**
      * AbstractLength constructor
      *
-     * @param float $value Value
-     * @param string $unit Unit
+     * @param float $value         Value
+     * @param string $unit         Unit
      * @param float $originalValue Original value
      */
     public function __construct(float $value, string $unit, float $originalValue)
@@ -92,5 +92,15 @@ abstract class AbstractLength extends Length implements UnitLengthInterface
     public function getOriginalValue()
     {
         return $this->originalValue;
+    }
+
+    /**
+     * Return the serialized length
+     *
+     * @return string Serialized length
+     */
+    public function __toString()
+    {
+        return $this->originalValue.$this->unit;
     }
 }

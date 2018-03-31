@@ -58,5 +58,6 @@ class RelativeLengthTest extends AbstractTestBase
         $this->assertEquals(UnitLengthInterface::UNIT_VW, $length->getUnit());
         $this->assertEquals(100, $length->getOriginalValue());
         $this->assertEquals(100, $length->getValue());
+        $this->assertEquals('100vw', strval($length));
     }
 }
