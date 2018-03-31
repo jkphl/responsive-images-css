@@ -72,16 +72,16 @@ class CssRulesetCompilerService
      * CSS Ruleset Compiler Service constructor
      *
      * @param CssRulesetInterface $cssRuleset
-     * @param UnitLengthInterface[] $breakpoints Breakpoints
+     * @param UnitLengthInterface[] $breakPoints Breakpoints
      * @param ImageCandidateSetInterface $imageCandidates
      */
     public function __construct(
         CssRulesetInterface $cssRuleset,
-        array $breakpoints,
+        array $breakPoints,
         ImageCandidateSetInterface $imageCandidates
     ) {
         $this->cssRuleset      = $cssRuleset;
-        $this->breakpoints     = $breakpoints;
+        $this->breakPoints     = $breakPoints;
         $this->imageCandidates = $imageCandidates;
     }
 
@@ -98,7 +98,7 @@ class CssRulesetCompilerService
         foreach ($densities as $density) {
             $this->cssRuleset = CssRulesetCompilerServiceFactory::createForImageCandidates(
                 $this->cssRuleset,
-                $this->breakpoints,
+                $this->breakPoints,
                 $this->imageCandidates
             )->compile($density);
         }

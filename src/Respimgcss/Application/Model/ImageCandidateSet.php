@@ -110,6 +110,28 @@ class ImageCandidateSet extends \Jkphl\Respimgcss\Domain\Model\ImageCandidateSet
 
         parent::offsetSet($offset, $value);
         $this->values[$value->getValue()] = true;
+
+        // Sort the image candidates by value
+        usort($this->imageCandidates, [$this, 'sortImageCandidates']);
+    }
+
+    /**
+     * Compare and sort two image candidates by value
+     *
+     * @param ImageCandidateInterface $image1 Image candidate 1
+     * @param ImageCandidateInterface $image2 Image candidate 2
+     *
+     * @return int
+     */
+    protected function sortImageCandidates(ImageCandidateInterface $image1, ImageCandidateInterface $image2): int
+    {
+        $imageValue1 = $image1->getValue();
+        $imageValue2 = $image2->getValue();
+        if ($imageValue1 === $imageValue2) {
+            return 0;
+        }
+
+        return ($imageValue1 > $imageValue2) ? 1 : -1;
     }
 
     /**

@@ -36,8 +36,6 @@
 
 namespace Jkphl\Respimgcss\Domain\Service;
 
-use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
-
 /**
  * Pixel density CSS ruleset compiler service
  *
@@ -46,15 +44,5 @@ use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
  */
 class DensityCssRulesetCompilerService extends AbstractCssRulesetCompilerService
 {
-    /**
-     * Compile a CSS ruleset based on the registered breakpoints, image candidates and a given density
-     *
-     * @param int $density Density
-     *
-     * @return CssRulesetInterface CSS ruleset
-     */
-    public function compile(int $density): CssRulesetInterface
-    {
-        return $this->cssRuleset;
-    }
+
 }
