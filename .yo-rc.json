@@ -1,0 +1,27 @@
+{
+  "generator-clearphp": {
+    "run": 31,
+    "github": {
+      "ssh": "git@github.com:jkphl/responsive-images-css.git",
+      "https": "https://github.com/jkphl/responsive-images-css"
+    },
+    "codeclimate": "20359e11b7e56d440ebf84cbb0aacfa5d57fd9cfc4afdf0d7f0cba34b0105913",
+    "scrutinizer": true,
+    "coverage": true,
+    "docs": false,
+    "apidocs": false,
+    "year": 2018,
+    "vendor": "jkphl",
+    "project": "responsive-images-css",
+    "description": "PHP library for translating HTML responsive images to CSS (sort of ...)",
+    "website": "https://github.com/jkphl/responsive-images-css",
+    "license": "MIT",
+    "stability": "RC",
+    "namespace": "Jkphl",
+    "module": "Respimgcss",
+    "php": "7.1",
+    "authorName": "Joschi Kuphal",
+    "authorEmail": "joschi@kuphal.net",
+    "authorWebsite": "https://jkphl.is"
+  }
+}
