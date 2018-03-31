@@ -36,6 +36,12 @@
 
 namespace Jkphl\Respimgcss\Domain\Service;
 
+use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
+use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
+use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
+use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
+use Jkphl\Respimgcss\Domain\Model\Css\Rule;
+
 /**
  * Pixel density CSS ruleset compiler service
  *
@@ -44,5 +50,33 @@ namespace Jkphl\Respimgcss\Domain\Service;
  */
 class DensityCssRulesetCompilerService extends AbstractCssRulesetCompilerService
 {
+    /**
+     * Compile a CSS ruleset based on the registered breakpoints, image candidates and a given density
+     *
+     * @param float $density Density
+     *
+     * @return CssRulesetInterface CSS ruleset
+     */
+    public function compile(float $density): CssRulesetInterface
+    {
+        // Run through and test all image candidates
+        /** @var ImageCandidateInterface $imageCandidate */
+        foreach ($this->imageCandidates as $imageCandidate) {
+            if ($imageCandidate->getValue() >= $density) {
+                $rule = new Rule($imageCandidate);
+                if ($density !== 1.0) {
+                    $rule = $rule->addCondition(
+                        new ResolutionMediaCondition(
+                            $density,
+                            CssMinMaxMediaConditionInterface::MIN
+                        )
+                    );
+                }
+                $this->cssRuleset->addRule($rule);
+                break;
+            }
+        }
 
+        return $this->cssRuleset;
+    }
 }

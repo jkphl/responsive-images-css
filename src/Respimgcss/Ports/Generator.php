@@ -49,14 +49,14 @@ class Generator extends \Jkphl\Respimgcss\Infrastructure\Generator
     /**
      * Generator constructor
      *
-     * @param string[] $breakPoints List of breakpoint length strings
+     * @param string[] $breakpoints List of breakpoint length strings
      * @param int $emPixel          EM to pixel ratio
      *
      * @api
      */
-    public function __construct($breakPoints, int $emPixel = 16)
+    public function __construct($breakpoints, int $emPixel = 16)
     {
-        parent::__construct($breakPoints, $emPixel);
+        parent::__construct($breakpoints, $emPixel);
     }
 
     /**

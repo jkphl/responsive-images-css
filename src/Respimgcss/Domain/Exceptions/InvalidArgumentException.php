@@ -58,4 +58,16 @@ class InvalidArgumentException extends \InvalidArgumentException implements Resp
      * @var int
      */
     const INVALID_IMAGE_CANDIDATE = 1522507099;
+    /**
+     * Invalid CSS condition modifier
+     *
+     * @var string
+     */
+    const INVALID_CSS_CONDITION_MODIFIER_STR = 'Invalid CSS condition modifier "%s"';
+    /**
+     * Invalid CSS condition modifier
+     *
+     * @var int
+     */
+    const INVALID_CSS_CONDITION_MODIFIER = 1522531210;
 }

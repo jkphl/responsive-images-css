@@ -56,8 +56,8 @@ class GeneratorTest extends AbstractTestBase
         $generator = new Generator(['24em', '800px', '72em'], 16);
         $this->assertInstanceOf(Generator::class, $generator);
 
-        $generator->registerImageCandidate('image.jpg');
-        $generator->registerImageCandidate('image.jpg', '2x');
+        $generator->registerImageCandidate('small.jpg');
+        $generator->registerImageCandidate('large.jpg', '2x');
         $imageCandidates = $generator->getImageCandidates();
         $this->assertTrue(is_array($imageCandidates));
         $this->assertEquals(2, count($imageCandidates));

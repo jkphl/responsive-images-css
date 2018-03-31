@@ -40,8 +40,8 @@ use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Factory\CssRulesetCompilerServiceFactory;
 use Jkphl\Respimgcss\Application\Factory\LengthFactory;
 use Jkphl\Respimgcss\Application\Model\ImageCandidateSet;
-use Jkphl\Respimgcss\Domain\Model\CssRuleset;
 use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
+use Jkphl\Respimgcss\Domain\Model\Css\Ruleset;
 use Jkphl\Respimgcss\Domain\Model\WidthImageCandidate;
 use Jkphl\Respimgcss\Domain\Service\DensityCssRulesetCompilerService;
 use Jkphl\Respimgcss\Domain\Service\WidthCssRulesetCompilerService;
@@ -64,17 +64,6 @@ class CssRulesetCompilerServiceFactoryTest extends AbstractTestBase
     protected $breakpoints = [];
 
     /**
-     * Test setup
-     */
-    protected function setUp()/* The :void return type declaration that should be here would cause a BC issue */
-    {
-        parent::setUp();
-        $this->breakpoints[] = LengthFactory::createLengthFromString('24em');
-        $this->breakpoints[] = LengthFactory::createLengthFromString('800px');
-        $this->breakpoints[] = LengthFactory::createLengthFromString('72em');
-    }
-
-    /**
      * Test the CSS Ruleset compiler service factory with an invalid image candidate set
      *
      * @expectedException \Jkphl\Respimgcss\Application\Exceptions\RuntimeException
@@ -83,7 +72,7 @@ class CssRulesetCompilerServiceFactoryTest extends AbstractTestBase
     public function testFactoryWithInvalidImageCandidateSet()
     {
         CssRulesetCompilerServiceFactory::createForImageCandidates(
-            new CssRuleset(),
+            new Ruleset(),
             $this->breakpoints,
             new ImageCandidateSet(new ImageCandidateMock('image.jpg', 1))
         );
@@ -95,7 +84,7 @@ class CssRulesetCompilerServiceFactoryTest extends AbstractTestBase
     public function testFactoryWithDensityImageCandidateSet()
     {
         $compilerService = CssRulesetCompilerServiceFactory::createForImageCandidates(
-            new CssRuleset(),
+            new Ruleset(),
             $this->breakpoints,
             new ImageCandidateSet(new DensityImageCandidate('image.jpg', 1))
         );
@@ -108,10 +97,21 @@ class CssRulesetCompilerServiceFactoryTest extends AbstractTestBase
     public function testFactoryWithWidthImageCandidateSet()
     {
         $compilerService = CssRulesetCompilerServiceFactory::createForImageCandidates(
-            new CssRuleset(),
+            new Ruleset(),
             $this->breakpoints,
             new ImageCandidateSet(new WidthImageCandidate('image.jpg', 1000))
         );
         $this->assertInstanceOf(WidthCssRulesetCompilerService::class, $compilerService);
+    }
+
+    /**
+     * Test setup
+     */
+    protected function setUp()/* The :void return type declaration that should be here would cause a BC issue */
+    {
+        parent::setUp();
+        $this->breakpoints[] = LengthFactory::createLengthFromString('24em');
+        $this->breakpoints[] = LengthFactory::createLengthFromString('800px');
+        $this->breakpoints[] = LengthFactory::createLengthFromString('72em');
     }
 }

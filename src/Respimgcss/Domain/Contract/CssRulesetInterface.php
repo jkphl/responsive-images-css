@@ -44,5 +44,12 @@ namespace Jkphl\Respimgcss\Domain\Contract;
  */
 interface CssRulesetInterface
 {
-
+    /**
+     * Add a CSS rule to the ruleset
+     *
+     * @param CssRuleInterface $rule CSS rule
+     *
+     * @return CssRulesetInterface Self reference
+     */
+    public function addRule(CssRuleInterface $rule): CssRulesetInterface;
 }

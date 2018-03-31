@@ -36,6 +36,9 @@
 
 namespace Jkphl\Respimgcss\Domain\Service;
 
+use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
+use Jkphl\Respimgcss\Domain\Contract\LengthInterface;
+
 /**
  * Pixel density CSS ruleset compiler service
  *
@@ -44,5 +47,34 @@ namespace Jkphl\Respimgcss\Domain\Service;
  */
 class WidthCssRulesetCompilerService extends AbstractCssRulesetCompilerService
 {
+    /**
+     * Compile a CSS ruleset based on the registered breakpoints, image candidates and a given density
+     *
+     * @param float $density Density
+     *
+     * @return CssRulesetInterface CSS ruleset
+     */
+    public function compile(float $density): CssRulesetInterface
+    {
+        // Compile the minimum size
+        $this->compileBreakpoint($density, null);
 
+        // Run through and compile for all breakpoints
+        foreach ($this->breakpoints as $breakpoint) {
+            $this->compileBreakpoint($density, $breakpoint);
+        }
+
+        return $this->cssRuleset;
+    }
+
+    /**
+     * Compile the CSS rules for particular breakpoint, a given density and the registered image candidates
+     *
+     * @param int $density                Device display density
+     * @param LengthInterface $breakpoint Breakpoint length (NULL = minimum size / no breakpoint)
+     */
+    protected function compileBreakpoint(int $density, LengthInterface $breakpoint = null): void
+    {
+        echo $breakpoint ? $breakpoint->getValue().PHP_EOL : "default\n";
+    }
 }

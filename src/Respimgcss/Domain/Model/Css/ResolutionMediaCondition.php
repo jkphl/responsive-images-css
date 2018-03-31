@@ -5,9 +5,9 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Contract
- * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
- * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
+ * @subpackage Jkphl\Respimgcss\Domain\Model\Css
+ * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
+ * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
@@ -34,22 +34,27 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Domain\Contract;
+namespace Jkphl\Respimgcss\Domain\Model\Css;
 
 /**
- * CSS Ruleset Compiler Interface
+ * Resolution based min/max media condition
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain
+ * @subpackage Jkphl\Respimgcss\Domain\Model\Css
  */
-interface CssRulesetCompilerServiceInterface
+class ResolutionMediaCondition extends AbstractMinMaxMediaCondition
 {
+    // Property name
+    const PROPERTY = 'resolution';
+
     /**
-     * Compile a CSS ruleset based on the registered breakpoints, image candidates and a given density
+     * Resolution media condition constructor
      *
-     * @param float $density Density
-     *
-     * @return CssRulesetInterface CSS ruleset
+     * @param float $value     Property value
+     * @param string $modifier Condition modifier
      */
-    public function compile(float $density): CssRulesetInterface;
+    public function __construct(float $value, string $modifier = self::EQ)
+    {
+        parent::__construct(self::PROPERTY, $value, $modifier);
+    }
 }

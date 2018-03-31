@@ -5,9 +5,9 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Contract
- * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
- * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
+ * @subpackage Jkphl\Respimgcss\Domain\Model\Css
+ * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
+ * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
@@ -34,22 +34,40 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Domain\Contract;
+namespace Jkphl\Respimgcss\Domain\Model\Css;
+
+use Jkphl\Respimgcss\Domain\Contract\CssMediaConditionInterface;
 
 /**
- * CSS Ruleset Compiler Interface
+ * CSS media conditioon
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain
+ * @subpackage Jkphl\Respimgcss\Domain\Model\Css
  */
-interface CssRulesetCompilerServiceInterface
+class MediaCondition implements CssMediaConditionInterface
 {
     /**
-     * Compile a CSS ruleset based on the registered breakpoints, image candidates and a given density
+     * Property name
      *
-     * @param float $density Density
-     *
-     * @return CssRulesetInterface CSS ruleset
+     * @var string
      */
-    public function compile(float $density): CssRulesetInterface;
+    protected $property;
+    /**
+     * Property value
+     *
+     * @var mixed
+     */
+    protected $value;
+
+    /**
+     * Media condition constructor
+     *
+     * @param string $property Property name
+     * @param mixed $value     Property value
+     */
+    public function __construct(string $property, $value)
+    {
+        $this->property = $property;
+        $this->value    = $value;
+    }
 }

@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Contract
+ * @subpackage Jkphl\Respimgcss\Infrastructure
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,22 +34,36 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Domain\Contract;
+namespace Jkphl\Respimgcss\Domain\Model\Css;
+
+use Jkphl\Respimgcss\Domain\Contract\CssRuleInterface;
+use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
 
 /**
- * CSS Ruleset Compiler Interface
+ * CSS Ruleset
  *
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Domain
  */
-interface CssRulesetCompilerServiceInterface
+class Ruleset implements CssRulesetInterface
 {
     /**
-     * Compile a CSS ruleset based on the registered breakpoints, image candidates and a given density
+     * CSS rules
      *
-     * @param float $density Density
-     *
-     * @return CssRulesetInterface CSS ruleset
+     * @var CssRuleInterface[]
      */
-    public function compile(float $density): CssRulesetInterface;
+    protected $rules = [];
+
+    /**
+     * Add a CSS rule to the ruleset
+     *
+     * @param CssRuleInterface $rule CSS rule
+     *
+     * @return CssRulesetInterface Self reference
+     */
+    public function addRule(CssRuleInterface $rule): CssRulesetInterface
+    {
+        $this->rules[] = $rule;
+        return $this;
+    }
 }

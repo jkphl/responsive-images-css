@@ -36,13 +36,16 @@
 
 namespace Jkphl\Respimgcss\Ports;
 
+use Jkphl\Respimgcss\Domain\Model\Css\Ruleset;
+
+
 /**
  * CSS Ruleset
  *
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Ports
  */
-class CssRuleset extends \Jkphl\Respimgcss\Domain\Model\CssRuleset implements CssRulesetInterface
+class CssRuleset extends Ruleset implements CssRulesetInterface
 {
 
 }

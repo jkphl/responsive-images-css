@@ -43,6 +43,7 @@ use Jkphl\Respimgcss\Application\Factory\LengthFactory;
 use Jkphl\Respimgcss\Application\Model\ImageCandidateSet;
 use Jkphl\Respimgcss\Application\Service\CssRulesetCompilerService;
 use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
+use Jkphl\Respimgcss\Ports\CssRuleset;
 use Jkphl\Respimgcss\Ports\CssRulesetInterface;
 use Jkphl\Respimgcss\Ports\GeneratorInterface;
 
@@ -59,7 +60,7 @@ abstract class Generator implements GeneratorInterface
      *
      * @var UnitLengthInterface[]
      */
-    protected $breakPoints;
+    protected $breakpoints;
     /**
      * EM to pixel ratio
      *
@@ -76,16 +77,16 @@ abstract class Generator implements GeneratorInterface
     /**
      * Generator constructor
      *
-     * @param string[] $breakPoints List of breakpoint length strings
+     * @param string[] $breakpoints List of breakpoint length strings
      * @param int $emPixel          EM to pixel ratio
      */
-    public function __construct(array $breakPoints, int $emPixel)
+    public function __construct(array $breakpoints, int $emPixel)
     {
         $this->emPixel     = $emPixel;
-        $this->breakPoints = array_map(
+        $this->breakpoints = array_map(
             [LengthFactory::class, 'createLengthFromString'],
-            $breakPoints,
-            array_fill(0, count($breakPoints), $this->emPixel)
+            $breakpoints,
+            array_fill(0, count($breakpoints), $this->emPixel)
         );
     }
 
@@ -137,14 +138,14 @@ abstract class Generator implements GeneratorInterface
      */
     public function make(array $densities = [1]): CssRulesetInterface
     {
-        $cssRuleset = new \Jkphl\Respimgcss\Ports\CssRuleset();
+        $cssRuleset = new CssRuleset();
 
         // If all necessary properties are given
-        if (count($this->breakPoints) && count($this->imageCandidates) && count($densities)) {
+        if (count($this->breakpoints) && count($this->imageCandidates) && count($densities)) {
             // Instantiate a CSS ruleset compiler service and compile for all densities
             $cssRulesetCompilerService = new CssRulesetCompilerService(
                 $cssRuleset,
-                $this->breakPoints,
+                $this->breakpoints,
                 $this->imageCandidates
             );
             $cssRuleset                = $cssRulesetCompilerService->compile($densities);

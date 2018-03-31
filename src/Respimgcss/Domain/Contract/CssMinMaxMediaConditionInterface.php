@@ -6,8 +6,8 @@
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Domain\Contract
- * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
- * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
+ * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
+ * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
@@ -37,19 +37,15 @@
 namespace Jkphl\Respimgcss\Domain\Contract;
 
 /**
- * CSS Ruleset Compiler Interface
+ * Min/Max CSS media condition interface
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain
+ * @subpackage Jkphl\Respimgcss\Domain\Contract
  */
-interface CssRulesetCompilerServiceInterface
+interface CssMinMaxMediaConditionInterface extends CssMediaConditionInterface
 {
-    /**
-     * Compile a CSS ruleset based on the registered breakpoints, image candidates and a given density
-     *
-     * @param float $density Density
-     *
-     * @return CssRulesetInterface CSS ruleset
-     */
-    public function compile(float $density): CssRulesetInterface;
+    // Property modifier
+    const MIN = 'min-';
+    const MAX = 'max-';
+    const EQ = '';
 }

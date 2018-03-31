@@ -5,9 +5,9 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Contract
- * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
- * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
+ * @subpackage Jkphl\Respimgcss\Domain\Model\Css
+ * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
+ * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
@@ -34,22 +34,56 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Domain\Contract;
+namespace Jkphl\Respimgcss\Domain\Model\Css;
+
+use Jkphl\Respimgcss\Domain\Contract\CssMediaConditionInterface;
+use Jkphl\Respimgcss\Domain\Contract\CssRuleInterface;
+use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
 
 /**
- * CSS Ruleset Compiler Interface
+ * CSS rule
  *
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Domain
  */
-interface CssRulesetCompilerServiceInterface
+class Rule implements CssRuleInterface
 {
     /**
-     * Compile a CSS ruleset based on the registered breakpoints, image candidates and a given density
+     * Image candidate
      *
-     * @param float $density Density
-     *
-     * @return CssRulesetInterface CSS ruleset
+     * @var ImageCandidateInterface
      */
-    public function compile(float $density): CssRulesetInterface;
+    protected $imageCandidate;
+    /**
+     * Media conditions
+     *
+     * @var CssMediaConditionInterface[]
+     */
+    protected $conditions;
+
+    /**
+     * CSS rule
+     *
+     * @param ImageCandidateInterface $imageCandidate  Image candidate
+     * @param CssMediaConditionInterface[] $conditions CSS media conditions
+     */
+    public function __construct(ImageCandidateInterface $imageCandidate, array $conditions = [])
+    {
+        $this->imageCandidate = $imageCandidate;
+        $this->conditions     = $conditions;
+    }
+
+    /**
+     * Add a CSS media condition to this rule
+     *
+     * @param CssMediaConditionInterface $condition CSS media condition
+     *
+     * @return CssRuleInterface Self reference
+     */
+    public function addCondition(CssMediaConditionInterface $condition): CssRuleInterface
+    {
+        $rule               = clone $this;
+        $rule->conditions[] = $condition;
+        return $rule;
+    }
 }

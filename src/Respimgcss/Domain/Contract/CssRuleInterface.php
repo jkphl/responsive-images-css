@@ -5,9 +5,9 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Infrastructure
- * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
- * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
+ * @subpackage Jkphl\Respimgcss\Domain
+ * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
+ * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
@@ -34,17 +34,22 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Domain\Model;
-
-use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
+namespace Jkphl\Respimgcss\Domain\Contract;
 
 /**
- * CSS Ruleset
+ * CSS Rule interface
  *
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Domain
  */
-class CssRuleset implements CssRulesetInterface
+interface CssRuleInterface
 {
-
+    /**
+     * Add a CSS media condition to this rule
+     *
+     * @param CssMediaConditionInterface $condition CSS media condition
+     *
+     * @return CssRuleInterface Self reference
+     */
+    public function addCondition(CssMediaConditionInterface $condition): CssRuleInterface;
 }

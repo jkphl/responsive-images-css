@@ -5,9 +5,9 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Contract
- * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
- * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
+ * @subpackage Jkphl\Respimgcss\Domain\Model\Css
+ * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
+ * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
@@ -34,22 +34,57 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Domain\Contract;
+namespace Jkphl\Respimgcss\Domain\Model\Css;
+
+use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
+use Jkphl\Respimgcss\Domain\Exceptions\InvalidArgumentException;
 
 /**
- * CSS Ruleset Compiler Interface
+ * Abstract min/max media condition
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain
+ * @subpackage Jkphl\Respimgcss\Domain\Model\Css
  */
-interface CssRulesetCompilerServiceInterface
+abstract class AbstractMinMaxMediaCondition extends MediaCondition implements CssMinMaxMediaConditionInterface
 {
     /**
-     * Compile a CSS ruleset based on the registered breakpoints, image candidates and a given density
+     * Property modifier
      *
-     * @param float $density Density
-     *
-     * @return CssRulesetInterface CSS ruleset
+     * @var string
      */
-    public function compile(float $density): CssRulesetInterface;
+    protected $modifier = self::EQ;
+    /**
+     * Property value
+     *
+     * @var float
+     */
+    protected $value;
+
+    /**
+     * Min/Max CSS media condition constructor
+     *
+     * @param string $property Property name
+     * @param float $value     Property value
+     * @param string $modifier Condition modifier
+     *
+     * @throws InvalidArgumentException If the condition modifier is invalid
+     */
+    public function __construct(string $property, float $value, string $modifier = self::EQ)
+    {
+        parent::__construct($property, $value);
+
+        if (
+            ($modifier !== self::EQ)
+            && ($modifier !== self::MIN)
+            && ($modifier !== self::MAX)
+        ) {
+            throw new InvalidArgumentException(
+                sprintf(InvalidArgumentException::INVALID_CSS_CONDITION_MODIFIER_STR, $modifier),
+                InvalidArgumentException::INVALID_CSS_CONDITION_MODIFIER
+            );
+        }
+
+        $this->modifier = $modifier;
+    }
+
 }
