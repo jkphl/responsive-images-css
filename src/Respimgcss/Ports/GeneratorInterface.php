@@ -63,4 +63,13 @@ interface GeneratorInterface
      * @return ImageCandidateInterface[] Image candidates
      */
     public function getImageCandidates(): array;
+
+    /**
+     * Create a CSS rulset for the registered image candidates
+     *
+     * @param float[] $densities Device display densities
+     *
+     * @return CssRulesetInterface CSS Ruleset
+     */
+    public function make(array $densities = [1]): CssRulesetInterface;
 }

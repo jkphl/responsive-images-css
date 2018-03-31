@@ -41,7 +41,9 @@ use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Factory\ImageCandidateFactory;
 use Jkphl\Respimgcss\Application\Factory\LengthFactory;
 use Jkphl\Respimgcss\Application\Model\ImageCandidateSet;
+use Jkphl\Respimgcss\Application\Service\CssRulesetCompilerService;
 use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
+use Jkphl\Respimgcss\Ports\CssRulesetInterface;
 use Jkphl\Respimgcss\Ports\GeneratorInterface;
 
 /**
@@ -124,5 +126,30 @@ abstract class Generator implements GeneratorInterface
     {
         return ($this->imageCandidates instanceof ImageCandidateSetInterface) ?
             $this->imageCandidates->toArray() : [];
+    }
+
+    /**
+     * Create a CSS rulset for the registered image candidates
+     *
+     * @param float[] $densities Device display densities
+     *
+     * @return CssRulesetInterface CSS Ruleset
+     */
+    public function make(array $densities = [1]): CssRulesetInterface
+    {
+        $cssRuleset = new \Jkphl\Respimgcss\Ports\CssRuleset();
+
+        // If all necessary properties are given
+        if (count($this->breakPoints) && count($this->imageCandidates) && count($densities)) {
+            // Instantiate a CSS ruleset compiler service and compile for all densities
+            $cssRulesetCompilerService = new CssRulesetCompilerService(
+                $cssRuleset,
+                $this->breakPoints,
+                $this->imageCandidates
+            );
+            $cssRuleset                = $cssRulesetCompilerService->compile($densities);
+        }
+
+        return $cssRuleset;
     }
 }

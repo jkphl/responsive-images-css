@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Ports
+ * @subpackage Jkphl\Respimgcss\Domain\Service
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,36 +34,54 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Tests\Ports;
+namespace Jkphl\Respimgcss\Domain\Service;
 
-use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
-use Jkphl\Respimgcss\Ports\Generator;
-use Jkphl\Respimgcss\Tests\AbstractTestBase;
+use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
+use Jkphl\Respimgcss\Domain\Contract\CssRulesetCompilerServiceInterface;
+use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
+use Jkphl\Respimgcss\Domain\Contract\ImageCandidateSetInterface;
 
 /**
- * Generator test
+ * Abstract CSS Ruleset compiler service
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests
+ * @subpackage Jkphl\Respimgcss\Domain
  */
-class GeneratorTest extends AbstractTestBase
+abstract class AbstractCssRulesetCompilerService implements CssRulesetCompilerServiceInterface
 {
     /**
-     * Test the generator
+     * CSS Ruleset
+     *
+     * @var CssRulesetInterface
      */
-    public function testGenerator()
-    {
-        $generator = new Generator(['24em', '800px', '72em'], 16);
-        $this->assertInstanceOf(Generator::class, $generator);
+    protected $cssRuleset;
+    /**
+     * Breakpoints
+     *
+     * @var UnitLengthInterface[]
+     */
+    protected $breakPoints;
+    /**
+     * Image candidates
+     *
+     * @var ImageCandidateSetInterface
+     */
+    protected $imageCandidates = null;
 
-        $generator->registerImageCandidate('image.jpg');
-        $generator->registerImageCandidate('image.jpg', '2x');
-        $imageCandidates = $generator->getImageCandidates();
-        $this->assertTrue(is_array($imageCandidates));
-        $this->assertEquals(2, count($imageCandidates));
-        $this->assertInstanceOf(ImageCandidateInterface::class, current($imageCandidates));
-
-        $cssRuleset = $generator->make([1, 2]);
-        print_r($cssRuleset);
+    /**
+     * CSS Ruleset Compiler Service constructor
+     *
+     * @param CssRulesetInterface $cssRuleset             CSS Ruleset
+     * @param UnitLengthInterface[] $breakpoints          Breakpoints
+     * @param ImageCandidateSetInterface $imageCandidates Image candidates
+     */
+    public function __construct(
+        CssRulesetInterface $cssRuleset,
+        array $breakpoints,
+        ImageCandidateSetInterface $imageCandidates
+    ) {
+        $this->cssRuleset      = $cssRuleset;
+        $this->breakpoints     = $breakpoints;
+        $this->imageCandidates = $imageCandidates;
     }
 }

@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Ports
+ * @subpackage Jkphl\Respimgcss\Domain\Exceptions
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,36 +34,17 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Tests\Ports;
+namespace Jkphl\Respimgcss\Domain\Exceptions;
 
-use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
-use Jkphl\Respimgcss\Ports\Generator;
-use Jkphl\Respimgcss\Tests\AbstractTestBase;
+use Jkphl\Respimgcss\Domain\Contract\RespimgcssExceptionInterface;
 
 /**
- * Generator test
+ * Runtime exception
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests
+ * @subpackage Jkphl\Respimgcss\Domain
  */
-class GeneratorTest extends AbstractTestBase
+class RuntimeException extends \RuntimeException implements RespimgcssExceptionInterface
 {
-    /**
-     * Test the generator
-     */
-    public function testGenerator()
-    {
-        $generator = new Generator(['24em', '800px', '72em'], 16);
-        $this->assertInstanceOf(Generator::class, $generator);
 
-        $generator->registerImageCandidate('image.jpg');
-        $generator->registerImageCandidate('image.jpg', '2x');
-        $imageCandidates = $generator->getImageCandidates();
-        $this->assertTrue(is_array($imageCandidates));
-        $this->assertEquals(2, count($imageCandidates));
-        $this->assertInstanceOf(ImageCandidateInterface::class, current($imageCandidates));
-
-        $cssRuleset = $generator->make([1, 2]);
-        print_r($cssRuleset);
-    }
 }
