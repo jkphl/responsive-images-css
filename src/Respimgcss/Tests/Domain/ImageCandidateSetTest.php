@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
+ * @subpackage Jkphl\Respimgcss\Tests\Domain
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,53 +34,53 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Ports;
+namespace Jkphl\Respimgcss\Tests\Domain;
 
 use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
+use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
+use Jkphl\Respimgcss\Domain\Model\ImageCandidateSet;
+use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
- * Responsive image CSS generator
+ * Image candidate set tests
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
+ * @subpackage Jkphl\Respimgcss\Tests\Domain
  */
-class Generator extends \Jkphl\Respimgcss\Infrastructure\Generator
+class ImageCandidateSetTest extends AbstractTestBase
 {
     /**
-     * Generator constructor
-     *
-     * @param string[] $breakPoints List of breakpoint length strings
-     * @param int $emPixel          EM to pixel ratio
-     *
-     * @api
+     * Test the image candidate set
      */
-    public function __construct($breakPoints, int $emPixel = 16)
+    public function testImageCandidateSet()
     {
-        parent::__construct($breakPoints, $emPixel);
+        $imageCandidateSet = new ImageCandidateSet();
+        $this->assertInstanceOf(ImageCandidateSet::class, $imageCandidateSet);
+
+        $imageCandidateSet[] = new DensityImageCandidate('image.jpg', 1);
+        $imageCandidateSet[] = new DensityImageCandidate('image.jpg', 2);
+        $imageCandidateSet[] = new DensityImageCandidate('image.jpg', 3);
+        $this->assertEquals(3, count($imageCandidateSet));
+        $this->assertTrue(isset($imageCandidateSet[1]));
+        unset($imageCandidateSet[1]);
+        $this->assertEquals(2, count($imageCandidateSet));
+        $this->assertInstanceOf(ImageCandidateInterface::class, $imageCandidateSet[0]);
+
+        foreach ($imageCandidateSet as $index => $imageCandidate) {
+            $this->assertInstanceOf(ImageCandidateInterface::class, $imageCandidate);
+        }
     }
 
     /**
-     * Register an image candidate
+     * Test the image candidate set with an invalid member
      *
-     * @param string $file            Image candidate file path and name
-     * @param string|null $descriptor Image candidate descriptor
-     *
-     * @return GeneratorInterface Self reference
-     * @api
+     * @expectedException \Jkphl\Respimgcss\Domain\Exceptions\InvalidArgumentException
+     * @expectedExceptionCode 1522507099
      */
-    public function registerImageCandidate(string $file, string $descriptor = null): GeneratorInterface
+    public function testImageCandidateSetInvalidMember()
     {
-        return parent::registerImageCandidate($file, $descriptor);
-    }
-
-    /**
-     * Return the registered image candidates
-     *
-     * @return ImageCandidateInterface[] Image candidates
-     * @api
-     */
-    public function getImageCandidates(): array
-    {
-        return parent::getImageCandidates();
+        $imageCandidateSet = new ImageCandidateSet();
+        $this->assertInstanceOf(ImageCandidateSet::class, $imageCandidateSet);
+        $imageCandidateSet[] = 'invalid';
     }
 }

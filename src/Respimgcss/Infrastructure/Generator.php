@@ -36,10 +36,11 @@
 
 namespace Jkphl\Respimgcss\Infrastructure;
 
+use Jkphl\Respimgcss\Application\Contract\ImageCandidateSetInterface;
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Factory\ImageCandidateFactory;
 use Jkphl\Respimgcss\Application\Factory\LengthFactory;
-use Jkphl\Respimgcss\Application\Service\ImageCandidateSetValidator;
+use Jkphl\Respimgcss\Application\Model\ImageCandidateSet;
 use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
 use Jkphl\Respimgcss\Ports\GeneratorInterface;
 
@@ -66,9 +67,9 @@ abstract class Generator implements GeneratorInterface
     /**
      * Image candidates
      *
-     * @var ImageCandidateInterface[]
+     * @var ImageCandidateSet
      */
-    protected $imageCandidates = [];
+    protected $imageCandidates = null;
 
     /**
      * Generator constructor
@@ -101,10 +102,15 @@ abstract class Generator implements GeneratorInterface
             ImageCandidateFactory::createImageCandidateFromString($file) :
             ImageCandidateFactory::createImageCandidateFromFileAndDescriptor($file, $descriptor);
 
-        $imageCandidateSetValidator = new ImageCandidateSetValidator($imageCandidate, ...$this->imageCandidates);
-        if ($imageCandidateSetValidator->validate()) {
-            $this->imageCandidates[] = $imageCandidate;
+        // If the image candidate set doesn't exist yet
+        if (!($this->imageCandidates instanceof ImageCandidateSetInterface)) {
+            $this->imageCandidates = new ImageCandidateSet($imageCandidate);
+
+            return $this;
         }
+
+        // Register the image candidate
+        $this->imageCandidates[] = $imageCandidate;
 
         return $this;
     }
@@ -116,6 +122,7 @@ abstract class Generator implements GeneratorInterface
      */
     public function getImageCandidates(): array
     {
-        return $this->imageCandidates;
+        return ($this->imageCandidates instanceof ImageCandidateSetInterface) ?
+            $this->imageCandidates->toArray() : [];
     }
 }

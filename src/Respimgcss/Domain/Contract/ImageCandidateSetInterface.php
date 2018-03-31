@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Exceptions
+ * @subpackage Jkphl\Respimgcss\Domain\Contract
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,28 +34,15 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Domain\Exceptions;
-
-use Jkphl\Respimgcss\Domain\Contract\RespimgcssExceptionInterface;
+namespace Jkphl\Respimgcss\Domain\Contract;
 
 /**
- * Invalid argument exception
+ * Image candidate set interface
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain
+ * @subpackage Jkphl\Respimgcss\Domain\Contract
  */
-class InvalidArgumentException extends \InvalidArgumentException implements RespimgcssExceptionInterface
+interface ImageCandidateSetInterface extends \Iterator, \ArrayAccess, \Countable
 {
-    /**
-     * Invalid image candidate
-     *
-     * @var string
-     */
-    const INVALID_IMAGE_CANDIDATE_STR = 'Invalid image candidate';
-    /**
-     * Invalid image candidate
-     *
-     * @var int
-     */
-    const INVALID_IMAGE_CANDIDATE = 1522507099;
+
 }

@@ -36,59 +36,68 @@
 
 namespace Jkphl\Respimgcss\Tests\Application;
 
-use Jkphl\Respimgcss\Application\Service\ImageCandidateSetValidator;
+use Jkphl\Respimgcss\Application\Model\ImageCandidateSet;
 use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
 use Jkphl\Respimgcss\Domain\Model\WidthImageCandidate;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
- * Image candidate set validator tests
+ * ImageCandidateSetTest
  *
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Tests
  */
-class ImageCandidateSetValidatorTest extends AbstractTestBase
+class ImageCandidateSetTest extends AbstractTestBase
 {
     /**
-     * Test the image candidate set validator
-     */
-    public function testImageCandidateSetValidator()
-    {
-        $validator = new ImageCandidateSetValidator(
-            new DensityImageCandidate('image.jpg', 1),
-            new DensityImageCandidate('image.jpg', 2)
-        );
-        $this->assertInstanceOf(ImageCandidateSetValidator::class, $validator);
-        $this->assertTrue($validator->validate());
-    }
-
-    /**
-     * Test the image candidate set validator with mixed types
+     * Test the image candidate set with an inconsistent type
      *
      * @expectedException \Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException
      * @expectedExceptionCode 1522504523
      */
-    public function testImageCandidateSetValidatorWithMixedTypes()
+    public function testImageCandidateSetInconsistentType()
     {
-        $validator = new ImageCandidateSetValidator(
-            new DensityImageCandidate('image.jpg', 1),
-            new WidthImageCandidate('image.jpg', 1000)
-        );
-        $validator->validate();
+        $imageCandidateSet = new ImageCandidateSet(new DensityImageCandidate('image.jpg', 1));
+        $this->assertInstanceOf(ImageCandidateSet::class, $imageCandidateSet);
+
+        $imageCandidateSet[] = new DensityImageCandidate('image.jpg', 2);
+        $imageCandidateSet[] = new DensityImageCandidate('image.jpg', 3);
+        $this->assertEquals(3, count($imageCandidateSet));
+        $imageCandidates = $imageCandidateSet->toArray();
+        $this->assertTrue(is_array($imageCandidates));
+        $this->assertEquals(3, count($imageCandidates));
+        foreach ($imageCandidates as $imageCandidate) {
+            $this->assertInstanceOf(DensityImageCandidate::class, $imageCandidate);
+        }
+
+        $imageCandidateSet[] = new WidthImageCandidate('image.jpg', 1000);
     }
 
     /**
-     * Test the image candidate set validator with overlapping values
+     * Test the image candidate set with an invalid candidate
+     *
+     * @expectedException \Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException
+     * @expectedExceptionCode 1522507099
+     */
+    public function testImageCandidateSetInvalidMember()
+    {
+        $imageCandidateSet = new ImageCandidateSet(new DensityImageCandidate('image.jpg', 1));
+        $this->assertInstanceOf(ImageCandidateSet::class, $imageCandidateSet);
+
+        $imageCandidateSet[] = 'invalid';
+    }
+
+    /**
+     * Test the image candidate set with an overlapping value
      *
      * @expectedException \Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException
      * @expectedExceptionCode 1522504652
      */
-    public function testImageCandidateSetValidatorWithOverlappingValues()
+    public function testImageCandidateSetOverlappingValue()
     {
-        $validator = new ImageCandidateSetValidator(
-            new DensityImageCandidate('image.jpg', 1),
-            new DensityImageCandidate('image.jpg', 1)
-        );
-        $validator->validate();
+        $imageCandidateSet = new ImageCandidateSet(new DensityImageCandidate('image.jpg', 1));
+        $this->assertInstanceOf(ImageCandidateSet::class, $imageCandidateSet);
+
+        $imageCandidateSet[] = new DensityImageCandidate('image.jpg', 1);
     }
 }
