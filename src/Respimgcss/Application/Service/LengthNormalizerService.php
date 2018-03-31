@@ -93,27 +93,38 @@ class LengthNormalizerService
      */
     public function normalize(float $value, string $unit)
     {
+        $normalized = null;
+
         switch ($unit) {
             case UnitLengthInterface::UNIT_PIXEL:
-                return $value;
+                $normalized = $value;
+                break;
             case UnitLengthInterface::UNIT_REM:
             case UnitLengthInterface::UNIT_EM:
-                return $value * $this->emPixel;
+                $normalized = $value * $this->emPixel;
+                break;
             case UnitLengthInterface::UNIT_CM:
-                return round($value * static::DEFAULT_DPI / static::INCH_IN_CM);
+                $normalized = round($value * static::DEFAULT_DPI / static::INCH_IN_CM);
+                break;
             case UnitLengthInterface::UNIT_MM:
-                return round($value * static::DEFAULT_DPI / (static::INCH_IN_CM * 10));
+                $normalized = round($value * static::DEFAULT_DPI / (static::INCH_IN_CM * 10));
+                break;
             case UnitLengthInterface::UNIT_IN:
-                return $value * static::DEFAULT_DPI;
+                $normalized = $value * static::DEFAULT_DPI;
+                break;
             case UnitLengthInterface::UNIT_PT:
-                return round($value / static::PX_IN_PT);
+                $normalized = round($value / static::PX_IN_PT);
+                break;
             case UnitLengthInterface::UNIT_PC:
-                return round($value * 12 / static::PX_IN_PT);
+                $normalized = round($value * 12 / static::PX_IN_PT);
+                break;
+            default:
+                throw new InvalidArgumentException(
+                    sprintf(InvalidArgumentException::INVALID_UNIT_STR, $unit),
+                    InvalidArgumentException::INVALID_UNIT
+                );
         }
 
-        throw new InvalidArgumentException(
-            sprintf(InvalidArgumentException::INVALID_UNIT_STR, $unit),
-            InvalidArgumentException::INVALID_UNIT
-        );
+        return $normalized;
     }
 }
