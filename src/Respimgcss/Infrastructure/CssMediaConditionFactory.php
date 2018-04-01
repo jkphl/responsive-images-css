@@ -82,28 +82,40 @@ class CssMediaConditionFactory
     protected static function createFromResolutionMediaCondition(
         ResolutionMediaCondition $resolutionMediaCondition
     ): array {
-        $renderableMediaConditions = [];
-        $resolutionValue           = $resolutionMediaCondition->getValue()->getValue();
-        $resolutionModifier        = $resolutionMediaCondition->getModifier();
-
-        // -webkit-device-pixel-ratio media condition
-        $webkitDevicePixelRatioRule = new CssMediaConditionRule(
-            sprintf('-webkit-%sdevice-pixel-ratio', $resolutionModifier)
+        $resolutionValue      = $resolutionMediaCondition->getValue()->getValue();
+        $resolutionModifier   = $resolutionMediaCondition->getModifier();
+        $resolutionProperties = ['-webkit-%sdevice-pixel-ratio', '%sresolution', '%sresolution'];
+        $resolutionValues     = [
+            strval($resolutionValue),
+            round($resolutionValue * 96).'dpi',
+            $resolutionValue.'ddpx'
+        ];
+        return array_map(
+            function ($resolutionProperty, $resolutionValue) use ($resolutionModifier) {
+                return self::createMediaCondition($resolutionProperty, $resolutionModifier, $resolutionValue);
+            },
+            $resolutionProperties,
+            $resolutionValues
         );
-        $webkitDevicePixelRatioRule->setValue($resolutionValue);
-        $renderableMediaConditions[] = new CssMediaCondition($webkitDevicePixelRatioRule);
+    }
 
-        // resolution media condition (dpi)
-        $resolutionRule = new CssMediaConditionRule(sprintf('%sresolution', $resolutionModifier));
-        $resolutionRule->setValue(round($resolutionValue * 96).'dpi');
-        $renderableMediaConditions[] = new CssMediaCondition($resolutionRule);
-
-        // resolution media condition (dppx)
-        $resolutionRule = new CssMediaConditionRule(sprintf('%sresolution', $resolutionModifier));
-        $resolutionRule->setValue($resolutionValue.'ddpx');
-        $renderableMediaConditions[] = new CssMediaCondition($resolutionRule);
-
-        return $renderableMediaConditions;
+    /**
+     * Create a renderable media condition
+     *
+     * @param string $property Condition property
+     * @param string $modifier Condition modifier
+     * @param string $value    Condition value
+     *
+     * @return CssMediaConditionInterface Renderable media condition
+     */
+    protected static function createMediaCondition(
+        string $property,
+        string $modifier,
+        string $value
+    ): CssMediaConditionInterface {
+        $rule = new CssMediaConditionRule(sprintf($property, $modifier));
+        $rule->setValue($value);
+        return new CssMediaCondition($rule);
     }
 
     /**

@@ -152,21 +152,14 @@ class CssRulesSerializer
         /** @var DomainMediaConditionInterface $condition */
         foreach ($rule as $condition) {
             $addMediaConditionAlternatives = CssMediaConditionFactory::createFromMediaCondition($condition);
-
-            // If there are already registered media conditions: Add and multiply
-            if (count($alternativeMediaConditions)) {
-                $alternativeMediaConditions = $this->addAndMultiplyCssMediaConditions(
+            $alternativeMediaConditions    = count($alternativeMediaConditions) ?
+                $this->addAndMultiplyCssMediaConditions(
+                    $alternativeMediaConditions,
+                    $addMediaConditionAlternatives
+                ) : $this->initializeCssMediaConditions(
                     $alternativeMediaConditions,
                     $addMediaConditionAlternatives
                 );
-                continue;
-            }
-
-            // Else: Add and wrap with logical and media conditions
-            $alternativeMediaConditions = $this->initializeCssMediaConditions(
-                $alternativeMediaConditions,
-                $addMediaConditionAlternatives
-            );
         }
 
         return strval($alternativeMediaConditions);

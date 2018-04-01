@@ -83,13 +83,28 @@ class ImageCandidateFactory
      * @param string $imageCandidateDescriptor Image candidate descriptor
      *
      * @return ImageCandidateInterface Image candidate
-     * @throws InvalidArgumentException If the Image candidate file is invalid
-     * @throws InvalidArgumentException If the Image candidate descriptor is invalid
      */
     public static function createImageCandidateFromFileAndDescriptor(
         string $imageCandidateFile,
         string $imageCandidateDescriptor = '1x'
     ): ImageCandidateInterface {
+        $imageCandidateFile = self::validateImageCandidate($imageCandidateFile);
+        list($imageCandidateType, $imageCandidateValue) = self::matchImageCandidateTypeValue($imageCandidateDescriptor);
+        return ($imageCandidateType == ImageCandidateInterface::TYPE_DENSITY) ?
+            new DensityImageCandidate($imageCandidateFile, $imageCandidateValue) :
+            new WidthImageCandidate($imageCandidateFile, $imageCandidateValue);
+    }
+
+    /**
+     * Validate and image candidate file
+     *
+     * @param string $imageCandidateFile Image candidate file
+     *
+     * @return string Validated image candidate file
+     * @throws InvalidArgumentException If the Image candidate file is invalid
+     */
+    protected static function validateImageCandidate(string $imageCandidateFile): string
+    {
         $imageCandidateFile = trim($imageCandidateFile);
 
         // If the Image candidate file is invalid
@@ -100,7 +115,20 @@ class ImageCandidateFactory
             );
         }
 
-        // If the image candidate string is invalid
+        return $imageCandidateFile;
+    }
+
+    /**
+     * Match the image candidate type and value
+     *
+     * @param string $imageCandidateDescriptor Image candidate descriptor
+     *
+     * @return string[] Image candidate type and value
+     * @throws InvalidArgumentException If the Image candidate descriptor is invalid
+     */
+    protected static function matchImageCandidateTypeValue(string $imageCandidateDescriptor): array
+    {
+        // If the image candidate list is invalid
         if (!preg_match('/^(\d+)(w|x)$/', trim($imageCandidateDescriptor), $imageCandidateDescriptorMatch)) {
             throw new InvalidArgumentException(
                 sprintf(InvalidArgumentException::INVALID_IMAGE_CANDIDATE_DESCRIPTOR_STR, $imageCandidateDescriptor),
@@ -108,10 +136,6 @@ class ImageCandidateFactory
             );
         }
 
-        $value = intval($imageCandidateDescriptorMatch[1]);
-
-        return ($imageCandidateDescriptorMatch[2] == ImageCandidateInterface::TYPE_DENSITY) ?
-            new DensityImageCandidate($imageCandidateFile, $value) :
-            new WidthImageCandidate($imageCandidateFile, $value);
+        return [$imageCandidateDescriptorMatch[2], $imageCandidateDescriptorMatch[1]];
     }
 }

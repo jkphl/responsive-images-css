@@ -82,10 +82,22 @@ class LengthFactory
      * @param int $emPixel   EM to pixel ratio
      *
      * @return UnitLengthInterface Length with unit
-     * @throws InvalidArgumentException If the length string is invalid
-     * @throws InvalidArgumentException If the unit is invalid
      */
-    public static function createLengthFromString(string $length, int $emPixel = 16)
+    public static function createLengthFromString(string $length, int $emPixel = 16): UnitLengthInterface
+    {
+        $valueAndUnit = self::matchValueAndUnit($length);
+        return self::makeInstance($valueAndUnit[1], $valueAndUnit[2], $emPixel);
+    }
+
+    /**
+     * Match the value and unit of a length descriptor
+     *
+     * @param string $length Length descriptor
+     *
+     * @return array Value and unit (PCRE match)
+     * @throws InvalidArgumentException If the length string is invalid
+     */
+    protected static function matchValueAndUnit($length): array
     {
         $length = trim(strtolower($length));
         if (!strlen($length) || !preg_match('/^(\d+(?:\.\d+)?)([pxremcintvw%]+)$/i', $length, $valueAndUnit)) {
@@ -95,23 +107,34 @@ class LengthFactory
             );
         }
 
+        return $valueAndUnit;
+    }
+
+    /**
+     * Create a value with unit instance
+     *
+     * @param string $value Value
+     * @param string $unit  Unit
+     * @param int $emPixel  EM to pixel ratio
+     *
+     * @return UnitLengthInterface Length with unit
+     * @throws InvalidArgumentException If the unit is invalid
+     */
+    protected static function makeInstance(string $value, string $unit, int $emPixel): UnitLengthInterface
+    {
         // If it's an absolute unit
-        if (in_array($valueAndUnit[2], self::UNITS_ABSOLUTE)) {
-            return new AbsoluteLength(
-                floatval($valueAndUnit[1]),
-                $valueAndUnit[2],
-                new LengthNormalizerService($emPixel)
-            );
+        if (in_array($unit, self::UNITS_ABSOLUTE)) {
+            return new AbsoluteLength(floatval($value), $unit, new LengthNormalizerService($emPixel));
         }
 
         // If it's a relative unit
-        if (in_array($valueAndUnit[2], self::UNITS_RELATIVE)) {
-            return new RelativeLength(floatval($valueAndUnit[1]), $valueAndUnit[2]);
+        if (in_array($unit, self::UNITS_RELATIVE)) {
+            return new RelativeLength(floatval($value), $unit);
         }
 
         // Invalid unit
         throw new InvalidArgumentException(
-            sprintf(InvalidArgumentException::INVALID_UNIT_STR, $valueAndUnit[2]),
+            sprintf(InvalidArgumentException::INVALID_UNIT_STR, $unit),
             InvalidArgumentException::INVALID_UNIT
         );
     }

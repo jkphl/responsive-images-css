@@ -76,37 +76,16 @@ class ImageCandidateSet extends \Jkphl\Respimgcss\Domain\Model\ImageCandidateSet
     /**
      * Offset to set
      *
-     * @param int $offset Offset
-     * @param ImageCandidateInterface $value
+     * @param int $offset  Offset
+     * @param mixed $value Image candidate
      *
      * @return void
-     * @throws InvalidArgumentException If the value given is not a valid image candidate
-     * @throws InvalidArgumentException If the image candidate types are inconsistent
-     * @throws InvalidArgumentException If the image candidate value isn't unique
      */
     public function offsetSet($offset, $value): void
     {
-        if (!($value instanceof ImageCandidateInterface)) {
-            throw new InvalidArgumentException(
-                InvalidArgumentException::INVALID_IMAGE_CANDIDATE_STR,
-                InvalidArgumentException::INVALID_IMAGE_CANDIDATE
-            );
-        }
-
-        // Test if the image candidate type matches the current set type
-        if ($value->getType() !== $this->type) {
-            throw new InvalidArgumentException(
-                InvalidArgumentException::INCONSISTENT_IMAGE_CANDIDATE_TYPES_STR,
-                InvalidArgumentException::INCONSISTENT_IMAGE_CANDIDATE_TYPES
-            );
-        }
-
-        if (array_key_exists($value->getValue(), $this->values)) {
-            throw new InvalidArgumentException(
-                sprintf(InvalidArgumentException::OVERLAPPING_IMAGE_CANDIDATE_VALUE_STR, $value),
-                InvalidArgumentException::OVERLAPPING_IMAGE_CANDIDATE_VALUE
-            );
-        }
+        $this->validateImageCandidate($value);
+        $this->validateImageCandidateType($value);
+        $this->validateImageCandidateValue($value);
 
         parent::offsetSet($offset, $value);
         $this->values[$value->getValue()] = true;
@@ -116,19 +95,56 @@ class ImageCandidateSet extends \Jkphl\Respimgcss\Domain\Model\ImageCandidateSet
     }
 
     /**
-     * Compare and sort two image candidates by value
+     * Validate a value that should be added as image candidate
      *
-     * @param ImageCandidateInterface $image1 Image candidate 1
-     * @param ImageCandidateInterface $image2 Image candidate 2
+     * @param mixed $value Image candidate
      *
-     * @return int
+     * @throws InvalidArgumentException If the value given is not a valid image candidate
      */
-    protected function sortImageCandidates(ImageCandidateInterface $image1, ImageCandidateInterface $image2): int
+    protected function validateImageCandidate($value)
     {
-        $imageValue1 = $image1->getValue();
-        $imageValue2 = $image2->getValue();
+        if (!($value instanceof ImageCandidateInterface)) {
+            throw new InvalidArgumentException(
+                InvalidArgumentException::INVALID_IMAGE_CANDIDATE_STR,
+                InvalidArgumentException::INVALID_IMAGE_CANDIDATE
+            );
+        }
+    }
 
-        return ($imageValue1 === $imageValue2) ? 0 : (($imageValue1 > $imageValue2) ? 1 : -1);
+    /**
+     * Validate a value that should be added as image candidate
+     *
+     * @param mixed $value Image candidate
+     *
+     * @throws InvalidArgumentException If the image candidate types are inconsistent
+     */
+    protected function validateImageCandidateType(ImageCandidateInterface $value)
+    {
+        // Test if the image candidate type matches the current set type
+        if ($value->getType() !== $this->type) {
+            throw new InvalidArgumentException(
+                InvalidArgumentException::INCONSISTENT_IMAGE_CANDIDATE_TYPES_STR,
+                InvalidArgumentException::INCONSISTENT_IMAGE_CANDIDATE_TYPES
+            );
+        }
+    }
+
+    /**
+     * Validate a value that should be added as image candidate
+     *
+     * @param mixed $value Image candidate
+     *
+     * @throws InvalidArgumentException If the image candidate value isn't unique
+     */
+    protected function validateImageCandidateValue(ImageCandidateInterface $value)
+    {
+        // If the image candidate value isn't unique
+        if (array_key_exists($value->getValue(), $this->values)) {
+            throw new InvalidArgumentException(
+                sprintf(InvalidArgumentException::OVERLAPPING_IMAGE_CANDIDATE_VALUE_STR, $value),
+                InvalidArgumentException::OVERLAPPING_IMAGE_CANDIDATE_VALUE
+            );
+        }
     }
 
     /**
@@ -149,5 +165,21 @@ class ImageCandidateSet extends \Jkphl\Respimgcss\Domain\Model\ImageCandidateSet
     public function getType(): string
     {
         return $this->type;
+    }
+
+    /**
+     * Compare and sort two image candidates by value
+     *
+     * @param ImageCandidateInterface $image1 Image candidate 1
+     * @param ImageCandidateInterface $image2 Image candidate 2
+     *
+     * @return int
+     */
+    protected function sortImageCandidates(ImageCandidateInterface $image1, ImageCandidateInterface $image2): int
+    {
+        $imageValue1 = $image1->getValue();
+        $imageValue2 = $image2->getValue();
+
+        return ($imageValue1 === $imageValue2) ? 0 : (($imageValue1 > $imageValue2) ? 1 : -1);
     }
 }
