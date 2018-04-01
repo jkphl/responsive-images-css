@@ -230,10 +230,8 @@ class CssRulesSerializer
      *
      * @return DeclarationBlock Declaration block
      */
-    protected function exportCssRuleDeclarationBlock(
-        CssRuleInterface $rule,
-        string $selector
-    ): DeclarationBlock {
+    protected function exportCssRuleDeclarationBlock(CssRuleInterface $rule, string $selector): DeclarationBlock
+    {
         $declarationBlock = new DeclarationBlock();
         $declarationBlock->setSelectors([$selector]);
         $declarationBlock->addRule($this->exportCssRuleRule($rule));
@@ -248,9 +246,8 @@ class CssRulesSerializer
      *
      * @return Rule Export CSS rule
      */
-    protected function exportCssRuleRule(
-        CssRuleInterface $rule
-    ): Rule {
+    protected function exportCssRuleRule(CssRuleInterface $rule): Rule
+    {
         $imageCandidateFile = $rule->getImageCandidate()->getFile();
         $cssRule            = new Rule('background-image');
         $cssRule->setValue(new URL(new CSSString($imageCandidateFile)));

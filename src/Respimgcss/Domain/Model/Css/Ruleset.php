@@ -61,7 +61,7 @@ class Ruleset implements CssRulesetInterface
      *
      * @return CssRulesetInterface Self reference
      */
-    public function addRule(CssRuleInterface $rule): CssRulesetInterface
+    public function appendRule(CssRuleInterface $rule): CssRulesetInterface
     {
         $this->rules[] = $rule;
         return $this;

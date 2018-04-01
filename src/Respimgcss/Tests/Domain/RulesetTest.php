@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Ports
+ * @subpackage Jkphl\Respimgcss\Tests\Domain
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,44 +34,33 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Tests\Ports;
+namespace Jkphl\Respimgcss\Tests\Domain;
 
-use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
-use Jkphl\Respimgcss\Ports\Generator;
+use Jkphl\Respimgcss\Domain\Model\Css\MediaCondition;
+use Jkphl\Respimgcss\Domain\Model\Css\Rule;
+use Jkphl\Respimgcss\Domain\Model\Css\Ruleset;
+use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
-use Sabberworm\CSS\Parser;
 
 /**
- * Generator test
+ * Ruleset tests
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests
+ * @subpackage Jkphl\Respimgcss\Tests\Domain
  */
-class GeneratorTest extends AbstractTestBase
+class RulesetTest extends AbstractTestBase
 {
     /**
-     * Test the generator
+     * Test the ruleset
      */
-    public function testGenerator()
+    public function testRuleset()
     {
-        $generator = new Generator(['24em', '800px', '72em'], 16);
-        $this->assertInstanceOf(Generator::class, $generator);
+        $ruleset = new Ruleset();
+        $this->assertInstanceOf(Ruleset::class, $ruleset);
 
-        $generator->registerImageCandidate('small.jpg');
-        $generator->registerImageCandidate('large.jpg', '2x');
-        $imageCandidates = $generator->getImageCandidates();
-        $this->assertTrue(is_array($imageCandidates));
-        $this->assertEquals(2, count($imageCandidates));
-        $this->assertInstanceOf(ImageCandidateInterface::class, current($imageCandidates));
-
-//        $cssRuleset = $generator->make([1, 2]);
-//        echo $cssRuleset->toCss('.example');
-    }
-
-    public function _testCssParser()
-    {
-        $oCssParser   = new Parser(file_get_contents(dirname(__DIR__).'/Fixture/Css/example.css'));
-        $oCssDocument = $oCssParser->parse();
-        print_r($oCssDocument);
+        $imageCandidate = new DensityImageCandidate('image.jpg', 1);
+        $mediaCondition = new MediaCondition('property', 'value');
+        $rule           = new Rule($imageCandidate, [$mediaCondition]);
+        $this->assertInstanceOf(Ruleset::class, $ruleset->appendRule($rule));
     }
 }

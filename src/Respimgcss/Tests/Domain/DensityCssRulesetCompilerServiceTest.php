@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Ports
+ * @subpackage Jkphl\Respimgcss\Tests\Domain
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,44 +34,40 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Tests\Ports;
+namespace Jkphl\Respimgcss\Tests\Domain;
 
-use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
-use Jkphl\Respimgcss\Ports\Generator;
+use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
+use Jkphl\Respimgcss\Domain\Model\Css\Ruleset;
+use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
+use Jkphl\Respimgcss\Domain\Model\ImageCandidateSet;
+use Jkphl\Respimgcss\Domain\Model\Length;
+use Jkphl\Respimgcss\Domain\Service\DensityCssRulesetCompilerService;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
-use Sabberworm\CSS\Parser;
 
 /**
- * Generator test
+ * Density CSS ruleset compiler service tests
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests
+ * @subpackage Jkphl\Respimgcss\Tests\Domain
  */
-class GeneratorTest extends AbstractTestBase
+class DensityCssRulesetCompilerServiceTest extends AbstractTestBase
 {
     /**
-     * Test the generator
+     * Test the density CSS ruleset compiler service
      */
-    public function testGenerator()
+    public function testDensityCssRulesetCompilerService()
     {
-        $generator = new Generator(['24em', '800px', '72em'], 16);
-        $this->assertInstanceOf(Generator::class, $generator);
+        $ruleset             = new Ruleset();
+        $value               = rand(1, getrandmax());
+        $length              = new Length($value);
+        $imageCandidate      = new DensityImageCandidate('image.jpg', 3);
+        $imageCandidateSet   = new ImageCandidateSet();
+        $imageCandidateSet[] = $imageCandidate;
 
-        $generator->registerImageCandidate('small.jpg');
-        $generator->registerImageCandidate('large.jpg', '2x');
-        $imageCandidates = $generator->getImageCandidates();
-        $this->assertTrue(is_array($imageCandidates));
-        $this->assertEquals(2, count($imageCandidates));
-        $this->assertInstanceOf(ImageCandidateInterface::class, current($imageCandidates));
+        $compiler = new DensityCssRulesetCompilerService($ruleset, [$length], $imageCandidateSet);
+        $this->assertInstanceOf(DensityCssRulesetCompilerService::class, $compiler);
 
-//        $cssRuleset = $generator->make([1, 2]);
-//        echo $cssRuleset->toCss('.example');
-    }
-
-    public function _testCssParser()
-    {
-        $oCssParser   = new Parser(file_get_contents(dirname(__DIR__).'/Fixture/Css/example.css'));
-        $oCssDocument = $oCssParser->parse();
-        print_r($oCssDocument);
+        $cssRuleset = $compiler->compile(2);
+        $this->assertInstanceOf(CssRulesetInterface::class, $cssRuleset);
     }
 }
