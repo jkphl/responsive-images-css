@@ -59,7 +59,8 @@ class ImageCandidateFactory
      */
     public static function createImageCandidateFromString(string $imageCandidateString): ImageCandidateInterface
     {
-        $imageCandidateStringParts = array_replace([null, '1x'], preg_split('/\s+/', trim($imageCandidateString)));
+        $imageCandidateStringParts = (array)(preg_split('/\s+/', trim($imageCandidateString)) ?: null);
+        $imageCandidateStringParts = array_replace([null, '1x'], $imageCandidateStringParts);
 
         // If the image candidate string is invalid
         if (count($imageCandidateStringParts) !== 2) {
@@ -69,7 +70,10 @@ class ImageCandidateFactory
             );
         }
 
-        return self::createImageCandidateFromFileAndDescriptor(...$imageCandidateStringParts);
+        return self::createImageCandidateFromFileAndDescriptor(
+            $imageCandidateStringParts[0],
+            $imageCandidateStringParts[1]
+        );
     }
 
     /**

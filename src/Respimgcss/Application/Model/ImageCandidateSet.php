@@ -128,7 +128,7 @@ class ImageCandidateSet extends \Jkphl\Respimgcss\Domain\Model\ImageCandidateSet
         $imageValue1 = $image1->getValue();
         $imageValue2 = $image2->getValue();
 
-        return ($imageValue1 === $imageValue2) ?: (($imageValue1 > $imageValue2) ? 1 : -1);
+        return ($imageValue1 === $imageValue2) ? 0 : (($imageValue1 > $imageValue2) ? 1 : -1);
     }
 
     /**

@@ -36,7 +36,6 @@
 
 namespace Jkphl\Respimgcss\Infrastructure;
 
-use Jkphl\Respimgcss\Application\Contract\ImageCandidateSetInterface;
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Factory\ImageCandidateFactory;
 use Jkphl\Respimgcss\Application\Factory\LengthFactory;
@@ -106,7 +105,7 @@ abstract class Generator implements GeneratorInterface
             ImageCandidateFactory::createImageCandidateFromFileAndDescriptor($file, $descriptor);
 
         // If the image candidate set doesn't exist yet
-        if (!($this->imageCandidates instanceof ImageCandidateSetInterface)) {
+        if ($this->imageCandidates === null) {
             $this->imageCandidates = new ImageCandidateSet($imageCandidate);
 
             return $this;
@@ -125,8 +124,7 @@ abstract class Generator implements GeneratorInterface
      */
     public function getImageCandidates(): array
     {
-        return ($this->imageCandidates instanceof ImageCandidateSetInterface) ?
-            $this->imageCandidates->toArray() : [];
+        return ($this->imageCandidates === null) ? [] : $this->imageCandidates->toArray();
     }
 
     /**
@@ -148,7 +146,7 @@ abstract class Generator implements GeneratorInterface
                 $this->breakpoints,
                 $this->imageCandidates
             );
-            $cssRuleset                = $cssRulesetCompilerService->compile($densities);
+            $cssRuleset                = new CssRuleset($cssRulesetCompilerService->compile($densities));
         }
 
         return $cssRuleset;

@@ -49,6 +49,18 @@ use Jkphl\Respimgcss\Infrastructure\CssRulesSerializer;
 class CssRuleset extends Ruleset implements CssRulesetInterface
 {
     /**
+     * CSS ruleset constructor
+     *
+     * @param Ruleset|null $ruleset Optional: Domain ruleset to import rules from
+     */
+    public function __construct(Ruleset $ruleset = null)
+    {
+        if ($ruleset !== null) {
+            $this->rules = $ruleset->rules;
+        }
+    }
+
+    /**
      * Serialize the CSS ruleset
      *
      * @param string $selector Selector

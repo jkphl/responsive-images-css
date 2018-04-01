@@ -69,7 +69,7 @@ class AbsoluteLength extends AbstractLength
     /**
      * Return whether this is an absolute length
      *
-     * @return float Absolute length
+     * @return boolean Absolute length
      */
     public function isAbsolute()
     {

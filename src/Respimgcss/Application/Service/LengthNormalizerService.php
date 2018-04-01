@@ -57,19 +57,19 @@ class LengthNormalizerService
      *
      * @var float
      */
-    CONST INCH_IN_CM = 2.54;
+    const INCH_IN_CM = 2.54;
     /**
      * Default display density
      *
      * @var int
      */
-    CONST DEFAULT_DPI = 72;
+    const DEFAULT_DPI = 72;
     /**
      * Pixel to point ratio
      *
      * @var float
      */
-    CONST PX_IN_PT = .75;
+    const PX_IN_PT = .75;
 
     /**
      * Length normalizer constructor

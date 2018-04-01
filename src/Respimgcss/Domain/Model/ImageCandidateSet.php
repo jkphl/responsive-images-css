@@ -138,8 +138,8 @@ class ImageCandidateSet implements ImageCandidateSetInterface
     /**
      * Offset to set
      *
-     * @param int $offset Offset
-     * @param ImageCandidateInterface $value
+     * @param int|null $offset Offset
+     * @param mixed $value
      *
      * @return void
      * @throws InvalidArgumentException If the value given is not a valid image candidate

@@ -70,10 +70,10 @@ class WidthCssRulesetCompilerService extends AbstractCssRulesetCompilerService
     /**
      * Compile the CSS rules for particular breakpoint, a given density and the registered image candidates
      *
-     * @param int $density                Device display density
+     * @param float $density              Device display density
      * @param LengthInterface $breakpoint Breakpoint length (NULL = minimum size / no breakpoint)
      */
-    protected function compileBreakpoint(int $density, LengthInterface $breakpoint = null): void
+    protected function compileBreakpoint(float $density, LengthInterface $breakpoint = null): void
     {
         echo $breakpoint ? $breakpoint->getValue().PHP_EOL : "default\n";
     }
