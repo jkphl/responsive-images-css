@@ -63,26 +63,26 @@ interface UnitLengthInterface extends LengthInterface
      *
      * @return string Unit
      */
-    public function getUnit();
+    public function getUnit(): string;
 
     /**
      * Return the original value (in source units)
      *
      * @return float Original value (in source units)
      */
-    public function getOriginalValue();
+    public function getOriginalValue(): float;
 
     /**
      * Return whether this is an absolute length
      *
      * @return boolean Absolute length
      */
-    public function isAbsolute();
+    public function isAbsolute(): bool;
 
     /**
      * Return the serialized length
      *
      * @return string Serialized length
      */
-    public function __toString();
+    public function __toString(): string;
 }

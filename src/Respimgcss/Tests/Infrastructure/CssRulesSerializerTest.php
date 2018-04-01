@@ -40,6 +40,7 @@ use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
 use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
 use Jkphl\Respimgcss\Domain\Model\Css\Rule;
 use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
+use Jkphl\Respimgcss\Domain\Model\Length;
 use Jkphl\Respimgcss\Infrastructure\CssRulesSerializer;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
@@ -65,19 +66,6 @@ class CssRulesSerializerTest extends AbstractTestBase
     protected $rule2;
 
     /**
-     * Test setup
-     */
-    protected function setUp()/* The :void return type declaration that should be here would cause a BC issue */
-    {
-        parent::setUp();
-        $imageCandidate1 = new DensityImageCandidate('small.jpg', 1);
-        $this->rule1     = new Rule($imageCandidate1, []);
-        $imageCandidate2 = new DensityImageCandidate('large.jpg', 2);
-        $mediaCondition  = new ResolutionMediaCondition(2, CssMinMaxMediaConditionInterface::MIN);
-        $this->rule2     = new Rule($imageCandidate2, [$mediaCondition]);
-    }
-
-    /**
      * Test the CSS rules serializer
      */
     public function testCssRulesSerializerTest()
@@ -101,5 +89,18 @@ class CssRulesSerializerTest extends AbstractTestBase
         $serializer = new CssRulesSerializer([$this->rule1, $this->rule2]);
         $this->assertInstanceOf(CssRulesSerializer::class, $serializer);
         $serializer->toCss('');
+    }
+
+    /**
+     * Test setup
+     */
+    protected function setUp()/* The :void return type declaration that should be here would cause a BC issue */
+    {
+        parent::setUp();
+        $imageCandidate1 = new DensityImageCandidate('small.jpg', 1);
+        $this->rule1     = new Rule($imageCandidate1, []);
+        $imageCandidate2 = new DensityImageCandidate('large.jpg', 2);
+        $mediaCondition  = new ResolutionMediaCondition(new Length(2), CssMinMaxMediaConditionInterface::MIN);
+        $this->rule2     = new Rule($imageCandidate2, [$mediaCondition]);
     }
 }

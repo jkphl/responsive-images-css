@@ -51,21 +51,21 @@ use Jkphl\Respimgcss\Tests\Infrastructure\Mocks\Generator;
 class GeneratorTest extends AbstractTestBase
 {
     /**
-     * Test the internal generator
+     * Test the internal generator with density based image candidates
      */
-    public function testGenerator()
+    public function testGeneratorDensityImageCandidates()
     {
         $generator = new Generator(['24em', '800px', '72em'], 16);
         $this->assertInstanceOf(InternalGenerator::class, $generator);
-        $this->runGeneratorAssertions($generator);
+        $this->runGeneratorDensityImageCandidatesAssertions($generator);
     }
 
     /**
-     * Run the generator assertions
+     * Run the generator assertions for density based image candidates
      *
      * @param InternalGenerator $generator
      */
-    protected function runGeneratorAssertions(InternalGenerator $generator)
+    protected function runGeneratorDensityImageCandidatesAssertions(InternalGenerator $generator)
     {
         $generator->registerImageCandidate('small.jpg');
         $generator->registerImageCandidate('large.jpg', '2x');
@@ -73,11 +73,47 @@ class GeneratorTest extends AbstractTestBase
         $this->assertTrue(is_array($imageCandidates));
         $this->assertEquals(2, count($imageCandidates));
         $this->assertInstanceOf(ImageCandidateInterface::class, current($imageCandidates));
+        $this->assertEquals(ImageCandidateInterface::TYPE_DENSITY, current($imageCandidates)->getType());
 
         $cssRuleset = $generator->make([1, 2]);
         $this->assertInstanceOf(CssRulesetInterface::class, $cssRuleset);
         $css = $cssRuleset->toCss('.example');
         $this->assertTrue(is_string($css));
         $this->assertStringEqualsFile(dirname(__DIR__).'/Fixture/Css/CssRulesSerializerTest.css', $css);
+    }
+
+    /**
+     * Test the internal generator with width based image candidates
+     */
+    public function testGeneratorWidthImageCandidates()
+    {
+        $generator = new Generator(['24em', '800px', '72em'], 16);
+        $this->assertInstanceOf(InternalGenerator::class, $generator);
+        $this->runGeneratorWidthImageCandidatesAssertions($generator);
+    }
+
+    /**
+     * Run the generator assertions for density based image candidates
+     *
+     * @param InternalGenerator $generator
+     */
+    protected function runGeneratorWidthImageCandidatesAssertions(InternalGenerator $generator)
+    {
+        $generator->registerImageCandidate('small-400.jpg 400w');
+        $generator->registerImageCandidate('medium-800.jpg', '800w');
+        $generator->registerImageCandidate('large-1200.jpg', '1200w');
+        $generator->registerImageCandidate('extralarge-1200.jpg', '1600w');
+        $imageCandidates = $generator->getImageCandidates();
+        $this->assertTrue(is_array($imageCandidates));
+        $this->assertEquals(4, count($imageCandidates));
+        $this->assertInstanceOf(ImageCandidateInterface::class, current($imageCandidates));
+        $this->assertEquals(ImageCandidateInterface::TYPE_WIDTH, current($imageCandidates)->getType());
+
+        $cssRuleset = $generator->make([1, 2]);
+        $this->assertInstanceOf(CssRulesetInterface::class, $cssRuleset);
+        $css = $cssRuleset->toCss('.example');
+//        echo $css;
+        $this->assertTrue(is_string($css));
+//        $this->assertStringEqualsFile(dirname(__DIR__).'/Fixture/Css/CssRulesSerializerTest.css', $css);
     }
 }

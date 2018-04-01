@@ -38,6 +38,7 @@ namespace Jkphl\Respimgcss\Infrastructure;
 
 use Jkphl\Respimgcss\Domain\Contract\CssMediaConditionInterface as DomainMediaConditionInterface;
 use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
+use Jkphl\Respimgcss\Domain\Model\Css\WidthMediaCondition;
 use Jkphl\Respimgcss\Infrastructure\CssMediaConditionInterface as RenderableMediaConditionInterface;
 
 /**
@@ -61,6 +62,9 @@ class CssMediaConditionFactory
             case $mediaCondition instanceof ResolutionMediaCondition:
                 $renderableMediaConditions = self::createFromResolutionMediaCondition($mediaCondition);
                 break;
+            case $mediaCondition instanceof WidthMediaCondition:
+                $renderableMediaConditions = self::createFromWidthMediaCondition($mediaCondition);
+                break;
             default:
                 $renderableMediaConditions = [];
         }
@@ -69,7 +73,7 @@ class CssMediaConditionFactory
     }
 
     /**
-     * Create renderable media conditions from a domain media condition
+     * Create renderable media conditions from a resolution media condition
      *
      * @param ResolutionMediaCondition $resolutionMediaCondition Resolution media condition
      *
@@ -79,7 +83,7 @@ class CssMediaConditionFactory
         ResolutionMediaCondition $resolutionMediaCondition
     ): array {
         $renderableMediaConditions = [];
-        $resolutionValue           = $resolutionMediaCondition->getValue();
+        $resolutionValue           = $resolutionMediaCondition->getValue()->getValue();
         $resolutionModifier        = $resolutionMediaCondition->getModifier();
 
         // -webkit-device-pixel-ratio media condition
@@ -100,5 +104,23 @@ class CssMediaConditionFactory
         $renderableMediaConditions[] = new CssMediaCondition($resolutionRule);
 
         return $renderableMediaConditions;
+    }
+
+    /**
+     * Create renderable media conditions from a width media condition
+     *
+     * @param WidthMediaCondition $widthMediaCondition Resolution media condition
+     *
+     * @return RenderableMediaConditionInterface[] Renderable media conditions
+     */
+    protected static function createFromWidthMediaCondition(
+        WidthMediaCondition $widthMediaCondition
+    ): array {
+        $widthValue    = $widthMediaCondition->getValue();
+        $widthModifier = $widthMediaCondition->getModifier();
+        $widthRule     = new CssMediaConditionRule(sprintf('%swidth', $widthModifier));
+        $widthRule->setValue(strval($widthValue));
+
+        return [new CssMediaCondition($widthRule)];
     }
 }

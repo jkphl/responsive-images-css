@@ -68,8 +68,18 @@ class Length implements LengthInterface
      *
      * @return float Length value
      */
-    public function getValue()
+    public function getValue(): float
     {
         return $this->value;
+    }
+
+    /**
+     * Return the serialized length
+     *
+     * @return string Serialized length
+     */
+    public function __toString(): string
+    {
+        return strval($this->value);
     }
 }

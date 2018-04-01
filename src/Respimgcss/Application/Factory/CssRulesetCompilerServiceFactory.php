@@ -67,7 +67,7 @@ class CssRulesetCompilerServiceFactory
         CssRulesetInterface $cssRuleset,
         array $breakpoints,
         ImageCandidateSetInterface $imageCandidates
-    ) {
+    ): CssRulesetCompilerServiceInterface {
         $cssRulesetCompiler = null;
         switch ($imageCandidates->getType()) {
             case ImageCandidateInterface::TYPE_DENSITY:

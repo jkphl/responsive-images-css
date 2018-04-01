@@ -47,12 +47,22 @@ use Jkphl\Respimgcss\Ports\Generator;
 class GeneratorTest extends \Jkphl\Respimgcss\Tests\Infrastructure\GeneratorTest
 {
     /**
-     * Test the generator
+     * Test the internal generator with density based image candidates
      */
-    public function testGenerator()
+    public function testGeneratorDensityImageCandidates()
     {
         $generator = new Generator(['24em', '800px', '72em'], 16);
         $this->assertInstanceOf(Generator::class, $generator);
-        $this->runGeneratorAssertions($generator);
+        $this->runGeneratorDensityImageCandidatesAssertions($generator);
+    }
+
+    /**
+     * Test the internal generator with width based image candidates
+     */
+    public function testGeneratorWidthImageCandidates()
+    {
+        $generator = new Generator(['24em', '800px', '72em'], 16);
+        $this->assertInstanceOf(Generator::class, $generator);
+        $this->runGeneratorWidthImageCandidatesAssertions($generator);
     }
 }

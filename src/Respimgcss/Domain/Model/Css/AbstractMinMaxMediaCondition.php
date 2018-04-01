@@ -37,6 +37,7 @@
 namespace Jkphl\Respimgcss\Domain\Model\Css;
 
 use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
+use Jkphl\Respimgcss\Domain\Contract\LengthInterface;
 use Jkphl\Respimgcss\Domain\Exceptions\InvalidArgumentException;
 
 /**
@@ -48,6 +49,12 @@ use Jkphl\Respimgcss\Domain\Exceptions\InvalidArgumentException;
 abstract class AbstractMinMaxMediaCondition extends MediaCondition implements CssMinMaxMediaConditionInterface
 {
     /**
+     * Property name
+     *
+     * @var string
+     */
+    const PROPERTY = 'none';
+    /**
      * Property modifier
      *
      * @var string
@@ -56,22 +63,20 @@ abstract class AbstractMinMaxMediaCondition extends MediaCondition implements Cs
     /**
      * Property value
      *
-     * @var float
+     * @var LengthInterface
      */
     protected $value;
 
     /**
      * Min/Max CSS media condition constructor
      *
-     * @param string $property Property name
-     * @param float $value     Property value
-     * @param string $modifier Condition modifier
+     * @param LengthInterface $value Property value
+     * @param string $modifier       Condition modifier
      *
-     * @throws InvalidArgumentException If the condition modifier is invalid
      */
-    public function __construct(string $property, float $value, string $modifier = self::EQ)
+    public function __construct(LengthInterface $value, string $modifier = self::EQ)
     {
-        parent::__construct($property, $value);
+        parent::__construct(static::PROPERTY, $value);
 
         if (
             ($modifier !== self::EQ)
@@ -95,5 +100,15 @@ abstract class AbstractMinMaxMediaCondition extends MediaCondition implements Cs
     public function getModifier(): string
     {
         return $this->modifier;
+    }
+
+    /**
+     * Return the property value
+     *
+     * @return LengthInterface Property value
+     */
+    public function getValue()
+    {
+        return $this->value;
     }
 }

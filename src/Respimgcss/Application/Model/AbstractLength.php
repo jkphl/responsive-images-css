@@ -79,7 +79,7 @@ abstract class AbstractLength extends Length implements UnitLengthInterface
      *
      * @return string Unit
      */
-    public function getUnit()
+    public function getUnit(): string
     {
         return $this->unit;
     }
@@ -89,7 +89,7 @@ abstract class AbstractLength extends Length implements UnitLengthInterface
      *
      * @return float Original value (in source units)
      */
-    public function getOriginalValue()
+    public function getOriginalValue(): float
     {
         return $this->originalValue;
     }
@@ -99,7 +99,7 @@ abstract class AbstractLength extends Length implements UnitLengthInterface
      *
      * @return string Serialized length
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->originalValue.$this->unit;
     }

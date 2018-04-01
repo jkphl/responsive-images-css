@@ -44,17 +44,10 @@ namespace Jkphl\Respimgcss\Domain\Model\Css;
  */
 class ResolutionMediaCondition extends AbstractMinMaxMediaCondition
 {
-    // Property name
-    const PROPERTY = 'resolution';
-
     /**
-     * Resolution media condition constructor
+     * Property name
      *
-     * @param float $value     Property value
-     * @param string $modifier Condition modifier
+     * @var string
      */
-    public function __construct(float $value, string $modifier = self::EQ)
-    {
-        parent::__construct(self::PROPERTY, $value, $modifier);
-    }
+    const PROPERTY = 'resolution';
 }

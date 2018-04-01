@@ -55,6 +55,8 @@ class LengthTest extends AbstractTestBase
         $value  = rand(1, getrandmax());
         $length = new Length($value);
         $this->assertInstanceOf(Length::class, $length);
+        $this->assertTrue(is_float($length->getValue()));
         $this->assertEquals($value, $length->getValue());
+        $this->assertEquals(strval($value), strval($length));
     }
 }

@@ -56,9 +56,9 @@ class AbsoluteLength extends AbstractLength
     /**
      * Absolute length constructor
      *
-     * @param float $value Value
-     * @param string $unit Unit
-     * @param int $emPixel EM to pixel ratio
+     * @param float $value                                     Value
+     * @param string $unit                                     Unit
+     * @param LengthNormalizerService $lengthNormalizerService Length normalizer service
      */
     public function __construct(float $value, string $unit, LengthNormalizerService $lengthNormalizerService)
     {
@@ -71,7 +71,7 @@ class AbsoluteLength extends AbstractLength
      *
      * @return boolean Absolute length
      */
-    public function isAbsolute()
+    public function isAbsolute(): bool
     {
         return true;
     }

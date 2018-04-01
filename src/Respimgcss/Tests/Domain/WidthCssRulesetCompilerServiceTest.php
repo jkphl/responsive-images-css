@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Contract
+ * @subpackage Jkphl\Respimgcss\Tests\Domain
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,27 +34,39 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Domain\Contract;
+namespace Jkphl\Respimgcss\Tests\Domain;
+
+use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
+use Jkphl\Respimgcss\Domain\Model\Css\Ruleset;
+use Jkphl\Respimgcss\Domain\Model\ImageCandidateSet;
+use Jkphl\Respimgcss\Domain\Model\Length;
+use Jkphl\Respimgcss\Domain\Model\WidthImageCandidate;
+use Jkphl\Respimgcss\Domain\Service\WidthCssRulesetCompilerService;
+use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
- * Length Interface
+ * Width CSS ruleset compiler service tests
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain
+ * @subpackage Jkphl\Respimgcss\Tests\Domain
  */
-interface LengthInterface
+class WidthCssRulesetCompilerServiceTest extends AbstractTestBase
 {
     /**
-     * Return the length value
-     *
-     * @return float Length value
+     * Test the width CSS ruleset compiler service
      */
-    public function getValue(): float;
+    public function testWidthCssRulesetCompilerService()
+    {
+        $ruleset             = new Ruleset();
+        $length              = new Length(500);
+        $imageCandidateSet   = new ImageCandidateSet();
+        $imageCandidateSet[] = new WidthImageCandidate('small.jpg', 400);
+        $imageCandidateSet[] = new WidthImageCandidate('medium.jpg', 800);
 
-    /**
-     * Return the serialized length
-     *
-     * @return string Serialized length
-     */
-    public function __toString(): string;
+        $compiler = new WidthCssRulesetCompilerService($ruleset, [$length], $imageCandidateSet);
+        $this->assertInstanceOf(WidthCssRulesetCompilerService::class, $compiler);
+
+        $cssRuleset = $compiler->compile(1);
+        $this->assertInstanceOf(CssRulesetInterface::class, $cssRuleset);
+    }
 }

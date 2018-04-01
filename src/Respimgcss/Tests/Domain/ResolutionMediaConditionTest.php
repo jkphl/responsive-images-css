@@ -37,7 +37,9 @@
 namespace Jkphl\Respimgcss\Tests\Domain;
 
 use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
+use Jkphl\Respimgcss\Domain\Contract\LengthInterface;
 use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
+use Jkphl\Respimgcss\Domain\Model\Length;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
@@ -53,10 +55,13 @@ class ResolutionMediaConditionTest extends AbstractTestBase
      */
     public function testResolutionMediaCondition()
     {
-        $resolutionMediaCondition = new ResolutionMediaCondition(2.0, CssMinMaxMediaConditionInterface::MAX);
+        $resolutionMediaCondition = new ResolutionMediaCondition(
+            new Length(2.0),
+            CssMinMaxMediaConditionInterface::MAX
+        );
         $this->assertInstanceOf(ResolutionMediaCondition::class, $resolutionMediaCondition);
-        $this->assertTrue(is_float($resolutionMediaCondition->getValue()));
-        $this->assertEquals(2.0, $resolutionMediaCondition->getValue());
+        $this->assertInstanceOf(LengthInterface::class, $resolutionMediaCondition->getValue());
+        $this->assertEquals(2.0, $resolutionMediaCondition->getValue()->getValue());
         $this->assertEquals(CssMinMaxMediaConditionInterface::MAX, $resolutionMediaCondition->getModifier());
     }
 
@@ -68,6 +73,6 @@ class ResolutionMediaConditionTest extends AbstractTestBase
      */
     public function testResolutionMediaConditionInvalidModifier()
     {
-        new ResolutionMediaCondition(1.0, 'invalid');
+        new ResolutionMediaCondition(new Length(1.0), 'invalid');
     }
 }

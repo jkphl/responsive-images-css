@@ -60,7 +60,7 @@ class RelativeLength extends AbstractLength
      *
      * @return boolean Absolute length
      */
-    public function isAbsolute()
+    public function isAbsolute(): bool
     {
         return false;
     }
