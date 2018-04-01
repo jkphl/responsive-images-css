@@ -44,5 +44,17 @@ namespace Jkphl\Respimgcss\Domain\Contract;
  */
 interface CssMediaConditionInterface
 {
+    /**
+     * Return the property name
+     *
+     * @return string Property name
+     */
+    public function getProperty(): string;
 
+    /**
+     * Return the property value
+     *
+     * @return mixed Propery value
+     */
+    public function getValue();
 }

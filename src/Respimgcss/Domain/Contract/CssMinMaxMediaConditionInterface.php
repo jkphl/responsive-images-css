@@ -48,4 +48,11 @@ interface CssMinMaxMediaConditionInterface extends CssMediaConditionInterface
     const MIN = 'min-';
     const MAX = 'max-';
     const EQ = '';
+
+    /**
+     * Return the property modifier
+     *
+     * @return string Property modifier
+     */
+    public function getModifier(): string;
 }

@@ -5,9 +5,9 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Model\Css
- * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
- * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
+ * @subpackage Jkphl\Respimgcss\Infrastructure
+ * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
+ * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
@@ -34,60 +34,40 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Domain\Model\Css;
-
-use Jkphl\Respimgcss\Domain\Contract\CssMediaConditionInterface;
+namespace Jkphl\Respimgcss\Infrastructure;
 
 /**
- * CSS media conditioon
+ * CSS media condition alternatives
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Model\Css
+ * @subpackage Jkphl\Respimgcss\Infrastructure
  */
-class MediaCondition implements CssMediaConditionInterface
+class CssMediaConditionAlternatives extends \ArrayObject
 {
     /**
-     * Property name
+     * Concatenator
      *
      * @var string
      */
-    protected $property;
-    /**
-     * Property value
-     *
-     * @var mixed
-     */
-    protected $value;
+    protected $concatenator = ",";
 
     /**
-     * Media condition constructor
+     * Append a logical renderable media condition
      *
-     * @param string $property Property name
-     * @param mixed $value     Property value
+     * @param LogicalCssMediaConditionInterface $mediaCondition Renderable media condition
      */
-    public function __construct(string $property, $value)
+    public function appendCondition(LogicalCssMediaConditionInterface $mediaCondition): void
     {
-        $this->property = $property;
-        $this->value    = $value;
+        parent::append($mediaCondition);
     }
 
     /**
-     * Return the property name
+     * Return the serialized alternative media conditions
      *
-     * @return string Property name
+     * @return string Serialized alternative media conditions
      */
-    public function getProperty(): string
+    public function __toString()
     {
-        return $this->property;
-    }
-
-    /**
-     * Return the property value
-     *
-     * @return mixed Propery value
-     */
-    public function getValue()
-    {
-        return $this->value;
+        return implode($this->concatenator, array_map('strval', $this->getArrayCopy()));
     }
 }

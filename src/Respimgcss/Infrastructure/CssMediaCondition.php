@@ -5,9 +5,9 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Model\Css
- * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
- * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
+ * @subpackage Jkphl\Respimgcss\Infrastructure
+ * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
+ * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
@@ -34,60 +34,42 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Domain\Model\Css;
+namespace Jkphl\Respimgcss\Infrastructure;
 
-use Jkphl\Respimgcss\Domain\Contract\CssMediaConditionInterface;
+use Sabberworm\CSS\Rule\Rule;
 
 /**
- * CSS media conditioon
+ * CSS media condition
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Model\Css
+ * @subpackage Jkphl\Respimgcss\Infrastructure
  */
-class MediaCondition implements CssMediaConditionInterface
+class CssMediaCondition implements CssMediaConditionInterface
 {
     /**
-     * Property name
+     * Renderable rule
      *
-     * @var string
+     * @var Rule
      */
-    protected $property;
-    /**
-     * Property value
-     *
-     * @var mixed
-     */
-    protected $value;
+    protected $rule;
 
     /**
-     * Media condition constructor
+     * CSS media condition constructor
      *
-     * @param string $property Property name
-     * @param mixed $value     Property value
+     * @param Rule $rule
      */
-    public function __construct(string $property, $value)
+    public function __construct(Rule $rule)
     {
-        $this->property = $property;
-        $this->value    = $value;
+        $this->rule = $rule;
     }
 
     /**
-     * Return the property name
+     * Return the serialized media condition
      *
-     * @return string Property name
+     * @return string Serialized media condition
      */
-    public function getProperty(): string
+    public function __toString()
     {
-        return $this->property;
-    }
-
-    /**
-     * Return the property value
-     *
-     * @return mixed Propery value
-     */
-    public function getValue()
-    {
-        return $this->value;
+        return "({$this->rule})";
     }
 }

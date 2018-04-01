@@ -87,4 +87,13 @@ abstract class AbstractMinMaxMediaCondition extends MediaCondition implements Cs
         $this->modifier = $modifier;
     }
 
+    /**
+     * Return the property modifier
+     *
+     * @return string Property modifier
+     */
+    public function getModifier(): string
+    {
+        return $this->modifier;
+    }
 }

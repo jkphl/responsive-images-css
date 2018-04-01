@@ -36,7 +36,9 @@
 
 namespace Jkphl\Respimgcss\Infrastructure;
 
+use Jkphl\Respimgcss\Domain\Contract\CssMediaConditionInterface;
 use Jkphl\Respimgcss\Domain\Contract\CssRuleInterface;
+use Jkphl\Respimgcss\Infrastructure\CssMediaConditionInterface as RenderableMediaConditionInterface;
 use Jkphl\Respimgcss\Ports\InvalidArgumentException;
 use Sabberworm\CSS\CSSList\AtRuleBlockList;
 use Sabberworm\CSS\CSSList\Document;
@@ -144,7 +146,80 @@ class CssRulesSerializer
      */
     protected function exportCssRuleMediaConditions(CssRuleInterface $rule): string
     {
-        return 'screen';
+        $alternativeMediaConditions = new CssMediaConditionAlternatives();
+
+        // Run through all conditions of this rule
+        /** @var CssMediaConditionInterface $condition */
+        foreach ($rule as $condition) {
+            $addMediaConditionAlternatives = CssMediaConditionFactory::createFromMediaCondition($condition);
+
+            // If there are already registered media conditions: Add and multiply
+            if (count($alternativeMediaConditions)) {
+                $alternativeMediaConditions = $this->addAndMultiplyCssMediaConditions(
+                    $alternativeMediaConditions,
+                    $addMediaConditionAlternatives
+                );
+                continue;
+            }
+
+            // Else: Add and wrap with logical and media conditions
+            $alternativeMediaConditions = $this->initializeCssMediaConditions(
+                $alternativeMediaConditions,
+                $addMediaConditionAlternatives
+            );
+        }
+
+        return strval($alternativeMediaConditions);
+    }
+
+    /**
+     * Add and multiply media condition alternatives
+     *
+     * @param CssMediaConditionAlternatives $alternativeMediaConditions       Base set of alternative media conditions
+     * @param RenderableMediaConditionInterface[] $mediaConditionAlternatives Media condition alternatives to add
+     *
+     * @return CssMediaConditionAlternatives Multiplied set of media condition alternatives
+     */
+    protected function addAndMultiplyCssMediaConditions(
+        CssMediaConditionAlternatives $alternativeMediaConditions,
+        array $mediaConditionAlternatives
+    ): CssMediaConditionAlternatives {
+        $multipliedAlternativeMediaConditions = new CssMediaConditionAlternatives();
+
+        // Run through all generated media condition alternatives
+        /** @var RenderableMediaConditionInterface $mediaConditionAlternative */
+        foreach ($mediaConditionAlternatives as $mediaConditionAlternative) {
+            // Run through all registered media condition alternatives
+            /** @var LogicalCssMediaConditionInterface $registeredMediaConditionAlternative */
+            foreach ($alternativeMediaConditions as $registeredMediaConditionAlternative) {
+                $clonedMediaConditionAlternative = clone $registeredMediaConditionAlternative;
+                $clonedMediaConditionAlternative->appendCondition($mediaConditionAlternative);
+                $multipliedAlternativeMediaConditions->appendCondition($clonedMediaConditionAlternative);
+            }
+        }
+
+        return $multipliedAlternativeMediaConditions;
+    }
+
+    /**
+     * Initialize media condition alternatives
+     *
+     * @param CssMediaConditionAlternatives $alternativeMediaConditions       Base set of alternative media conditions
+     * @param RenderableMediaConditionInterface[] $mediaConditionAlternatives Media condition alternatives to add
+     *
+     * @return CssMediaConditionAlternatives Multiplied set of media condition alternatives
+     */
+    protected function initializeCssMediaConditions(
+        CssMediaConditionAlternatives $alternativeMediaConditions,
+        array $mediaConditionAlternatives
+    ): CssMediaConditionAlternatives {
+        // Run through all generated media condition alternatives
+        /** @var RenderableMediaConditionInterface $mediaConditionAlternative */
+        foreach ($mediaConditionAlternatives as $mediaConditionAlternative) {
+            $alternativeMediaConditions->appendCondition(new LogicalAndCssMediaCondition([$mediaConditionAlternative]));
+        }
+
+        return $alternativeMediaConditions;
     }
 
     /**
@@ -155,8 +230,11 @@ class CssRulesSerializer
      *
      * @return DeclarationBlock Declaration block
      */
-    protected function exportCssRuleDeclarationBlock(CssRuleInterface $rule, string $selector): DeclarationBlock
-    {
+    protected
+    function exportCssRuleDeclarationBlock(
+        CssRuleInterface $rule,
+        string $selector
+    ): DeclarationBlock {
         $declarationBlock = new DeclarationBlock();
         $declarationBlock->setSelectors([$selector]);
         $declarationBlock->addRule($this->exportCssRuleRule($rule));
@@ -171,8 +249,10 @@ class CssRulesSerializer
      *
      * @return Rule Export CSS rule
      */
-    protected function exportCssRuleRule(CssRuleInterface $rule): Rule
-    {
+    protected
+    function exportCssRuleRule(
+        CssRuleInterface $rule
+    ): Rule {
         $imageCandidateFile = $rule->getImageCandidate()->getFile();
         $cssRule            = new Rule('background-image');
         $cssRule->setValue(new URL(new CSSString($imageCandidateFile)));

@@ -5,9 +5,9 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Model\Css
- * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
- * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
+ * @subpackage Jkphl\Respimgcss\Infrastructure
+ * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
+ * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
@@ -34,60 +34,56 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Domain\Model\Css;
-
-use Jkphl\Respimgcss\Domain\Contract\CssMediaConditionInterface;
+namespace Jkphl\Respimgcss\Infrastructure;
 
 /**
- * CSS media conditioon
+ * Abstract logical media condition
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Model\Css
+ * @subpackage Jkphl\Respimgcss\Infrastructure
  */
-class MediaCondition implements CssMediaConditionInterface
+abstract class AbstractLogicalCssMediaCondition implements LogicalCssMediaConditionInterface
 {
     /**
-     * Property name
+     * Renderable media conditions
+     *
+     * @var CssMediaConditionInterface[]
+     */
+    protected $mediaConditions;
+    /**
+     * Concatenator
      *
      * @var string
      */
-    protected $property;
-    /**
-     * Property value
-     *
-     * @var mixed
-     */
-    protected $value;
+    protected $concatenator = '';
 
     /**
-     * Media condition constructor
+     * Abstract logical media condition constructor
      *
-     * @param string $property Property name
-     * @param mixed $value     Property value
+     * @param CssMediaConditionInterface[] $mediaConditions Media conditions
      */
-    public function __construct(string $property, $value)
+    public function __construct(array $mediaConditions = [])
     {
-        $this->property = $property;
-        $this->value    = $value;
+        $this->mediaConditions = $mediaConditions;
     }
 
     /**
-     * Return the property name
+     * Append a renderable media condition
      *
-     * @return string Property name
+     * @param CssMediaConditionInterface $mediaCondition Renderable media condition
      */
-    public function getProperty(): string
+    public function appendCondition(CssMediaConditionInterface $mediaCondition): void
     {
-        return $this->property;
+        $this->mediaConditions[] = $mediaCondition;
     }
 
     /**
-     * Return the property value
+     * Return the serialized media condition
      *
-     * @return mixed Propery value
+     * @return string Serialized media condition
      */
-    public function getValue()
+    public function __toString()
     {
-        return $this->value;
+        return implode($this->concatenator, array_map('strval', $this->mediaConditions));
     }
 }

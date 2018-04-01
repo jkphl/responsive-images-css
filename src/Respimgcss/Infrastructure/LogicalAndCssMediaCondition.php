@@ -5,9 +5,9 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Model\Css
- * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
- * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
+ * @subpackage Jkphl\Respimgcss\Infrastructure
+ * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
+ * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
@@ -34,60 +34,20 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Domain\Model\Css;
-
-use Jkphl\Respimgcss\Domain\Contract\CssMediaConditionInterface;
+namespace Jkphl\Respimgcss\Infrastructure;
 
 /**
- * CSS media conditioon
+ * Logical "and" media condition
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Model\Css
+ * @subpackage Jkphl\Respimgcss\Infrastructure
  */
-class MediaCondition implements CssMediaConditionInterface
+class LogicalAndCssMediaCondition extends AbstractLogicalCssMediaCondition
 {
     /**
-     * Property name
+     * Concatenator
      *
      * @var string
      */
-    protected $property;
-    /**
-     * Property value
-     *
-     * @var mixed
-     */
-    protected $value;
-
-    /**
-     * Media condition constructor
-     *
-     * @param string $property Property name
-     * @param mixed $value     Property value
-     */
-    public function __construct(string $property, $value)
-    {
-        $this->property = $property;
-        $this->value    = $value;
-    }
-
-    /**
-     * Return the property name
-     *
-     * @return string Property name
-     */
-    public function getProperty(): string
-    {
-        return $this->property;
-    }
-
-    /**
-     * Return the property value
-     *
-     * @return mixed Propery value
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
+    protected $concatenator = ' and ';
 }
