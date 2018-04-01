@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Ports
+ * @subpackage Jkphl\Respimgcss\Tests\Infrastructure
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,25 +34,27 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Tests\Ports;
+namespace Jkphl\Respimgcss\Tests\Infrastructure;
 
-use Jkphl\Respimgcss\Ports\Generator;
+use Jkphl\Respimgcss\Infrastructure\CssMediaConditionRule;
+use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
- * Generator test
+ * CSS media condition rule tests
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests
+ * @subpackage Jkphl\Respimgcss\Tests\Infrastructure
  */
-class GeneratorTest extends \Jkphl\Respimgcss\Tests\Infrastructure\GeneratorTest
+class CssMediaConditionRuleTest extends AbstractTestBase
 {
     /**
-     * Test the generator
+     * Test the CSS media condition rule
      */
-    public function testGenerator()
+    public function testCssMediaConditionRule()
     {
-        $generator = new Generator(['24em', '800px', '72em'], 16);
-        $this->assertInstanceOf(Generator::class, $generator);
-        $this->runGeneratorAssertions($generator);
+        $rule = new CssMediaConditionRule('property');
+        $this->assertInstanceOf(CssMediaConditionRule::class, $rule);
+        $rule->setValue('value');
+        $this->assertEquals('property: value', strval($rule));
     }
 }

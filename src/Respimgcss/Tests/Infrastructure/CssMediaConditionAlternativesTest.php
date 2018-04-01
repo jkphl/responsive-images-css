@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Ports
+ * @subpackage Jkphl\Respimgcss\Tests\Infrastructure
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,25 +34,45 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Tests\Ports;
+namespace Jkphl\Respimgcss\Tests\Infrastructure;
 
-use Jkphl\Respimgcss\Ports\Generator;
+use Jkphl\Respimgcss\Infrastructure\CssMediaCondition;
+use Jkphl\Respimgcss\Infrastructure\CssMediaConditionAlternatives;
+use Jkphl\Respimgcss\Infrastructure\LogicalAndCssMediaCondition;
+use Jkphl\Respimgcss\Infrastructure\LogicalOrCssMediaCondition;
+use Jkphl\Respimgcss\Tests\AbstractTestBase;
+use Sabberworm\CSS\Rule\Rule;
 
 /**
- * Generator test
+ * CSS media condition alternatives tests
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests
+ * @subpackage Jkphl\Respimgcss\Tests\Infrastructure
  */
-class GeneratorTest extends \Jkphl\Respimgcss\Tests\Infrastructure\GeneratorTest
+class CssMediaConditionAlternativesTest extends AbstractTestBase
 {
     /**
-     * Test the generator
+     * Test the CSS media condition alternatives
      */
-    public function testGenerator()
+    public function testCssMediaConditionAlternatives()
     {
-        $generator = new Generator(['24em', '800px', '72em'], 16);
-        $this->assertInstanceOf(Generator::class, $generator);
-        $this->runGeneratorAssertions($generator);
+        $alternatives = new CssMediaConditionAlternatives();
+        $this->assertInstanceOf(CssMediaConditionAlternatives::class, $alternatives);
+
+        $rule1 = new Rule('property1');
+        $rule1->setValue('value1');
+        $cssMediaCondition1 = new CssMediaCondition($rule1);
+
+        $rule2 = new Rule('property2');
+        $rule2->setValue('value2');
+        $cssMediaCondition2 = new CssMediaCondition($rule2);
+
+        $alternatives->appendCondition(new LogicalAndCssMediaCondition([$cssMediaCondition1, $cssMediaCondition2]));
+        $alternatives->appendCondition(new LogicalOrCssMediaCondition([$cssMediaCondition1, $cssMediaCondition2]));
+        $this->assertEquals(2, count($alternatives));
+        $this->assertEquals(
+            '(property1: value1;) and (property2: value2;),(property1: value1;) or (property2: value2;)',
+            strval($alternatives)
+        );
     }
 }

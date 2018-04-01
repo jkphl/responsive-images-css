@@ -40,7 +40,7 @@ use Sabberworm\CSS\OutputFormat;
 use Sabberworm\CSS\Rule\Rule;
 
 /**
- * Css media condition rule
+ * CSS media condition rule
  *
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Infrastructure

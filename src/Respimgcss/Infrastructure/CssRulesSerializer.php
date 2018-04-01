@@ -42,6 +42,7 @@ use Jkphl\Respimgcss\Infrastructure\CssMediaConditionInterface as RenderableMedi
 use Jkphl\Respimgcss\Ports\InvalidArgumentException;
 use Sabberworm\CSS\CSSList\AtRuleBlockList;
 use Sabberworm\CSS\CSSList\Document;
+use Sabberworm\CSS\OutputFormat;
 use Sabberworm\CSS\Renderable;
 use Sabberworm\CSS\Rule\Rule;
 use Sabberworm\CSS\RuleSet\DeclarationBlock;
@@ -99,7 +100,10 @@ class CssRulesSerializer
             $cssDocument->append($this->exportCssRule($rule, $selector));
         }
 
-        return $cssDocument->render();
+        $outputFormat                      = new OutputFormat();
+        $outputFormat->sSpaceBetweenBlocks = "\r\n";
+
+        return $cssDocument->render($outputFormat);
     }
 
     /**

@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Ports
+ * @subpackage Jkphl\Respimgcss\Tests\Infrastructure\Mocks
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,25 +34,15 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Tests\Ports;
-
-use Jkphl\Respimgcss\Ports\Generator;
+namespace Jkphl\Respimgcss\Tests\Infrastructure\Mocks;
 
 /**
- * Generator test
+ * Internal generator mock
  *
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Tests
  */
-class GeneratorTest extends \Jkphl\Respimgcss\Tests\Infrastructure\GeneratorTest
+class Generator extends \Jkphl\Respimgcss\Infrastructure\Generator
 {
-    /**
-     * Test the generator
-     */
-    public function testGenerator()
-    {
-        $generator = new Generator(['24em', '800px', '72em'], 16);
-        $this->assertInstanceOf(Generator::class, $generator);
-        $this->runGeneratorAssertions($generator);
-    }
+
 }
