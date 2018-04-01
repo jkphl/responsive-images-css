@@ -63,20 +63,30 @@ class DensityCssRulesetCompilerService extends AbstractCssRulesetCompilerService
         /** @var ImageCandidateInterface $imageCandidate */
         foreach ($this->imageCandidates as $imageCandidate) {
             if ($imageCandidate->getValue() >= $density) {
-                $rule = new Rule($imageCandidate);
-                if ($density !== 1.0) {
-                    $rule = $rule->appendCondition(
-                        new ResolutionMediaCondition(
-                            $density,
-                            CssMinMaxMediaConditionInterface::MIN
-                        )
-                    );
-                }
-                $this->cssRuleset->addRule($rule);
+                $this->cssRuleset->addRule($this->createImageCandidateRule($imageCandidate, $density));
                 break;
             }
         }
 
         return $this->cssRuleset;
+    }
+
+    /**
+     * Create a density CSS rule for a particular image candidate
+     *
+     * @param ImageCandidateInterface $imageCandidate Image candidate
+     * @param float $density                          Density
+     *
+     * @return Rule Density CSS rule
+     */
+    protected function createImageCandidateRule(ImageCandidateInterface $imageCandidate, float $density): Rule
+    {
+        $rule = new Rule($imageCandidate);
+        if ($density !== 1.0) {
+            $resolutionMediaCondition = new ResolutionMediaCondition($density, CssMinMaxMediaConditionInterface::MIN);
+            $rule                     = $rule->appendCondition($resolutionMediaCondition);
+        }
+
+        return $rule;
     }
 }

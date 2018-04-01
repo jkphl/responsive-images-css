@@ -36,7 +36,7 @@
 
 namespace Jkphl\Respimgcss\Infrastructure;
 
-use Jkphl\Respimgcss\Domain\Contract\CssMediaConditionInterface;
+use Jkphl\Respimgcss\Domain\Contract\CssMediaConditionInterface as DomainMediaConditionInterface;
 use Jkphl\Respimgcss\Domain\Contract\CssRuleInterface;
 use Jkphl\Respimgcss\Infrastructure\CssMediaConditionInterface as RenderableMediaConditionInterface;
 use Jkphl\Respimgcss\Ports\InvalidArgumentException;
@@ -149,7 +149,7 @@ class CssRulesSerializer
         $alternativeMediaConditions = new CssMediaConditionAlternatives();
 
         // Run through all conditions of this rule
-        /** @var CssMediaConditionInterface $condition */
+        /** @var DomainMediaConditionInterface $condition */
         foreach ($rule as $condition) {
             $addMediaConditionAlternatives = CssMediaConditionFactory::createFromMediaCondition($condition);
 
@@ -230,8 +230,7 @@ class CssRulesSerializer
      *
      * @return DeclarationBlock Declaration block
      */
-    protected
-    function exportCssRuleDeclarationBlock(
+    protected function exportCssRuleDeclarationBlock(
         CssRuleInterface $rule,
         string $selector
     ): DeclarationBlock {
@@ -249,8 +248,7 @@ class CssRulesSerializer
      *
      * @return Rule Export CSS rule
      */
-    protected
-    function exportCssRuleRule(
+    protected function exportCssRuleRule(
         CssRuleInterface $rule
     ): Rule {
         $imageCandidateFile = $rule->getImageCandidate()->getFile();

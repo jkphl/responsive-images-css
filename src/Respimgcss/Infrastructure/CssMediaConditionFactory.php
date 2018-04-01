@@ -36,7 +36,7 @@
 
 namespace Jkphl\Respimgcss\Infrastructure;
 
-use Jkphl\Respimgcss\Domain\Contract\CssMediaConditionInterface;
+use Jkphl\Respimgcss\Domain\Contract\CssMediaConditionInterface as DomainMediaConditionInterface;
 use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
 use Jkphl\Respimgcss\Infrastructure\CssMediaConditionInterface as RenderableMediaConditionInterface;
 
@@ -51,11 +51,11 @@ class CssMediaConditionFactory
     /**
      * Create renderable media conditions from a domain media condition
      *
-     * @param CssMediaConditionInterface $mediaCondition Domain media condition
+     * @param DomainMediaConditionInterface $mediaCondition Domain media condition
      *
      * @return RenderableMediaConditionInterface[] Renderable media conditions
      */
-    public static function createFromMediaCondition(CssMediaConditionInterface $mediaCondition): array
+    public static function createFromMediaCondition(DomainMediaConditionInterface $mediaCondition): array
     {
         switch (true) {
             case $mediaCondition instanceof ResolutionMediaCondition:
