@@ -42,7 +42,7 @@ namespace Jkphl\Respimgcss\Domain\Contract;
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Domain
  */
-interface CssRuleInterface
+interface CssRuleInterface extends \IteratorAggregate, \ArrayAccess, \Serializable, \Countable
 {
     /**
      * Add a CSS media condition to this rule
@@ -51,5 +51,12 @@ interface CssRuleInterface
      *
      * @return CssRuleInterface Self reference
      */
-    public function addCondition(CssMediaConditionInterface $condition): CssRuleInterface;
+    public function appendCondition(CssMediaConditionInterface $condition): CssRuleInterface;
+
+    /**
+     * Return the image candidate associated with this rule
+     *
+     * @return ImageCandidateInterface Image candidate
+     */
+    public function getImageCandidate(): ImageCandidateInterface;
 }

@@ -44,5 +44,12 @@ namespace Jkphl\Respimgcss\Ports;
  */
 interface CssRulesetInterface extends \Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface
 {
-
+    /**
+     * Serialize the CSS ruleset
+     *
+     * @param string $selector Selector
+     *
+     * @return mixed
+     */
+    public function toCss(string $selector): string;
 }

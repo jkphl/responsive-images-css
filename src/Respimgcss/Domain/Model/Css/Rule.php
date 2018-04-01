@@ -46,7 +46,7 @@ use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Domain
  */
-class Rule implements CssRuleInterface
+class Rule extends \ArrayObject implements CssRuleInterface
 {
     /**
      * Image candidate
@@ -54,12 +54,6 @@ class Rule implements CssRuleInterface
      * @var ImageCandidateInterface
      */
     protected $imageCandidate;
-    /**
-     * Media conditions
-     *
-     * @var CssMediaConditionInterface[]
-     */
-    protected $conditions;
 
     /**
      * CSS rule
@@ -70,7 +64,7 @@ class Rule implements CssRuleInterface
     public function __construct(ImageCandidateInterface $imageCandidate, array $conditions = [])
     {
         $this->imageCandidate = $imageCandidate;
-        $this->conditions     = $conditions;
+        parent::__construct($conditions);
     }
 
     /**
@@ -80,10 +74,21 @@ class Rule implements CssRuleInterface
      *
      * @return CssRuleInterface Self reference
      */
-    public function addCondition(CssMediaConditionInterface $condition): CssRuleInterface
+    public function appendCondition(CssMediaConditionInterface $condition): CssRuleInterface
     {
-        $rule               = clone $this;
-        $rule->conditions[] = $condition;
+        $rule = clone $this;
+        $rule->append($condition);
+
         return $rule;
+    }
+
+    /**
+     * Return the image candidate associated with this rule
+     *
+     * @return ImageCandidateInterface Image candidate
+     */
+    public function getImageCandidate(): ImageCandidateInterface
+    {
+        return $this->imageCandidate;
     }
 }

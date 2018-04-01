@@ -1,0 +1,12 @@
+.example {
+	background-image: url("../Images/small-400.jpg");
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 2),
+screen and (min-resolution: 182dpi),
+screen and (min-resolution: 2dppx),
+screen and (-webkit-min-device-pixel-ratio: 2) and (min-width: 400px) and (max-width: 80vw) {
+	.example {
+		background-image: url("../Images/medium-800.jpg");
+	}
+}

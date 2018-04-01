@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Service
+ * @subpackage Jkphl\Respimgcss\Ports
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,49 +34,26 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Domain\Service;
-
-use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
-use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
-use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
-use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
-use Jkphl\Respimgcss\Domain\Model\Css\Rule;
+namespace Jkphl\Respimgcss\Ports;
 
 /**
- * Pixel density CSS ruleset compiler service
+ * Invalid argument exception
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain
+ * @subpackage Jkphl\Respimgcss\Ports
  */
-class DensityCssRulesetCompilerService extends AbstractCssRulesetCompilerService
+class InvalidArgumentException extends \Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException
 {
     /**
-     * Compile a CSS ruleset based on the registered breakpoints, image candidates and a given density
+     * Invalid CSS selector
      *
-     * @param float $density Density
-     *
-     * @return CssRulesetInterface CSS ruleset
+     * @var string
      */
-    public function compile(float $density): CssRulesetInterface
-    {
-        // Run through and test all image candidates
-        /** @var ImageCandidateInterface $imageCandidate */
-        foreach ($this->imageCandidates as $imageCandidate) {
-            if ($imageCandidate->getValue() >= $density) {
-                $rule = new Rule($imageCandidate);
-                if ($density !== 1.0) {
-                    $rule = $rule->appendCondition(
-                        new ResolutionMediaCondition(
-                            $density,
-                            CssMinMaxMediaConditionInterface::MIN
-                        )
-                    );
-                }
-                $this->cssRuleset->addRule($rule);
-                break;
-            }
-        }
-
-        return $this->cssRuleset;
-    }
+    const INVALID_CSS_SELECTOR_STR = 'Invalid CSS selector "%s"';
+    /**
+     * Invalid CSS selector
+     *
+     * @var int
+     */
+    const INVALID_CSS_SELECTOR = 1522574161;
 }

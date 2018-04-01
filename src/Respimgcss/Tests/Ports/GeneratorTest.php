@@ -39,6 +39,7 @@ namespace Jkphl\Respimgcss\Tests\Ports;
 use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
 use Jkphl\Respimgcss\Ports\Generator;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
+use Sabberworm\CSS\Parser;
 
 /**
  * Generator test
@@ -64,6 +65,13 @@ class GeneratorTest extends AbstractTestBase
         $this->assertInstanceOf(ImageCandidateInterface::class, current($imageCandidates));
 
         $cssRuleset = $generator->make([1, 2]);
-        print_r($cssRuleset);
+        echo $cssRuleset->toCss('.example');
+    }
+
+    public function testCssParser()
+    {
+        $oCssParser   = new Parser(file_get_contents(dirname(__DIR__).'/Fixture/Css/example.css'));
+        $oCssDocument = $oCssParser->parse();
+        print_r($oCssDocument);
     }
 }

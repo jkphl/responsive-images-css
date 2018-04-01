@@ -37,6 +37,7 @@
 namespace Jkphl\Respimgcss\Ports;
 
 use Jkphl\Respimgcss\Domain\Model\Css\Ruleset;
+use Jkphl\Respimgcss\Infrastructure\CssRulesSerializer;
 
 
 /**
@@ -47,5 +48,17 @@ use Jkphl\Respimgcss\Domain\Model\Css\Ruleset;
  */
 class CssRuleset extends Ruleset implements CssRulesetInterface
 {
+    /**
+     * Serialize the CSS ruleset
+     *
+     * @param string $selector Selector
+     *
+     * @return mixed
+     */
+    public function toCss(string $selector): string
+    {
+        $serializer = new CssRulesSerializer($this->rules);
 
+        return $serializer->toCss($selector);
+    }
 }
