@@ -39,7 +39,6 @@ namespace Jkphl\Respimgcss\Domain\Service;
 use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
 use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
 use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
-use Jkphl\Respimgcss\Domain\Contract\LengthInterface;
 use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
 use Jkphl\Respimgcss\Domain\Model\Css\Rule;
 use Jkphl\Respimgcss\Domain\Model\Css\WidthMediaCondition;
@@ -62,40 +61,21 @@ class WidthCssRulesetCompilerService extends AbstractCssRulesetCompilerService
      */
     public function compile(float $density): CssRulesetInterface
     {
-        // @TODO: Are the breakpoints relevant at all? Why not create custom breakpoints based on the image widths?
-        // @TODO: If not, then use the image candidate which covers at least the first breakpoint (not the first image candidate in the set)
-
-        // Compile the minimum size
-        $this->compileBreakpoint($density, null);
-
-        // Run through and compile for all breakpoints
-        foreach ($this->breakpoints as $breakpoint) {
-            $this->compileBreakpoint($density, $breakpoint);
-        }
-
-        return $this->cssRuleset;
-    }
-
-    /**
-     * Compile the CSS rules for particular breakpoint, a given density and the registered image candidates
-     *
-     * @param float $density                   Device display density
-     * @param LengthInterface|null $breakpoint Breakpoint length (NULL = minimum size / no breakpoint)
-     */
-    protected function compileBreakpoint(float $density, LengthInterface $breakpoint = null): void
-    {
-        // Calculate the density dependent device value
-        $deviceValue = ($breakpoint === null) ? 0 : ($density * $breakpoint->getValue());
+        // Initialize a virtual breakpoint
+        $lastImageCandidateWidth = 0;
 
         // Run through and test all image candidates
         /** @var ImageCandidateInterface $imageCandidate */
         foreach ($this->imageCandidates as $imageCandidate) {
-            if ($imageCandidate->getValue() >= $deviceValue) {
-                $widthRule = $this->createImageCandidateRule($imageCandidate, $density, $breakpoint);
-                $this->cssRuleset->appendRule($widthRule);
-                break;
+            if ($lastImageCandidateWidth || ($density == 1)) {
+                $this->cssRuleset->appendRule(
+                    $this->createImageCandidateRule($imageCandidate, $density, $lastImageCandidateWidth)
+                );
             }
+            $lastImageCandidateWidth = $imageCandidate->getValue();
         }
+
+        return $this->cssRuleset;
     }
 
     /**
@@ -103,25 +83,26 @@ class WidthCssRulesetCompilerService extends AbstractCssRulesetCompilerService
      *
      * @param ImageCandidateInterface $imageCandidate Image candidate
      * @param float $density                          Density
-     * @param LengthInterface|null $breakpoint        Breakpoint length (NULL = minimum size / no breakpoint)
+     * @param int $imageCandidateWidth                Image candidate width
      *
      * @return Rule Density CSS rule
      */
     protected function createImageCandidateRule(
         ImageCandidateInterface $imageCandidate,
         float $density,
-        LengthInterface $breakpoint = null
+        int $imageCandidateWidth
     ): Rule {
         $rule = new Rule($imageCandidate);
 
         // If this is not the minimum width: Add a width condition
-        if ($breakpoint !== null) {
+        if ($imageCandidateWidth) {
+            $breakpoint          = new Length(round($imageCandidateWidth) / $density);
             $widthMediaCondition = new WidthMediaCondition($breakpoint, CssMinMaxMediaConditionInterface::MIN);
             $rule                = $rule->appendCondition($widthMediaCondition);
         }
 
         // If this is not the default density: Add a resolution condition
-        if ($density != 1) {
+        if ($density > 1) {
             $resolutionMediaCondition = new ResolutionMediaCondition(
                 new Length($density),
                 CssMinMaxMediaConditionInterface::MIN

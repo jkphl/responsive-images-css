@@ -79,7 +79,7 @@ class GeneratorTest extends AbstractTestBase
         $this->assertInstanceOf(CssRulesetInterface::class, $cssRuleset);
         $css = $cssRuleset->toCss('.example');
         $this->assertTrue(is_string($css));
-        $this->assertStringEqualsFile(dirname(__DIR__).'/Fixture/Css/CssRulesSerializerTest.css', $css);
+        $this->assertStringEqualsFile(dirname(__DIR__).'/Fixture/Css/DensityImageCandidates.css', $css);
     }
 
     /**
@@ -102,7 +102,7 @@ class GeneratorTest extends AbstractTestBase
         $generator->registerImageCandidate('small-400.jpg 400w');
         $generator->registerImageCandidate('medium-800.jpg', '800w');
         $generator->registerImageCandidate('large-1200.jpg', '1200w');
-        $generator->registerImageCandidate('extralarge-1200.jpg', '1600w');
+        $generator->registerImageCandidate('extralarge-1600.jpg', '1600w');
         $imageCandidates = $generator->getImageCandidates();
         $this->assertTrue(is_array($imageCandidates));
         $this->assertEquals(4, count($imageCandidates));
@@ -112,8 +112,7 @@ class GeneratorTest extends AbstractTestBase
         $cssRuleset = $generator->make([1, 2]);
         $this->assertInstanceOf(CssRulesetInterface::class, $cssRuleset);
         $css = $cssRuleset->toCss('.example');
-//        echo $css;
         $this->assertTrue(is_string($css));
-//        $this->assertStringEqualsFile(dirname(__DIR__).'/Fixture/Css/CssRulesSerializerTest.css', $css);
+        $this->assertStringEqualsFile(dirname(__DIR__).'/Fixture/Css/WidthImageCandidates.css', $css);
     }
 }

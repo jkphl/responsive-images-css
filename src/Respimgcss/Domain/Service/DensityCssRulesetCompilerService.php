@@ -85,7 +85,7 @@ class DensityCssRulesetCompilerService extends AbstractCssRulesetCompilerService
         $rule = new Rule($imageCandidate);
 
         // If this is not the default density: Add a resolution condition
-        if ($density != 1) {
+        if ($density > 1) {
             $resolutionMediaCondition = new ResolutionMediaCondition(
                 new Length($density),
                 CssMinMaxMediaConditionInterface::MIN

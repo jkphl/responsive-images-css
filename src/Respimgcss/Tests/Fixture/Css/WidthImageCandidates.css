@@ -1,0 +1,7 @@
+.example {background-image: url("small-400.jpg");}
+@media (min-width: 400) {.example {background-image: url("medium-800.jpg");}}
+@media (min-width: 800) {.example {background-image: url("large-1200.jpg");}}
+@media (min-width: 1200) {.example {background-image: url("extralarge-1600.jpg");}}
+@media (min-width: 200) and (-webkit-min-device-pixel-ratio: 2),(min-width: 200) and (min-resolution: 192dpi),(min-width: 200) and (min-resolution: 2ddpx) {.example {background-image: url("medium-800.jpg");}}
+@media (min-width: 400) and (-webkit-min-device-pixel-ratio: 2),(min-width: 400) and (min-resolution: 192dpi),(min-width: 400) and (min-resolution: 2ddpx) {.example {background-image: url("large-1200.jpg");}}
+@media (min-width: 600) and (-webkit-min-device-pixel-ratio: 2),(min-width: 600) and (min-resolution: 192dpi),(min-width: 600) and (min-resolution: 2ddpx) {.example {background-image: url("extralarge-1600.jpg");}}

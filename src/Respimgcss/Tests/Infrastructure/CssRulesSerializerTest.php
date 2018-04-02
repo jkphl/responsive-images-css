@@ -75,7 +75,7 @@ class CssRulesSerializerTest extends AbstractTestBase
 
         $css = $serializer->toCss('.example');
         $this->assertTrue(is_string($css));
-        $this->assertStringEqualsFile(dirname(__DIR__).'/Fixture/Css/CssRulesSerializerTest.css', $css);
+        $this->assertStringEqualsFile(dirname(__DIR__).'/Fixture/Css/DensityImageCandidates.css', $css);
     }
 
     /**
