@@ -5,9 +5,9 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
- * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
- * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
+ * @subpackage Jkphl\Respimgcss\Application\Model
+ * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
+ * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
@@ -34,40 +34,41 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Ports;
+namespace Jkphl\Respimgcss\Application\Model;
 
-use Jkphl\Respimgcss\Application\Factory\SourceSizeFactory;
+use ChrisKonnertz\StringCalc\Symbols\AbstractFunction;
 
 /**
- * Size list
+ * Viewport calculation function
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
- * @see        http://w3c.github.io/html/semantics-embedded-content.html#ref-for-viewport-based-selection%E2%91%A0
- * @see        http://w3c.github.io/html/semantics-embedded-content.html#valid-source-size-list
- * @see        http://w3c.github.io/html/semantics-embedded-content.html#parse-a-sizes-attribute
+ * @subpackage Jkphl\Respimgcss\Application\Model
  */
-class SourceSizeList extends \Jkphl\Respimgcss\Infrastructure\SourceSizeList
+class ViewportFunction extends AbstractFunction
 {
     /**
-     * Create a size list from a source size list
-     *
-     * @param $sourceSizeListStr SourceSizeList size list
-     * @param int $emPixel       EM to pixel ratio
-     *
-     * @return SourceSizeList Size list
-     * @api
+     * @inheritdoc
      */
-    public static function fromString($sourceSizeListStr, int $emPixel = 16)
-    {
-        $unparsedSourceSizes = array_filter(array_map('trim', explode(',', $sourceSizeListStr)));
-        $sourceSizes         = array_map(
-            function ($unparsedSourceSize) use ($emPixel) {
-                return SourceSizeFactory::createFromSourceSizeStr($unparsedSourceSize, $emPixel);
-            },
-            $unparsedSourceSizes
-        );
+    protected $identifiers = ['viewport'];
 
-        return new static($sourceSizes);
+    /**
+     * This method is called when the function is executed. A function can have 0-n parameters.
+     * The implementation of this method is responsible to validate the number of arguments.
+     * The $arguments array contains these arguments. If the number of arguments is improper,
+     * the method has to throw a Exceptions\NumberOfArgumentsException exception.
+     * The items of the $arguments array will always be of type int or float. They will never be null.
+     * They keys will be integers starting at 0 and representing the positions of the arguments
+     * in ascending order.
+     * Overwrite this method in the concrete operator class.
+     * If this class does NOT return a value of type int or float,
+     * an exception will be thrown.
+     *
+     * @param  int|float[] $arguments
+     *
+     * @return int|float
+     */
+    public function execute(array $arguments)
+    {
+        return 1;
     }
 }

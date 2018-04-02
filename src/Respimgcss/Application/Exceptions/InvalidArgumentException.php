@@ -152,4 +152,16 @@ class InvalidArgumentException extends \Jkphl\Respimgcss\Domain\Exceptions\Inval
      * @var int
      */
     const ILL_FORMATTED_CALC_LENGTH_STRING = 1522687100;
+    /**
+     * Invalid word token in source size value
+     *
+     * @var string
+     */
+    const INVALID_WORD_TOKEN_IN_SOURCE_SIZE_VALUE_STR = 'Invalid word token "%s" in source size value';
+    /**
+     * Invalid word token in source size value
+     *
+     * @var int
+     */
+    const INVALID_WORD_TOKEN_IN_SOURCE_SIZE_VALUE = 1522701212;
 }

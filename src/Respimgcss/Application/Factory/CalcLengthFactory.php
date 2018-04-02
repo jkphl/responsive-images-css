@@ -36,11 +36,12 @@
 
 namespace Jkphl\Respimgcss\Application\Factory;
 
+use ChrisKonnertz\StringCalc\Parser\Nodes\ContainerNode;
+use ChrisKonnertz\StringCalc\StringCalc;
+use ChrisKonnertz\StringCalc\Tokenizer\Token;
+use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException;
-use Sabberworm\CSS\Parser;
-use Sabberworm\CSS\Rule\Rule;
-use Sabberworm\CSS\RuleSet\DeclarationBlock;
-use Sabberworm\CSS\Value\CSSFunction;
+use Jkphl\Respimgcss\Application\Model\ViewportFunction;
 
 /**
  * Length factory for calc() based values
@@ -50,26 +51,188 @@ use Sabberworm\CSS\Value\CSSFunction;
  */
 class CalcLengthFactory
 {
-    public static function createFromString(string $calcStr)
+    public static function createFromString(string $calcString, int $emPixel = 16)
     {
         // If the calc() string is ill-formatted
-        if (!preg_match('/^calc\(.+\)$/', $calcStr)) {
+        if (!preg_match('/^calc\(.+\)$/', $calcString)) {
             throw new InvalidArgumentException(
-                sprintf(InvalidArgumentException::ILL_FORMATTED_CALC_LENGTH_STRING_STR, $calcStr),
+                sprintf(InvalidArgumentException::ILL_FORMATTED_CALC_LENGTH_STRING_STR, $calcString),
                 InvalidArgumentException::ILL_FORMATTED_CALC_LENGTH_STRING
             );
         }
 
-        // Parse using a dummy shell
-        $parser      = new Parser("a{width:$calcStr}");
-        $cssDocument = $parser->parse();
-        /** @var DeclarationBlock $cssDeclarationBlock */
-        $cssDeclarationBlock = $cssDocument->getContents()[0];
-        /** @var Rule $cssRule */
-        $cssRule = $cssDeclarationBlock->getRules()[0];
-        /** @var CSSFunction $cssFunction */
-        $cssFunction = $cssRule->getValue();
-        print_r($cssFunction->getName());
-        echo $calcStr;
+        print_r(self::createCalculationContainerFromString($calcString, $emPixel));
+
+//        // Parse using a dummy shell
+//        $parser      = new Parser("a{width:$calcString}");
+//        $cssDocument = $parser->parse();
+//        /** @var DeclarationBlock $cssDeclarationBlock */
+//        $cssDeclarationBlock = $cssDocument->getContents()[0];
+//        /** @var Rule $cssRule */
+//        $cssRule = $cssDeclarationBlock->getRules()[0];
+//        /** @var CSSFunction $cssFunction */
+//        $cssFunction = $cssRule->getValue();
+////        print_r($cssFunction->getName());
+        echo $calcString;
+    }
+
+    /**
+     * Parse a calculation string and return a precompiled calculation node container
+     *
+     * @param string $calcString Calculation string
+     * @param int $emPixel       EM to pixel ratio
+     *
+     * @return ContainerNode Calculation node container
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
+     */
+    protected static function createCalculationContainerFromString(string $calcString, int $emPixel = 16): ContainerNode
+    {
+        $stringCalc    = new StringCalc();
+        $calcTokens    = $stringCalc->tokenize($calcString);
+        $refinedTokens = self::refineCalculationTokens($calcTokens, $emPixel);
+        $stringHelper  = $stringCalc->getContainer()->get('stringcalc_stringhelper');
+        $stringCalc->getSymbolContainer()->add(new ViewportFunction($stringHelper));
+
+        return $stringCalc->parse($refinedTokens);
+    }
+
+    /**
+     * Refine a list of symbol tokens
+     *
+     * @param Token[] $tokens Symbol tokens
+     * @param int $emPixel    EM to pixel ratio
+     *
+     * @return Token[] Refined symbol tokens
+     */
+    protected static function refineCalculationTokens(array $tokens, int $emPixel = 16): array
+    {
+        $refinedTokens = [];
+        $previousToken = null;
+
+        // Run through all tokens
+        foreach ($tokens as $token) {
+            $previousToken = self::handleToken($refinedTokens, $token, $previousToken, $emPixel);
+        }
+
+        // Add the last token
+        if ($previousToken) {
+            array_push($refinedTokens, $previousToken);
+        }
+
+        return $refinedTokens;
+    }
+
+    /**
+     * Handle a particular token
+     *
+     * @param Token[] $refinedTokens    Refined tokens
+     * @param Token $token              Token
+     * @param Token|null $previousToken Previous token
+     * @param int $emPixel              EM to pixel ratio
+     *
+     * @return Token|null               Stash token
+     */
+    protected static function handleToken(
+        array &$refinedTokens,
+        Token $token,
+        Token $previousToken = null,
+        int $emPixel = 16
+    ): ?Token {
+        // If it's a word token: Handle individually
+        if ($token->getType() == Token::TYPE_WORD) {
+            return self::handleWordToken($refinedTokens, $token, $previousToken, $emPixel);
+        }
+
+        // In all other cases: Register the previou token (if any)
+        if ($previousToken) {
+            array_push($refinedTokens, $previousToken);
+        }
+
+        // If it's a number token: Stash
+        if ($token->getType() == Token::TYPE_NUMBER) {
+            return $token;
+        }
+
+        array_push($refinedTokens, $token);
+        return null;
+    }
+
+    /**
+     * Handle a particular token
+     *
+     * The method returns a list of zero or more (possibly refined) tokens to preerve
+     *
+     * @param Token[] $refinedTokens    Refined tokens
+     * @param Token $token              Token
+     * @param Token|null $previousToken Previous token
+     * @param int $emPixel              EM to pixel ratio
+     *
+     * @return Token|null               Stash token
+     * @throws InvalidArgumentException If the word token is invalid
+     */
+    protected static function handleWordToken(
+        array &$refinedTokens,
+        Token $token,
+        Token $previousToken = null,
+        int $emPixel = 16
+    ): ?Token {
+        // If it's a calc() function call: Add the previous token and skip the current one
+        if ($token->getValue() == 'calc') {
+            if ($previousToken) {
+                array_push($refinedTokens, $previousToken);
+            }
+            return null;
+        }
+
+        // If the previous token is a number: Try to generate a unit length
+        if ($previousToken && ($previousToken->getType() == Token::TYPE_NUMBER)) {
+            try {
+                $unitLength = LengthFactory::createLengthFromString(
+                    $previousToken->getValue().$token->getValue(),
+                    $emPixel
+                );
+                self::handleUnitLengthToken($refinedTokens, $unitLength);
+                return null;
+            } catch (InvalidArgumentException $e) {
+                // Ignore
+            }
+        }
+
+        // Invalid word token
+        throw new InvalidArgumentException(
+            sprintf(InvalidArgumentException::INVALID_WORD_TOKEN_IN_SOURCE_SIZE_VALUE_STR, $token->getValue()),
+            InvalidArgumentException::INVALID_WORD_TOKEN_IN_SOURCE_SIZE_VALUE
+        );
+    }
+
+    /**
+     * Handle a unit length token
+     *
+     * @param Token[] $refinedTokens          Refined tokens
+     * @param UnitLengthInterface $unitLength Unit length
+     */
+    protected static function handleUnitLengthToken(
+        array &$refinedTokens,
+        UnitLengthInterface $unitLength
+    ): void {
+        // If it's an absolute value
+        if ($unitLength->isAbsolute()) {
+            array_push($refinedTokens, new Token(strval($unitLength->getValue()), Token::TYPE_NUMBER, 0));
+            return;
+        }
+
+        // Else: Substitute with multiplied function expression
+        array_push(
+            $refinedTokens,
+            new Token('(', Token::TYPE_CHARACTER, 0),
+            new Token(strval($unitLength->getValue() / 100), Token::TYPE_NUMBER, 0),
+            new Token('*', Token::TYPE_CHARACTER, 0),
+            new Token('viewport', Token::TYPE_WORD, 0),
+            new Token('(', Token::TYPE_CHARACTER, 0),
+            new Token(')', Token::TYPE_CHARACTER, 0),
+            new Token(')', Token::TYPE_CHARACTER, 0)
+        );
     }
 }

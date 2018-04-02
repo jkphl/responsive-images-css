@@ -28,6 +28,7 @@
     },
     "require": {
         "php": ">=7.1",
+        "chriskonnertz/string-calc": "^1.0",
         "sabberworm/php-css-parser": "^8.1"
     },
     "autoload": {

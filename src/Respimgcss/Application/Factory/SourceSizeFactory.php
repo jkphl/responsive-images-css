@@ -48,9 +48,9 @@ use Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException;
 class SourceSizeFactory
 {
 
-    public static function createFromSourceSizeStr(string $sourceSizeStr)
+    public static function createFromSourceSizeStr(string $sourceSizeStr, int $emPixel = 16)
     {
-        $sourceSizeValue = self::parseSourceSizeValue($sourceSizeStr);
+        $sourceSizeValue = self::parseSourceSizeValue($sourceSizeStr, $emPixel);
         echo $sourceSizeValue.' / '.$sourceSizeStr.PHP_EOL;
 
         return 'bla';
@@ -60,15 +60,16 @@ class SourceSizeFactory
      * Parse the length component
      *
      * @param string $sourceSizeStr Source size string
+     * @param int $emPixel          EM to pixel ratio
      *
      * @return UnitLengthInterface Length component
      * @throws InvalidArgumentException If the source size string is ill-formatted
      */
-    protected static function parseSourceSizeValue(string &$sourceSizeStr): UnitLengthInterface
+    protected static function parseSourceSizeValue(string &$sourceSizeStr, int $emPixel = 16): UnitLengthInterface
     {
         // If the source size string ends with a parenthesis: Try to parse a calc() base length
         if (substr($sourceSizeStr, -1) === ')') {
-            return self::parseSourceSizeCalculatedValue($sourceSizeStr);
+            return self::parseSourceSizeCalculatedValue($sourceSizeStr, $emPixel);
         }
 
         // If the source size string is ill-formatted
@@ -83,24 +84,29 @@ class SourceSizeFactory
         $sourceSizeStr = trim($sourceSizeStrMatch[1]);
 
         // Return the parsed length
-        return LengthFactory::createLengthFromString($sourceSizeStrMatch[2]);
+        return LengthFactory::createLengthFromString($sourceSizeStrMatch[2], $emPixel);
     }
 
     /**
      * Parse a calc() based length value
      *
      * @param string $sourceSizeStr Source size string
+     * @param int $emPixel          EM to pixel ratio
      *
      * @return UnitLengthInterface Length component
      * @throws InvalidArgumentException If the source size string is ill-formatted
      */
-    protected static function parseSourceSizeCalculatedValue(string &$sourceSizeStr): UnitLengthInterface
-    {
+    protected static function parseSourceSizeCalculatedValue(
+        string &$sourceSizeStr,
+        int $emPixel = 16
+    ): UnitLengthInterface {
         // Reverse-consume the source size string
-        for ($pos = 0, $sourceSizeRev = strrev($sourceSizeStr), $balance = null; $pos < strlen($sourceSizeStr); ++$pos) {
+        $sourceSizeRev = strrev($sourceSizeStr);
+        $balance       = null;
+        for ($pos = 0; $pos < strlen($sourceSizeStr); ++$pos) {
             $balance += self::getCharacterBalance($sourceSizeRev[$pos]);
             if ($balance === 0) {
-                $length        = CalcLengthFactory::createFromString(substr($sourceSizeStr, -($pos + 5)));
+                $length        = CalcLengthFactory::createFromString(substr($sourceSizeStr, -($pos + 5)),$emPixel);
                 $sourceSizeStr = trim(substr($sourceSizeStr, 0, -($pos + 5)));
 
                 return LengthFactory::createLengthFromString('100vw');
