@@ -103,11 +103,11 @@ class WidthCssRulesetCompilerService extends AbstractCssRulesetCompilerService
      *
      * @param Rule $rule               CSS rule
      * @param int $imageCandidateWidth Image candidate width in pixels
-     * @param int $density             Density
+     * @param float $density           Density
      *
      * @return Rule CSS rule
      */
-    protected function addWidthCondition(Rule $rule, int $imageCandidateWidth, int $density): Rule
+    protected function addWidthCondition(Rule $rule, int $imageCandidateWidth, float $density): Rule
     {
         // If this is not the minimum width: Add a width condition
         if ($imageCandidateWidth) {
@@ -122,12 +122,12 @@ class WidthCssRulesetCompilerService extends AbstractCssRulesetCompilerService
     /**
      * Add a density condition to a CSS rule
      *
-     * @param Rule $rule   CSS rule
-     * @param int $density Density
+     * @param Rule $rule     CSS rule
+     * @param float $density Density
      *
      * @return Rule CSS rule
      */
-    protected function addDensityCondition(Rule $rule, int $density): Rule
+    protected function addDensityCondition(Rule $rule, float $density): Rule
     {
         // If this is not the default density: Add a resolution condition
         if ($density > 1) {
