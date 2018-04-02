@@ -128,4 +128,28 @@ class InvalidArgumentException extends \Jkphl\Respimgcss\Domain\Exceptions\Inval
      * @var int
      */
     const OVERLAPPING_IMAGE_CANDIDATE_VALUE = 1522504652;
+    /**
+     * Ill-formatted source size string
+     *
+     * @var string
+     */
+    const ILL_FORMATTED_SOURCE_SIZE_STRING_STR = 'Ill-formatted source size string "%s"';
+    /**
+     * Ill-formatted source size string
+     *
+     * @var int
+     */
+    const ILL_FORMATTED_SOURCE_SIZE_STRING = 1522685593;
+    /**
+     * Ill-formatted calc() length string
+     *
+     * @var string
+     */
+    const ILL_FORMATTED_CALC_LENGTH_STRING_STR = 'Ill-formatted calc() length string "%s"';
+    /**
+     * Ill-formatted calc() length string
+     *
+     * @var int
+     */
+    const ILL_FORMATTED_CALC_LENGTH_STRING = 1522687100;
 }
