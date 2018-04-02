@@ -93,7 +93,22 @@ class WidthCssRulesetCompilerService extends AbstractCssRulesetCompilerService
         int $imageCandidateWidth
     ): Rule {
         $rule = new Rule($imageCandidate);
+        $rule = $this->addWidthCondition($rule, $imageCandidateWidth, $density);
 
+        return $this->addDensityCondition($rule, $density);
+    }
+
+    /**
+     * Add a width condition to a CSS rule
+     *
+     * @param Rule $rule               CSS rule
+     * @param int $imageCandidateWidth Image candidate width in pixels
+     * @param int $density             Density
+     *
+     * @return Rule CSS rule
+     */
+    protected function addWidthCondition(Rule $rule, int $imageCandidateWidth, int $density): Rule
+    {
         // If this is not the minimum width: Add a width condition
         if ($imageCandidateWidth) {
             $breakpoint          = new Length(round($imageCandidateWidth) / $density);
@@ -101,6 +116,19 @@ class WidthCssRulesetCompilerService extends AbstractCssRulesetCompilerService
             $rule                = $rule->appendCondition($widthMediaCondition);
         }
 
+        return $rule;
+    }
+
+    /**
+     * Add a density condition to a CSS rule
+     *
+     * @param Rule $rule   CSS rule
+     * @param int $density Density
+     *
+     * @return Rule CSS rule
+     */
+    protected function addDensityCondition(Rule $rule, int $density): Rule
+    {
         // If this is not the default density: Add a resolution condition
         if ($density > 1) {
             $resolutionMediaCondition = new ResolutionMediaCondition(
