@@ -36,10 +36,13 @@
 
 namespace Jkphl\Respimgcss\Application\Factory;
 
+use ChrisKonnertz\StringCalc\Tokenizer\Token;
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException;
 use Jkphl\Respimgcss\Application\Model\AbsoluteLength;
-use Jkphl\Respimgcss\Application\Model\RelativeLength;
+use Jkphl\Respimgcss\Application\Model\PercentageLength;
+use Jkphl\Respimgcss\Application\Model\StringCalculator;
+use Jkphl\Respimgcss\Application\Model\ViewportLength;
 use Jkphl\Respimgcss\Application\Service\LengthNormalizerService;
 
 /**
@@ -82,6 +85,9 @@ class LengthFactory
      * @param int $emPixel   EM to pixel ratio
      *
      * @return UnitLengthInterface Length with unit
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
     public static function createLengthFromString(string $length, int $emPixel = 16): UnitLengthInterface
     {
@@ -119,6 +125,9 @@ class LengthFactory
      *
      * @return UnitLengthInterface Length with unit
      * @throws InvalidArgumentException If the unit is invalid
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
     protected static function makeInstance(string $value, string $unit, int $emPixel): UnitLengthInterface
     {
@@ -127,15 +136,31 @@ class LengthFactory
             return new AbsoluteLength(floatval($value), $unit, new LengthNormalizerService($emPixel));
         }
 
-        // If it's a relative unit
-        if (in_array($unit, self::UNITS_RELATIVE)) {
-            return new RelativeLength(floatval($value), $unit);
-        }
+        switch ($unit) {
+            case UnitLengthInterface::UNIT_VW: // Viewport unit
+                $stringCalc = new StringCalculator();
+                return new ViewportLength(
+                    $stringCalc->parse(
+                        [
+                            new Token(strval($value / 100), Token::TYPE_NUMBER, 0),
+                            new Token('*', Token::TYPE_CHARACTER, 0),
+                            new Token('viewport', Token::TYPE_WORD, 0),
+                            new Token('(', Token::TYPE_CHARACTER, 0),
+                            new Token(')', Token::TYPE_CHARACTER, 0),
+                        ]
+                    ),
+                    new LengthNormalizerService($emPixel),
+                    $value
+                );
 
-        // Invalid unit
-        throw new InvalidArgumentException(
-            sprintf(InvalidArgumentException::INVALID_UNIT_STR, $unit),
-            InvalidArgumentException::INVALID_UNIT
-        );
+            case UnitLengthInterface::UNIT_PERCENT: // Percentages
+                return new PercentageLength(floatval($value));
+
+            default: // Invalid unit
+                throw new InvalidArgumentException(
+                    sprintf(InvalidArgumentException::INVALID_UNIT_STR, $unit),
+                    InvalidArgumentException::INVALID_UNIT
+                );
+        }
     }
 }

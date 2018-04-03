@@ -38,7 +38,7 @@ namespace Jkphl\Respimgcss\Tests\Application;
 
 use Jkphl\Respimgcss\Application\Factory\LengthFactory;
 use Jkphl\Respimgcss\Application\Model\AbsoluteLength;
-use Jkphl\Respimgcss\Application\Model\RelativeLength;
+use Jkphl\Respimgcss\Application\Model\AbstractRelativeLength;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
@@ -75,7 +75,7 @@ class LengthFactoryTest extends AbstractTestBase
     public function testRelativeLengthCreation()
     {
         $length = LengthFactory::createLengthFromString('100%');
-        $this->assertInstanceOf(RelativeLength::class, $length);
+        $this->assertInstanceOf(AbstractRelativeLength::class, $length);
     }
 
     /**

@@ -50,7 +50,7 @@ abstract class AbstractLength extends Length implements UnitLengthInterface
     /**
      * Original value
      *
-     * @var float
+     * @var mixed
      */
     protected $originalValue;
     /**
@@ -65,13 +65,33 @@ abstract class AbstractLength extends Length implements UnitLengthInterface
      *
      * @param float $value         Value
      * @param string $unit         Unit
-     * @param float $originalValue Original value
+     * @param mixed $originalValue Original value
      */
-    public function __construct(float $value, string $unit, float $originalValue)
+    public function __construct(float $value, string $unit, $originalValue)
     {
         parent::__construct($value);
         $this->unit          = $unit;
         $this->originalValue = $originalValue;
+    }
+
+    /**
+     * Return the serialized length
+     *
+     * @return string Serialized length
+     */
+    public function getValueAndUnit(): string
+    {
+        return $this->getOriginalValue().$this->getUnit();
+    }
+
+    /**
+     * Return the original value (in source units)
+     *
+     * @return mixed Original value (in source units)
+     */
+    public function getOriginalValue()
+    {
+        return $this->originalValue;
     }
 
     /**
@@ -82,25 +102,5 @@ abstract class AbstractLength extends Length implements UnitLengthInterface
     public function getUnit(): string
     {
         return $this->unit;
-    }
-
-    /**
-     * Return the original value (in source units)
-     *
-     * @return float Original value (in source units)
-     */
-    public function getOriginalValue(): float
-    {
-        return $this->originalValue;
-    }
-
-    /**
-     * Return the serialized length
-     *
-     * @return string Serialized length
-     */
-    public function __toString(): string
-    {
-        return $this->originalValue.$this->unit;
     }
 }

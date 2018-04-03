@@ -131,7 +131,7 @@ class CssMediaConditionFactory
         $widthValue    = $widthMediaCondition->getValue();
         $widthModifier = $widthMediaCondition->getModifier();
         $widthRule     = new CssMediaConditionRule(sprintf('%swidth', $widthModifier));
-        $widthRule->setValue(strval($widthValue));
+        $widthRule->setValue($widthValue->getValue());
 
         return [new CssMediaCondition($widthRule)];
     }

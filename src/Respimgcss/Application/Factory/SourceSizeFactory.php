@@ -62,7 +62,7 @@ class SourceSizeFactory
     {
         echo $sourceSizeStr.' -> ';
         $sourceSizeValue = self::parseSourceSizeValue($sourceSizeStr, $emPixel);
-        echo $sourceSizeValue.' ('.get_class($sourceSizeValue).')'.PHP_EOL;
+        echo $sourceSizeValue->getValueAndUnit().' ('.get_class($sourceSizeValue).')'.PHP_EOL;
 
         return $sourceSizeValue;
     }

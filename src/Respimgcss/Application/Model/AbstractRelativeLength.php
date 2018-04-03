@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Domain
+ * @subpackage Jkphl\Respimgcss\Application\Model
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,28 +34,23 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Tests\Domain;
-
-use Jkphl\Respimgcss\Domain\Model\Length;
-use Jkphl\Respimgcss\Tests\AbstractTestBase;
+namespace Jkphl\Respimgcss\Application\Model;
 
 /**
- * Length tests
+ * Relative length (percent)
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests
+ * @subpackage Jkphl\Respimgcss\Application\Model
  */
-class LengthTest extends AbstractTestBase
+abstract class AbstractRelativeLength extends AbstractLength
 {
     /**
-     * Test the length
+     * Return whether this is an absolute length
+     *
+     * @return boolean Absolute length
      */
-    public function testLength()
+    public function isAbsolute(): bool
     {
-        $value  = rand(1, getrandmax());
-        $length = new Length($value);
-        $this->assertInstanceOf(Length::class, $length);
-        $this->assertTrue(is_float($length->getValue()));
-        $this->assertEquals($value, $length->getValue());
+        return false;
     }
 }

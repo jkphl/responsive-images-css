@@ -5,9 +5,9 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Application
- * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
- * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
+ * @subpackage Jkphl\Respimgcss\Application\Model
+ * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
+ * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
@@ -34,30 +34,32 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Tests\Application;
+namespace Jkphl\Respimgcss\Application\Model;
 
-use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
-use Jkphl\Respimgcss\Application\Model\RelativeLength;
-use Jkphl\Respimgcss\Tests\AbstractTestBase;
+use ChrisKonnertz\StringCalc\Container\ContainerInterface;
+use ChrisKonnertz\StringCalc\StringCalc;
 
 /**
- * Relative length test
+ * Custom string calculator
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests
+ * @subpackage Jkphl\Respimgcss\Application\Model
  */
-class RelativeLengthTest extends AbstractTestBase
+class StringCalculator extends StringCalc
 {
     /**
-     * Test a relative length
+     * Custom string calculator constructor
+     *
+     * @param ContainerInterface $container
+     *
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
-    public function testRelativeLength()
+    public function __construct($container = null)
     {
-        $length = new RelativeLength(100, UnitLengthInterface::UNIT_VW);
-        $this->assertFalse($length->isAbsolute());
-        $this->assertEquals(UnitLengthInterface::UNIT_VW, $length->getUnit());
-        $this->assertEquals(100, $length->getOriginalValue());
-        $this->assertEquals(100, $length->getValue());
-        $this->assertEquals('100vw', strval($length));
+        parent::__construct($container);
+        $stringHelper = $this->getContainer()->get('stringcalc_stringhelper');
+        $this->symbolContainer->add(new ViewportFunction($stringHelper));
     }
 }

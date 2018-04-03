@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Application\Model
+ * @subpackage Jkphl\Respimgcss\Tests\Application
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,34 +34,30 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Application\Model;
+namespace Jkphl\Respimgcss\Tests\Application;
+
+use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
+use Jkphl\Respimgcss\Application\Model\PercentageLength;
+use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
- * Relative length
+ * Relative length test
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Application\Model
+ * @subpackage Jkphl\Respimgcss\Tests
  */
-class RelativeLength extends AbstractLength
+class PercentageLengthTest extends AbstractTestBase
 {
     /**
-     * Relative length constructor
-     *
-     * @param float $value Value
-     * @param string $unit Unit
+     * Test a relative length
      */
-    public function __construct(float $value, string $unit)
+    public function testRelativeLength()
     {
-        parent::__construct($value, $unit, $value);
-    }
-
-    /**
-     * Return whether this is an absolute length
-     *
-     * @return boolean Absolute length
-     */
-    public function isAbsolute(): bool
-    {
-        return false;
+        $length = new PercentageLength(100);
+        $this->assertFalse($length->isAbsolute());
+        $this->assertEquals(UnitLengthInterface::UNIT_PERCENT, $length->getUnit());
+        $this->assertEquals(100, $length->getOriginalValue());
+        $this->assertEquals(1, $length->getValue());
+        $this->assertEquals('100%', $length->getValueAndUnit());
     }
 }

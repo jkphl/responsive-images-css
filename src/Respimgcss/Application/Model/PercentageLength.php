@@ -5,9 +5,9 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Domain
- * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
- * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
+ * @subpackage Jkphl\Respimgcss\Application\Model
+ * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
+ * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
@@ -34,28 +34,25 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Tests\Domain;
+namespace Jkphl\Respimgcss\Application\Model;
 
-use Jkphl\Respimgcss\Domain\Model\Length;
-use Jkphl\Respimgcss\Tests\AbstractTestBase;
+use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 
 /**
- * Length tests
+ * Percentage length
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests
+ * @subpackage Jkphl\Respimgcss\Application\Model
  */
-class LengthTest extends AbstractTestBase
+class PercentageLength extends AbstractRelativeLength
 {
     /**
-     * Test the length
+     * Relative length constructor
+     *
+     * @param float $value Value
      */
-    public function testLength()
+    public function __construct(float $value)
     {
-        $value  = rand(1, getrandmax());
-        $length = new Length($value);
-        $this->assertInstanceOf(Length::class, $length);
-        $this->assertTrue(is_float($length->getValue()));
-        $this->assertEquals($value, $length->getValue());
+        parent::__construct($value / 100, UnitLengthInterface::UNIT_PERCENT, $value);
     }
 }

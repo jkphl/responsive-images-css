@@ -61,6 +61,6 @@ class AbsoluteLengthTest extends AbstractTestBase
         $this->assertEquals(UnitLengthInterface::UNIT_EM, $length->getUnit());
         $this->assertEquals(1, $length->getOriginalValue());
         $this->assertEquals($emPixel, $length->getValue());
-        $this->assertEquals('1em', strval($length));
+        $this->assertEquals('1em', $length->getValueAndUnit());
     }
 }

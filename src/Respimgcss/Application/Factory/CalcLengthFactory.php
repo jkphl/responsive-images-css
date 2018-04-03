@@ -37,12 +37,11 @@
 namespace Jkphl\Respimgcss\Application\Factory;
 
 use ChrisKonnertz\StringCalc\Parser\Nodes\ContainerNode;
-use ChrisKonnertz\StringCalc\StringCalc;
 use ChrisKonnertz\StringCalc\Tokenizer\Token;
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException;
 use Jkphl\Respimgcss\Application\Model\AbsoluteLength;
-use Jkphl\Respimgcss\Application\Model\ViewportFunction;
+use Jkphl\Respimgcss\Application\Model\StringCalculator;
 use Jkphl\Respimgcss\Application\Model\ViewportLength;
 use Jkphl\Respimgcss\Application\Service\LengthNormalizerService;
 
@@ -93,7 +92,7 @@ class CalcLengthFactory
         string $calcString,
         int $emPixel = 16
     ): UnitLengthInterface {
-        $stringCalc    = new StringCalc();
+        $stringCalc    = new StringCalculator();
         $calcTokens    = $stringCalc->tokenize($calcString);
         $refinedTokens = self::refineCalculationTokens($calcTokens, $emPixel);
 
@@ -101,7 +100,11 @@ class CalcLengthFactory
         /** @var Token $token */
         foreach ($refinedTokens as $token) {
             if (($token->getType() == Token::TYPE_WORD) && ($token->getValue() === 'viewport')) {
-                return self::createViewportUnitFromTokens($refinedTokens, $stringCalc, $emPixel);
+                return new ViewportLength(
+                    $stringCalc->parse($refinedTokens),
+                    new LengthNormalizerService($emPixel),
+                    $calcString
+                );
             }
         }
 
@@ -111,29 +114,6 @@ class CalcLengthFactory
             UnitLengthInterface::UNIT_PIXEL,
             new LengthNormalizerService($emPixel)
         );
-    }
-
-    /**
-     * Create a unit length from calculation tokens
-     *
-     * @param Token[] $tokens        Calculation tokens
-     * @param StringCalc $stringCalc StringCalc instance
-     * @param int $emPixel           EM to pixel ratio
-     *
-     * @return UnitLengthInterface Unit length
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
-     */
-    protected static function createViewportUnitFromTokens(
-        array $tokens,
-        StringCalc $stringCalc,
-        int $emPixel = 16
-    ): UnitLengthInterface {
-        $stringHelper = $stringCalc->getContainer()->get('stringcalc_stringhelper');
-        $stringCalc->getSymbolContainer()->add(new ViewportFunction($stringHelper));
-
-        return new ViewportLength($stringCalc->parse($tokens), new LengthNormalizerService($emPixel));
     }
 
     /**

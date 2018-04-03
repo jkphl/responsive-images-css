@@ -46,10 +46,10 @@ use Jkphl\Respimgcss\Application\Service\LengthNormalizerService;
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Application\Model
  */
-class ViewportLength implements UnitLengthInterface
+class ViewportLength extends AbstractRelativeLength
 {
     /**
-     * Calculation nodes
+     * Calculation
      *
      * @var ContainerNode
      */
@@ -66,21 +66,16 @@ class ViewportLength implements UnitLengthInterface
      *
      * @param ContainerNode $calculation                       Calculation nodes
      * @param LengthNormalizerService $lengthNormalizerService Length normalizer service
+     * @param string $originalValue                            Original value
      */
-    public function __construct(ContainerNode $calculation, LengthNormalizerService $lengthNormalizerService)
-    {
-        $this->lengthNormalizerService = $lengthNormalizerService;
+    public function __construct(
+        ContainerNode $calculation,
+        LengthNormalizerService $lengthNormalizerService,
+        string $originalValue
+    ) {
+        parent::__construct(0, UnitLengthInterface::UNIT_VW, $originalValue);
         $this->calculation             = $calculation;
-    }
-
-    /**
-     * Return the length value
-     *
-     * @return float Length value
-     */
-    public function getValue(): float
-    {
-        return 999;
+        $this->lengthNormalizerService = $lengthNormalizerService;
     }
 
     /**
@@ -96,11 +91,11 @@ class ViewportLength implements UnitLengthInterface
     /**
      * Return the original value (in source units)
      *
-     * @return float Original value (in source units)
+     * @return mixed Original value (in source units)
      */
-    public function getOriginalValue(): float
+    public function getOriginalValue()
     {
-        return 999;
+        return $this->originalValue;
     }
 
     /**
@@ -114,12 +109,22 @@ class ViewportLength implements UnitLengthInterface
     }
 
     /**
+     * Return the length value
+     *
+     * @return float Length value
+     */
+    public function getValue(): float
+    {
+        return 999;
+    }
+
+    /**
      * Return the serialized length
      *
      * @return string Serialized length
      */
-    public function __toString(): string
+    public function getValueAndUnit(): string
     {
-        return strval($this->getValue());
+        return 'DUMMY';
     }
 }
