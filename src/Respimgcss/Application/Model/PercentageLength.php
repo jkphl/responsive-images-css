@@ -37,6 +37,7 @@
 namespace Jkphl\Respimgcss\Application\Model;
 
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
+use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 
 /**
  * Percentage length
@@ -54,5 +55,17 @@ class PercentageLength extends AbstractRelativeLength
     public function __construct(float $value)
     {
         parent::__construct($value / 100, UnitLengthInterface::UNIT_PERCENT, $value);
+    }
+
+    /**
+     * Return the length value
+     *
+     * @param AbsoluteLengthInterface $viewport Viewport width
+     *
+     * @return float AbstractLength value
+     */
+    public function getValue(AbsoluteLengthInterface $viewport): float
+    {
+        return $this->value * $viewport->getValue();
     }
 }

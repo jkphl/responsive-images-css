@@ -42,7 +42,7 @@ use Jkphl\Respimgcss\Application\Model\AbstractRelativeLength;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
- * Length factory tests
+ * AbstractLength factory tests
  *
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Tests

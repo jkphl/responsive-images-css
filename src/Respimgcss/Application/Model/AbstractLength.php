@@ -37,7 +37,7 @@
 namespace Jkphl\Respimgcss\Application\Model;
 
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
-use Jkphl\Respimgcss\Domain\Model\Length;
+use Jkphl\Respimgcss\Domain\Model\AbstractLength as DomainAbstractLength;
 
 /**
  * Abstract length with unit
@@ -45,7 +45,7 @@ use Jkphl\Respimgcss\Domain\Model\Length;
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Application
  */
-abstract class AbstractLength extends Length implements UnitLengthInterface
+abstract class AbstractLength extends DomainAbstractLength implements UnitLengthInterface
 {
     /**
      * Original value

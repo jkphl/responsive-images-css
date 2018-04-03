@@ -73,7 +73,7 @@ class SourceSizeFactory
      * @param string $sourceSizeStr Source size string
      * @param int $emPixel          EM to pixel ratio
      *
-     * @return UnitLengthInterface Length component
+     * @return UnitLengthInterface AbstractLength component
      * @throws InvalidArgumentException If the source size string is ill-formatted
      * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
@@ -107,7 +107,7 @@ class SourceSizeFactory
      * @param string $sourceSizeStr Source size string
      * @param int $emPixel          EM to pixel ratio
      *
-     * @return UnitLengthInterface Length component
+     * @return UnitLengthInterface AbstractLength component
      * @throws InvalidArgumentException If the source size string is ill-formatted
      * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException

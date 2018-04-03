@@ -36,11 +36,11 @@
 
 namespace Jkphl\Respimgcss\Tests\Domain;
 
-use Jkphl\Respimgcss\Domain\Model\Length;
+use Jkphl\Respimgcss\Domain\Model\AbstractLength;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
- * Length tests
+ * AbstractLength tests
  *
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Tests
@@ -53,8 +53,8 @@ class LengthTest extends AbstractTestBase
     public function testLength()
     {
         $value  = rand(1, getrandmax());
-        $length = new Length($value);
-        $this->assertInstanceOf(Length::class, $length);
+        $length = new AbstractLength($value);
+        $this->assertInstanceOf(AbstractLength::class, $length);
         $this->assertTrue(is_float($length->getValue()));
         $this->assertEquals($value, $length->getValue());
     }

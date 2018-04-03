@@ -39,7 +39,7 @@ namespace Jkphl\Respimgcss\Application\Service;
 use Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException;
 
 /**
- * Length normalizer
+ * AbstractLength normalizer
  *
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Application
@@ -72,7 +72,7 @@ class LengthNormalizerService
     const PX_IN_PT = .75;
 
     /**
-     * Length normalizer constructor
+     * AbstractLength normalizer constructor
      *
      * @param int $emPixel EM to pixel ratio
      */

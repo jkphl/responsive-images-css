@@ -37,7 +37,7 @@
 namespace Jkphl\Respimgcss\Domain\Contract;
 
 /**
- * Length Interface
+ * AbstractLength Interface
  *
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Domain
@@ -47,14 +47,9 @@ interface LengthInterface
     /**
      * Return the length value
      *
-     * @return float Length value
-     */
-    public function getValue(): float;
-
-    /**
-     * Return the serialized length
+     * @param AbsoluteLengthInterface $viewport Viewport width
      *
-     * @return string Serialized length
+     * @return float AbstractLength value
      */
-    public function __toString(): string;
+    public function getValue(AbsoluteLengthInterface $viewport): float;
 }

@@ -5,9 +5,9 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Domain
- * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
- * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
+ * @subpackage Jkphl\Respimgcss\Domain\Contract
+ * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
+ * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
@@ -34,40 +34,22 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Tests\Domain;
-
-use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
-use Jkphl\Respimgcss\Domain\Model\Css\Ruleset;
-use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
-use Jkphl\Respimgcss\Domain\Model\ImageCandidateSet;
-use Jkphl\Respimgcss\Domain\Model\AbstractLength;
-use Jkphl\Respimgcss\Domain\Service\DensityCssRulesetCompilerService;
-use Jkphl\Respimgcss\Tests\AbstractTestBase;
+namespace Jkphl\Respimgcss\Domain\Contract;
 
 /**
- * Density CSS ruleset compiler service tests
+ * Absolute length interface
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Domain
+ * @subpackage Jkphl\Respimgcss\Domain\Contract
  */
-class DensityCssRulesetCompilerServiceTest extends AbstractTestBase
+interface AbsoluteLengthInterface extends LengthInterface
 {
     /**
-     * Test the density CSS ruleset compiler service
+     * Return the length value
+     *
+     * @param AbsoluteLengthInterface $viewport Viewport width
+     *
+     * @return float AbstractLength value
      */
-    public function testDensityCssRulesetCompilerService()
-    {
-        $ruleset             = new Ruleset();
-        $value               = rand(1, getrandmax());
-        $length              = new AbstractLength($value);
-        $imageCandidate      = new DensityImageCandidate('image.jpg', 3);
-        $imageCandidateSet   = new ImageCandidateSet();
-        $imageCandidateSet[] = $imageCandidate;
-
-        $compiler = new DensityCssRulesetCompilerService($ruleset, [$length], $imageCandidateSet);
-        $this->assertInstanceOf(DensityCssRulesetCompilerService::class, $compiler);
-
-        $cssRuleset = $compiler->compile(2);
-        $this->assertInstanceOf(CssRulesetInterface::class, $cssRuleset);
-    }
+    public function getValue(AbsoluteLengthInterface $viewport = null): float;
 }

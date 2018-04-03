@@ -40,7 +40,7 @@ use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
 use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
 use Jkphl\Respimgcss\Domain\Model\Css\Rule;
 use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
-use Jkphl\Respimgcss\Domain\Model\Length;
+use Jkphl\Respimgcss\Domain\Model\AbstractLength;
 use Jkphl\Respimgcss\Infrastructure\CssRulesSerializer;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
@@ -100,7 +100,7 @@ class CssRulesSerializerTest extends AbstractTestBase
         $imageCandidate1 = new DensityImageCandidate('small.jpg', 1);
         $this->rule1     = new Rule($imageCandidate1, []);
         $imageCandidate2 = new DensityImageCandidate('large.jpg', 2);
-        $mediaCondition  = new ResolutionMediaCondition(new Length(2), CssMinMaxMediaConditionInterface::MIN);
+        $mediaCondition  = new ResolutionMediaCondition(new AbstractLength(2), CssMinMaxMediaConditionInterface::MIN);
         $this->rule2     = new Rule($imageCandidate2, [$mediaCondition]);
     }
 }

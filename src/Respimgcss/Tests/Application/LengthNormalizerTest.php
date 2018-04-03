@@ -41,7 +41,7 @@ use Jkphl\Respimgcss\Application\Service\LengthNormalizerService;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
- * Length normalizer tests
+ * AbstractLength normalizer tests
  *
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Tests

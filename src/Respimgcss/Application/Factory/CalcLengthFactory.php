@@ -46,7 +46,7 @@ use Jkphl\Respimgcss\Application\Model\ViewportLength;
 use Jkphl\Respimgcss\Application\Service\LengthNormalizerService;
 
 /**
- * Length factory for calc() based values
+ * AbstractLength factory for calc() based values
  *
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Application\Factory

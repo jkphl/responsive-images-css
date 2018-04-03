@@ -46,7 +46,7 @@ use Jkphl\Respimgcss\Application\Model\ViewportLength;
 use Jkphl\Respimgcss\Application\Service\LengthNormalizerService;
 
 /**
- * Length Factory
+ * AbstractLength Factory
  *
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Application\Factory
@@ -81,10 +81,10 @@ class LengthFactory
     /**
      * Parse a length string and return a length with unit instance
      *
-     * @param string $length Length string
+     * @param string $length AbstractLength string
      * @param int $emPixel   EM to pixel ratio
      *
-     * @return UnitLengthInterface Length with unit
+     * @return UnitLengthInterface AbstractLength with unit
      * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
@@ -98,7 +98,7 @@ class LengthFactory
     /**
      * Match the value and unit of a length descriptor
      *
-     * @param string $length Length descriptor
+     * @param string $length AbstractLength descriptor
      *
      * @return array Value and unit (PCRE match)
      * @throws InvalidArgumentException If the length string is invalid
@@ -123,7 +123,7 @@ class LengthFactory
      * @param string $unit  Unit
      * @param int $emPixel  EM to pixel ratio
      *
-     * @return UnitLengthInterface Length with unit
+     * @return UnitLengthInterface AbstractLength with unit
      * @throws InvalidArgumentException If the unit is invalid
      * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException

@@ -37,6 +37,7 @@
 namespace Jkphl\Respimgcss\Application\Model;
 
 use Jkphl\Respimgcss\Application\Service\LengthNormalizerService;
+use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 
 /**
  * Absolute length
@@ -44,10 +45,10 @@ use Jkphl\Respimgcss\Application\Service\LengthNormalizerService;
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Application
  */
-class AbsoluteLength extends AbstractLength
+class AbsoluteLength extends AbstractLength implements AbsoluteLengthInterface
 {
     /**
-     * Length normalizer service
+     * AbstractLength normalizer service
      *
      * @var LengthNormalizerService
      */
@@ -58,7 +59,7 @@ class AbsoluteLength extends AbstractLength
      *
      * @param float $value                                     Value
      * @param string $unit                                     Unit
-     * @param LengthNormalizerService $lengthNormalizerService Length normalizer service
+     * @param LengthNormalizerService $lengthNormalizerService AbstractLength normalizer service
      */
     public function __construct(float $value, string $unit, LengthNormalizerService $lengthNormalizerService)
     {
@@ -74,5 +75,17 @@ class AbsoluteLength extends AbstractLength
     public function isAbsolute(): bool
     {
         return true;
+    }
+
+    /**
+     * Return the length value
+     *
+     * @param AbsoluteLengthInterface $viewport Viewport width
+     *
+     * @return float AbstractLength value
+     */
+    public function getValue(AbsoluteLengthInterface $viewport = null): float
+    {
+        return $this->value;
     }
 }

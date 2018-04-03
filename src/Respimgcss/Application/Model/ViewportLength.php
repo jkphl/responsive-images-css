@@ -39,6 +39,7 @@ namespace Jkphl\Respimgcss\Application\Model;
 use ChrisKonnertz\StringCalc\Parser\Nodes\ContainerNode;
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Service\LengthNormalizerService;
+use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 
 /**
  * Viewport length
@@ -55,7 +56,7 @@ class ViewportLength extends AbstractRelativeLength
      */
     protected $calculation;
     /**
-     * Length normalizer service
+     * AbstractLength normalizer service
      *
      * @var LengthNormalizerService
      */
@@ -65,7 +66,7 @@ class ViewportLength extends AbstractRelativeLength
      * Absolute length constructor
      *
      * @param ContainerNode $calculation                       Calculation nodes
-     * @param LengthNormalizerService $lengthNormalizerService Length normalizer service
+     * @param LengthNormalizerService $lengthNormalizerService AbstractLength normalizer service
      * @param string $originalValue                            Original value
      */
     public function __construct(
@@ -109,16 +110,6 @@ class ViewportLength extends AbstractRelativeLength
     }
 
     /**
-     * Return the length value
-     *
-     * @return float Length value
-     */
-    public function getValue(): float
-    {
-        return 999;
-    }
-
-    /**
      * Return the serialized length
      *
      * @return string Serialized length
@@ -126,5 +117,18 @@ class ViewportLength extends AbstractRelativeLength
     public function getValueAndUnit(): string
     {
         return 'DUMMY';
+    }
+
+    /**
+     * Return the length value
+     *
+     * @param AbsoluteLengthInterface $viewport Viewport width
+     *
+     * @return float AbstractLength value
+     */
+    public function getValue(AbsoluteLengthInterface $viewport): float
+    {
+        // TODO: Implement getValue() method.
+        return 999;
     }
 }

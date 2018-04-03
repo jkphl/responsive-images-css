@@ -37,7 +37,9 @@
 namespace Jkphl\Respimgcss\Tests\Application;
 
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
+use Jkphl\Respimgcss\Application\Model\AbsoluteLength;
 use Jkphl\Respimgcss\Application\Model\PercentageLength;
+use Jkphl\Respimgcss\Application\Service\LengthNormalizerService;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
@@ -53,11 +55,17 @@ class PercentageLengthTest extends AbstractTestBase
      */
     public function testRelativeLength()
     {
-        $length = new PercentageLength(100);
+        $viewportWidth = rand(500, 1000);
+        $viewport      = new AbsoluteLength(
+            $viewportWidth,
+            UnitLengthInterface::UNIT_PIXEL,
+            new LengthNormalizerService(16)
+        );
+        $length        = new PercentageLength(50);
         $this->assertFalse($length->isAbsolute());
         $this->assertEquals(UnitLengthInterface::UNIT_PERCENT, $length->getUnit());
-        $this->assertEquals(100, $length->getOriginalValue());
-        $this->assertEquals(1, $length->getValue());
-        $this->assertEquals('100%', $length->getValueAndUnit());
+        $this->assertEquals(50, $length->getOriginalValue());
+        $this->assertEquals($viewportWidth / 2, $length->getValue($viewport));
+        $this->assertEquals('50%', $length->getValueAndUnit());
     }
 }

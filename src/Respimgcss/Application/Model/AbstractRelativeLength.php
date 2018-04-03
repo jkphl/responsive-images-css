@@ -36,13 +36,15 @@
 
 namespace Jkphl\Respimgcss\Application\Model;
 
+use Jkphl\Respimgcss\Domain\Contract\RelativeLengthInterface;
+
 /**
  * Relative length (percent)
  *
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Application\Model
  */
-abstract class AbstractRelativeLength extends AbstractLength
+abstract class AbstractRelativeLength extends AbstractLength implements RelativeLengthInterface
 {
     /**
      * Return whether this is an absolute length

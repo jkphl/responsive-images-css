@@ -39,7 +39,7 @@ namespace Jkphl\Respimgcss\Application\Contract;
 use Jkphl\Respimgcss\Domain\Contract\LengthInterface;
 
 /**
- * Length with unit interface
+ * AbstractLength with unit interface
  *
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Application
