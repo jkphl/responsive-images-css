@@ -41,7 +41,10 @@ use ChrisKonnertz\StringCalc\StringCalc;
 use ChrisKonnertz\StringCalc\Tokenizer\Token;
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException;
+use Jkphl\Respimgcss\Application\Model\AbsoluteLength;
 use Jkphl\Respimgcss\Application\Model\ViewportFunction;
+use Jkphl\Respimgcss\Application\Model\ViewportLength;
+use Jkphl\Respimgcss\Application\Service\LengthNormalizerService;
 
 /**
  * Length factory for calc() based values
@@ -51,7 +54,18 @@ use Jkphl\Respimgcss\Application\Model\ViewportFunction;
  */
 class CalcLengthFactory
 {
-    public static function createFromString(string $calcString, int $emPixel = 16)
+    /**
+     * Create a unit length from a calc() size string
+     *
+     * @param string $calcString calc() size string
+     * @param int $emPixel       EM to pixel ratio
+     *
+     * @return UnitLengthInterface
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
+     */
+    public static function createFromString(string $calcString, int $emPixel = 16): UnitLengthInterface
     {
         // If the calc() string is ill-formatted
         if (!preg_match('/^calc\(.+\)$/', $calcString)) {
@@ -61,19 +75,7 @@ class CalcLengthFactory
             );
         }
 
-        print_r(self::createCalculationContainerFromString($calcString, $emPixel));
-
-//        // Parse using a dummy shell
-//        $parser      = new Parser("a{width:$calcString}");
-//        $cssDocument = $parser->parse();
-//        /** @var DeclarationBlock $cssDeclarationBlock */
-//        $cssDeclarationBlock = $cssDocument->getContents()[0];
-//        /** @var Rule $cssRule */
-//        $cssRule = $cssDeclarationBlock->getRules()[0];
-//        /** @var CSSFunction $cssFunction */
-//        $cssFunction = $cssRule->getValue();
-////        print_r($cssFunction->getName());
-        echo $calcString;
+        return self::createCalculationContainerFromString($calcString, $emPixel);
     }
 
     /**
@@ -87,15 +89,51 @@ class CalcLengthFactory
      * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
-    protected static function createCalculationContainerFromString(string $calcString, int $emPixel = 16): ContainerNode
-    {
+    protected static function createCalculationContainerFromString(
+        string $calcString,
+        int $emPixel = 16
+    ): UnitLengthInterface {
         $stringCalc    = new StringCalc();
         $calcTokens    = $stringCalc->tokenize($calcString);
         $refinedTokens = self::refineCalculationTokens($calcTokens, $emPixel);
-        $stringHelper  = $stringCalc->getContainer()->get('stringcalc_stringhelper');
+
+        // If there's the viewport involved in the calculation: Create a relative calculated length
+        /** @var Token $token */
+        foreach ($refinedTokens as $token) {
+            if (($token->getType() == Token::TYPE_WORD) && ($token->getValue() === 'viewport')) {
+                return self::createViewportUnitFromTokens($refinedTokens, $stringCalc, $emPixel);
+            }
+        }
+
+        // Create and return an absolute length
+        return new AbsoluteLength(
+            $stringCalc->calculate($refinedTokens),
+            UnitLengthInterface::UNIT_PIXEL,
+            new LengthNormalizerService($emPixel)
+        );
+    }
+
+    /**
+     * Create a unit length from calculation tokens
+     *
+     * @param Token[] $tokens        Calculation tokens
+     * @param StringCalc $stringCalc StringCalc instance
+     * @param int $emPixel           EM to pixel ratio
+     *
+     * @return UnitLengthInterface Unit length
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
+     */
+    protected static function createViewportUnitFromTokens(
+        array $tokens,
+        StringCalc $stringCalc,
+        int $emPixel = 16
+    ): UnitLengthInterface {
+        $stringHelper = $stringCalc->getContainer()->get('stringcalc_stringhelper');
         $stringCalc->getSymbolContainer()->add(new ViewportFunction($stringHelper));
 
-        return $stringCalc->parse($refinedTokens);
+        return new ViewportLength($stringCalc->parse($tokens), new LengthNormalizerService($emPixel));
     }
 
     /**
@@ -156,6 +194,7 @@ class CalcLengthFactory
         }
 
         array_push($refinedTokens, $token);
+
         return null;
     }
 
@@ -183,6 +222,7 @@ class CalcLengthFactory
             if ($previousToken) {
                 array_push($refinedTokens, $previousToken);
             }
+
             return null;
         }
 
@@ -194,6 +234,7 @@ class CalcLengthFactory
                     $emPixel
                 );
                 self::handleUnitLengthToken($refinedTokens, $unitLength);
+
                 return null;
             } catch (InvalidArgumentException $e) {
                 // Ignore
@@ -220,6 +261,7 @@ class CalcLengthFactory
         // If it's an absolute value
         if ($unitLength->isAbsolute()) {
             array_push($refinedTokens, new Token(strval($unitLength->getValue()), Token::TYPE_NUMBER, 0));
+
             return;
         }
 

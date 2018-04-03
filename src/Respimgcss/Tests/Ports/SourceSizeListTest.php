@@ -56,4 +56,23 @@ class SourceSizeListTest extends AbstractTestBase
         $sourceSizeList    = SourceSizeList::fromString($sourceSizeListStr);
         $this->assertInstanceOf(SourceSizeList::class, $sourceSizeList);
     }
+
+//    public function _testStringCalc()
+//    {
+//        $stringCalc   = new StringCalc();
+//        $stringHelper = $stringCalc->getContainer()->get('stringcalc_stringhelper');
+//        $stringCalc->addSymbol(new Test($stringHelper));
+//        echo $stringCalc->calculate('test()');
+//        SymbolContainer::class;
+//    }
 }
+
+//class Test extends AbstractFunction
+//{
+//    protected $identifiers = ['test'];
+//
+//    public function execute(array $arguments)
+//    {
+//        return 1;
+//    }
+//}
