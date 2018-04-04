@@ -57,8 +57,9 @@ class CssRulesetCompilerServiceTest extends AbstractTestBase
      */
     public function testCssRulesetCompilerService()
     {
+        $lengthFactory     = new LengthFactory(16);
         $ruleset           = new Ruleset();
-        $breakpoints       = array_map([LengthFactory::class, 'createLengthFromString'], ['24em', '800px', '72em']);
+        $breakpoints       = array_map([$lengthFactory, 'createLengthFromString'], ['24em', '800px', '72em']);
         $imageCandidateSet = new ImageCandidateSet(new DensityImageCandidate('image.jpg', 1));
         $compiler          = new CssRulesetCompilerService($ruleset, $breakpoints, $imageCandidateSet, 16);
         $this->assertInstanceOf(CssRulesetCompilerService::class, $compiler);

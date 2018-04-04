@@ -45,23 +45,22 @@ use Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException;
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Application\Factory
  */
-class SourceSizeFactory
+class SourceSizeFactory extends AbstractLengthFactory
 {
     /**
      * Create a source size value from a source size string
      *
      * @param string $sourceSizeStr Source size string
-     * @param int $emPixel          EM to pixel ratio
      *
      * @return UnitLengthInterface Source size value
      * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
-    public static function createFromSourceSizeStr(string $sourceSizeStr, int $emPixel = 16)
+    public function createFromSourceSizeStr(string $sourceSizeStr)
     {
         echo $sourceSizeStr.' -> ';
-        $sourceSizeValue = self::parseSourceSizeValue($sourceSizeStr, $emPixel);
+        $sourceSizeValue = $this->parseSourceSizeValue($sourceSizeStr);
         echo $sourceSizeValue->getValueAndUnit().' ('.get_class($sourceSizeValue).')'.PHP_EOL;
 
         return $sourceSizeValue;
@@ -71,7 +70,6 @@ class SourceSizeFactory
      * Parse the length component
      *
      * @param string $sourceSizeStr Source size string
-     * @param int $emPixel          EM to pixel ratio
      *
      * @return UnitLengthInterface AbstractLength component
      * @throws InvalidArgumentException If the source size string is ill-formatted
@@ -79,11 +77,11 @@ class SourceSizeFactory
      * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
-    protected static function parseSourceSizeValue(string &$sourceSizeStr, int $emPixel = 16): UnitLengthInterface
+    protected function parseSourceSizeValue(string &$sourceSizeStr): UnitLengthInterface
     {
         // If the source size string ends with a parenthesis: Try to parse a calc() base length
         if (substr($sourceSizeStr, -1) === ')') {
-            return self::parseSourceSizeCalculatedValue($sourceSizeStr, $emPixel);
+            return $this->parseSourceSizeCalculatedValue($sourceSizeStr);
         }
 
         // If the source size string is ill-formatted
@@ -98,14 +96,13 @@ class SourceSizeFactory
         $sourceSizeStr = trim($sourceSizeStrMatch[1]);
 
         // Return the parsed length
-        return LengthFactory::createLengthFromString($sourceSizeStrMatch[2], $emPixel);
+        return (new LengthFactory($this->emPixel))->createLengthFromString($sourceSizeStrMatch[2], $this->emPixel);
     }
 
     /**
      * Parse a calc() based length value
      *
      * @param string $sourceSizeStr Source size string
-     * @param int $emPixel          EM to pixel ratio
      *
      * @return UnitLengthInterface AbstractLength component
      * @throws InvalidArgumentException If the source size string is ill-formatted
@@ -113,17 +110,17 @@ class SourceSizeFactory
      * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
-    protected static function parseSourceSizeCalculatedValue(
-        string &$sourceSizeStr,
-        int $emPixel = 16
-    ): UnitLengthInterface {
+    protected function parseSourceSizeCalculatedValue(string &$sourceSizeStr): UnitLengthInterface
+    {
         // Reverse-consume the source size string
         $sourceSizeRev = strrev($sourceSizeStr);
         $balance       = null;
         for ($pos = 0; $pos < strlen($sourceSizeStr); ++$pos) {
-            $balance += self::getCharacterBalance($sourceSizeRev[$pos]);
+            $balance += $this->getCharacterBalance($sourceSizeRev[$pos]);
             if ($balance === 0) {
-                $length        = CalcLengthFactory::createFromString(substr($sourceSizeStr, -($pos + 5)), $emPixel);
+                $length        = (new CalcLengthFactory($this->emPixel))->createFromString(
+                    substr($sourceSizeStr, -($pos + 5))
+                );
                 $sourceSizeStr = trim(substr($sourceSizeStr, 0, -($pos + 5)));
 
                 return $length;
@@ -144,7 +141,7 @@ class SourceSizeFactory
      *
      * @return int Balance value
      */
-    protected static function getCharacterBalance($char): string
+    protected function getCharacterBalance($char): string
     {
         return ($char === ')') ? 1 : (($char === '(') ? -1 : 0);
     }

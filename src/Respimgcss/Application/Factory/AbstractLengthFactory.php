@@ -5,9 +5,9 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Contract
- * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
- * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
+ * @subpackage Jkphl\Respimgcss\Application\Factory
+ * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
+ * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
@@ -34,22 +34,55 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Domain\Contract;
+namespace Jkphl\Respimgcss\Application\Factory;
+
+use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
+use Jkphl\Respimgcss\Application\Model\AbsoluteLength;
+use Jkphl\Respimgcss\Application\Service\LengthNormalizerService;
+use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
+use Jkphl\Respimgcss\Domain\Contract\LengthFactoryInterface;
 
 /**
- * Absolute length interface
+ * Abstract length factory
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Contract
+ * @subpackage Jkphl\Respimgcss\Application\Factory
  */
-interface AbsoluteLengthInterface extends LengthInterface
+abstract class AbstractLengthFactory implements LengthFactoryInterface
 {
     /**
-     * Return the length value
+     * EM to pixel ratio
      *
-     * @param AbsoluteLengthInterface $viewport Viewport width
-     *
-     * @return float AbstractLength value
+     * @var int
      */
-    public function getValue(): float;
+    protected $emPixel;
+    /**
+     * Length normalizer service
+     *
+     * @var LengthNormalizerService
+     */
+    protected $lengthNormalizerService;
+
+    /**
+     * Length factory constructor
+     *
+     * @param int $emPixel EM to pixel ratio
+     */
+    public function __construct(int $emPixel)
+    {
+        $this->emPixel                 = $emPixel;
+        $this->lengthNormalizerService = new LengthNormalizerService($this->emPixel);
+    }
+
+    /**
+     * Create an absolute length
+     *
+     * @param float $value Value
+     *
+     * @return AbsoluteLengthInterface Absolute length
+     */
+    public function createAbsoluteLength(float $value): AbsoluteLengthInterface
+    {
+        return new AbsoluteLength($value, UnitLengthInterface::UNIT_PIXEL, $this->lengthNormalizerService);
+    }
 }

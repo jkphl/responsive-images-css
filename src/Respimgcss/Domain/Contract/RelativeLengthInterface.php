@@ -44,4 +44,12 @@ namespace Jkphl\Respimgcss\Domain\Contract;
  */
 interface RelativeLengthInterface extends LengthInterface
 {
+    /**
+     * Return the length value
+     *
+     * @param AbsoluteLengthInterface $viewport Viewport width
+     *
+     * @return float AbstractLength value
+     */
+    public function getValue(AbsoluteLengthInterface $viewport): float;
 }

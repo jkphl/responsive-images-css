@@ -37,12 +37,13 @@
 namespace Jkphl\Respimgcss\Tests\Domain;
 
 use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
+use Jkphl\Respimgcss\Domain\Contract\LengthFactoryInterface;
 use Jkphl\Respimgcss\Domain\Model\Css\Ruleset;
 use Jkphl\Respimgcss\Domain\Model\ImageCandidateSet;
-use Jkphl\Respimgcss\Domain\Model\AbstractLength;
 use Jkphl\Respimgcss\Domain\Model\WidthImageCandidate;
 use Jkphl\Respimgcss\Domain\Service\WidthCssRulesetCompilerService;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
+use Jkphl\Respimgcss\Tests\Domain\Mock\AbsoluteLength;
 
 /**
  * Width CSS ruleset compiler service tests
@@ -58,12 +59,17 @@ class WidthCssRulesetCompilerServiceTest extends AbstractTestBase
     public function testWidthCssRulesetCompilerService()
     {
         $ruleset             = new Ruleset();
-        $length              = new AbstractLength(500);
+        $length              = new AbsoluteLength(500);
         $imageCandidateSet   = new ImageCandidateSet();
         $imageCandidateSet[] = new WidthImageCandidate('small.jpg', 400);
         $imageCandidateSet[] = new WidthImageCandidate('medium.jpg', 800);
-
-        $compiler = new WidthCssRulesetCompilerService($ruleset, [$length], $imageCandidateSet);
+        $lengthFactory       = $this->createMock(LengthFactoryInterface::class);
+        $compiler            = new WidthCssRulesetCompilerService(
+            $ruleset,
+            [$length],
+            $imageCandidateSet,
+            $lengthFactory
+        );
         $this->assertInstanceOf(WidthCssRulesetCompilerService::class, $compiler);
 
         $cssRuleset = $compiler->compile(1);

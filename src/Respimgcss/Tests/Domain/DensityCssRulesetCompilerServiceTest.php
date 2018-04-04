@@ -36,9 +36,9 @@
 
 namespace Jkphl\Respimgcss\Tests\Domain;
 
-use Jkphl\Respimgcss\Application\Factory\LengthFactory;
 use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
+use Jkphl\Respimgcss\Domain\Contract\LengthFactoryInterface;
 use Jkphl\Respimgcss\Domain\Model\Css\Ruleset;
 use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
 use Jkphl\Respimgcss\Domain\Model\ImageCandidateSet;
@@ -65,7 +65,7 @@ class DensityCssRulesetCompilerServiceTest extends AbstractTestBase
         $imageCandidate      = new DensityImageCandidate('image.jpg', 3);
         $imageCandidateSet   = new ImageCandidateSet();
         $imageCandidateSet[] = $imageCandidate;
-        $lengthFactory       = new LengthFactory(16);
+        $lengthFactory       = $this->createMock(LengthFactoryInterface::class);
 
         $compiler = new DensityCssRulesetCompilerService($ruleset, [$length], $imageCandidateSet, $lengthFactory);
         $this->assertInstanceOf(DensityCssRulesetCompilerService::class, $compiler);

@@ -39,10 +39,10 @@ namespace Jkphl\Respimgcss\Domain\Service;
 use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
 use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
 use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
-use Jkphl\Respimgcss\Domain\Model\AbstractLength;
 use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
 use Jkphl\Respimgcss\Domain\Model\Css\Rule;
 use Jkphl\Respimgcss\Domain\Model\Css\WidthMediaCondition;
+use Jkphl\Respimgcss\Tests\Domain\Mock\AbsoluteLength;
 
 /**
  * Pixel density CSS ruleset compiler service
@@ -111,7 +111,7 @@ class WidthCssRulesetCompilerService extends AbstractCssRulesetCompilerService
     {
         // If this is not the minimum width: Add a width condition
         if ($imageCandidateWidth) {
-            $breakpoint          = new AbstractLength(round($imageCandidateWidth) / $density);
+            $breakpoint          = new AbsoluteLength(round($imageCandidateWidth) / $density);
             $widthMediaCondition = new WidthMediaCondition($breakpoint, CssMinMaxMediaConditionInterface::MIN);
             $rule                = $rule->appendCondition($widthMediaCondition);
         }
@@ -132,7 +132,7 @@ class WidthCssRulesetCompilerService extends AbstractCssRulesetCompilerService
         // If this is not the default density: Add a resolution condition
         if ($density > 1) {
             $resolutionMediaCondition = new ResolutionMediaCondition(
-                new AbstractLength($density),
+                new AbsoluteLength($density),
                 CssMinMaxMediaConditionInterface::MIN
             );
             $rule                     = $rule->appendCondition($resolutionMediaCondition);

@@ -36,10 +36,10 @@
 
 namespace Jkphl\Respimgcss\Tests\Infrastructure;
 
+use Jkphl\Respimgcss\Application\Factory\LengthFactory;
 use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
 use Jkphl\Respimgcss\Domain\Model\Css\MediaCondition;
 use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
-use Jkphl\Respimgcss\Domain\Model\AbstractLength;
 use Jkphl\Respimgcss\Infrastructure\CssMediaCondition;
 use Jkphl\Respimgcss\Infrastructure\CssMediaConditionFactory;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
@@ -68,8 +68,9 @@ class CssMediaConditionFactoryTest extends AbstractTestBase
      */
     public function testCssMediaConditionFactoryResolution()
     {
+        $lengthFactory   = new LengthFactory(16);
         $mediaConditions = CssMediaConditionFactory::createFromMediaCondition(
-            new ResolutionMediaCondition(new AbstractLength(2), CssMinMaxMediaConditionInterface::MAX)
+            new ResolutionMediaCondition($lengthFactory->createAbsoluteLength(2), CssMinMaxMediaConditionInterface::MAX)
         );
         $this->assertTrue(is_array($mediaConditions));
         $this->assertEquals(3, count($mediaConditions));

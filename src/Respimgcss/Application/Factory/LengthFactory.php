@@ -43,9 +43,6 @@ use Jkphl\Respimgcss\Application\Model\AbsoluteLength;
 use Jkphl\Respimgcss\Application\Model\PercentageLength;
 use Jkphl\Respimgcss\Application\Model\StringCalculator;
 use Jkphl\Respimgcss\Application\Model\ViewportLength;
-use Jkphl\Respimgcss\Application\Service\LengthNormalizerService;
-use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
-use Jkphl\Respimgcss\Domain\Contract\LengthFactoryInterface;
 
 /**
  * AbstractLength Factory
@@ -53,7 +50,7 @@ use Jkphl\Respimgcss\Domain\Contract\LengthFactoryInterface;
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Application\Factory
  */
-class LengthFactory implements LengthFactoryInterface
+class LengthFactory extends AbstractLengthFactory
 {
     /**
      * Absolute units
@@ -81,45 +78,20 @@ class LengthFactory implements LengthFactoryInterface
     ];
 
     /**
-     * EM to pixel ratio
-     *
-     * @var int
-     */
-    protected $emPixel;
-    /**
-     * Length normalizer service
-     *
-     * @var LengthNormalizerService
-     */
-    protected $lengthNormalizerService;
-
-    /**
-     * Length factory constructor
-     *
-     * @param int $emPixel EM to pixel ratio
-     */
-    public function __construct(int $emPixel)
-    {
-        $this->emPixel                 = $emPixel;
-        $this->lengthNormalizerService = new LengthNormalizerService($this->emPixel);
-    }
-
-    /**
      * Parse a length string and return a length with unit instance
      *
      * @param string $length AbstractLength string
-     * @param int $emPixel   EM to pixel ratio
      *
      * @return UnitLengthInterface AbstractLength with unit
      * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
-    public static function createLengthFromString(string $length, int $emPixel = 16): UnitLengthInterface
+    public function createLengthFromString(string $length): UnitLengthInterface
     {
-        $valueAndUnit = self::matchValueAndUnit($length);
+        $valueAndUnit = $this->matchValueAndUnit($length);
 
-        return self::makeInstance($valueAndUnit[1], $valueAndUnit[2], $emPixel);
+        return $this->makeInstance($valueAndUnit[1], $valueAndUnit[2]);
     }
 
     /**
@@ -130,7 +102,7 @@ class LengthFactory implements LengthFactoryInterface
      * @return array Value and unit (PCRE match)
      * @throws InvalidArgumentException If the length string is invalid
      */
-    protected static function matchValueAndUnit($length): array
+    protected function matchValueAndUnit($length): array
     {
         $length = trim(strtolower($length));
         if (!strlen($length) || !preg_match('/^(\d+(?:\.\d+)?)([pxremcintvw%]+)$/i', $length, $valueAndUnit)) {
@@ -148,7 +120,6 @@ class LengthFactory implements LengthFactoryInterface
      *
      * @param string $value Value
      * @param string $unit  Unit
-     * @param int $emPixel  EM to pixel ratio
      *
      * @return UnitLengthInterface AbstractLength with unit
      * @throws InvalidArgumentException If the unit is invalid
@@ -156,11 +127,11 @@ class LengthFactory implements LengthFactoryInterface
      * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
-    protected static function makeInstance(string $value, string $unit, int $emPixel): UnitLengthInterface
+    protected function makeInstance(string $value, string $unit): UnitLengthInterface
     {
         // If it's an absolute unit
         if (in_array($unit, self::UNITS_ABSOLUTE)) {
-            return new AbsoluteLength(floatval($value), $unit, new LengthNormalizerService($emPixel));
+            return new AbsoluteLength(floatval($value), $unit, $this->lengthNormalizerService);
         }
 
         switch ($unit) {
@@ -177,7 +148,7 @@ class LengthFactory implements LengthFactoryInterface
                             new Token(')', Token::TYPE_CHARACTER, 0),
                         ]
                     ),
-                    new LengthNormalizerService($emPixel),
+                    $this->lengthNormalizerService,
                     $value
                 );
 
@@ -190,17 +161,5 @@ class LengthFactory implements LengthFactoryInterface
                     InvalidArgumentException::INVALID_UNIT
                 );
         }
-    }
-
-    /**
-     * Create an absolute length
-     *
-     * @param float $value Value
-     *
-     * @return AbsoluteLengthInterface Absolute length
-     */
-    public function createAbsoluteLength(float $value): AbsoluteLengthInterface
-    {
-        return new AbsoluteLength($value, UnitLengthInterface::UNIT_PIXEL, $this->lengthNormalizerService);
     }
 }

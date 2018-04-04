@@ -74,7 +74,8 @@ class CssRulesetCompilerServiceFactoryTest extends AbstractTestBase
         CssRulesetCompilerServiceFactory::createForImageCandidates(
             new Ruleset(),
             $this->breakpoints,
-            new ImageCandidateSet(new ImageCandidateMock('image.jpg', 1))
+            new ImageCandidateSet(new ImageCandidateMock('image.jpg', 1)),
+            16
         );
     }
 
@@ -112,8 +113,9 @@ class CssRulesetCompilerServiceFactoryTest extends AbstractTestBase
     protected function setUp()/* The :void return type declaration that should be here would cause a BC issue */
     {
         parent::setUp();
-        $this->breakpoints[] = LengthFactory::createLengthFromString('24em');
-        $this->breakpoints[] = LengthFactory::createLengthFromString('800px');
-        $this->breakpoints[] = LengthFactory::createLengthFromString('72em');
+        $lengthFactory       = new LengthFactory(16);
+        $this->breakpoints[] = $lengthFactory->createLengthFromString('24em');
+        $this->breakpoints[] = $lengthFactory->createLengthFromString('800px');
+        $this->breakpoints[] = $lengthFactory->createLengthFromString('72em');
     }
 }

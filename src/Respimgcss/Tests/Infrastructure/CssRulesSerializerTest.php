@@ -36,11 +36,11 @@
 
 namespace Jkphl\Respimgcss\Tests\Infrastructure;
 
+use Jkphl\Respimgcss\Application\Factory\LengthFactory;
 use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
 use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
 use Jkphl\Respimgcss\Domain\Model\Css\Rule;
 use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
-use Jkphl\Respimgcss\Domain\Model\AbstractLength;
 use Jkphl\Respimgcss\Infrastructure\CssRulesSerializer;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
@@ -97,10 +97,14 @@ class CssRulesSerializerTest extends AbstractTestBase
     protected function setUp()/* The :void return type declaration that should be here would cause a BC issue */
     {
         parent::setUp();
+        $lengthFactory   = new LengthFactory(16);
         $imageCandidate1 = new DensityImageCandidate('small.jpg', 1);
         $this->rule1     = new Rule($imageCandidate1, []);
         $imageCandidate2 = new DensityImageCandidate('large.jpg', 2);
-        $mediaCondition  = new ResolutionMediaCondition(new AbstractLength(2), CssMinMaxMediaConditionInterface::MIN);
+        $mediaCondition  = new ResolutionMediaCondition(
+            $lengthFactory->createAbsoluteLength(2),
+            CssMinMaxMediaConditionInterface::MIN
+        );
         $this->rule2     = new Rule($imageCandidate2, [$mediaCondition]);
     }
 }

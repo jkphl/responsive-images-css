@@ -43,7 +43,6 @@ use Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException;
 use Jkphl\Respimgcss\Application\Model\AbsoluteLength;
 use Jkphl\Respimgcss\Application\Model\StringCalculator;
 use Jkphl\Respimgcss\Application\Model\ViewportLength;
-use Jkphl\Respimgcss\Application\Service\LengthNormalizerService;
 
 /**
  * AbstractLength factory for calc() based values
@@ -51,20 +50,19 @@ use Jkphl\Respimgcss\Application\Service\LengthNormalizerService;
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Application\Factory
  */
-class CalcLengthFactory
+class CalcLengthFactory extends AbstractLengthFactory
 {
     /**
      * Create a unit length from a calc() size string
      *
      * @param string $calcString calc() size string
-     * @param int $emPixel       EM to pixel ratio
      *
      * @return UnitLengthInterface
      * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
-    public static function createFromString(string $calcString, int $emPixel = 16): UnitLengthInterface
+    public function createFromString(string $calcString): UnitLengthInterface
     {
         // If the calc() string is ill-formatted
         if (!preg_match('/^calc\(.+\)$/', $calcString)) {
@@ -74,27 +72,24 @@ class CalcLengthFactory
             );
         }
 
-        return self::createCalculationContainerFromString($calcString, $emPixel);
+        return $this->createCalculationContainerFromString($calcString);
     }
 
     /**
      * Parse a calculation string and return a precompiled calculation node container
      *
      * @param string $calcString Calculation string
-     * @param int $emPixel       EM to pixel ratio
      *
      * @return ContainerNode Calculation node container
      * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
-    protected static function createCalculationContainerFromString(
-        string $calcString,
-        int $emPixel = 16
-    ): UnitLengthInterface {
+    protected function createCalculationContainerFromString(string $calcString): UnitLengthInterface
+    {
         $stringCalc    = new StringCalculator();
         $calcTokens    = $stringCalc->tokenize($calcString);
-        $refinedTokens = self::refineCalculationTokens($calcTokens, $emPixel);
+        $refinedTokens = $this->refineCalculationTokens($calcTokens);
 
         // If there's the viewport involved in the calculation: Create a relative calculated length
         /** @var Token $token */
@@ -102,7 +97,7 @@ class CalcLengthFactory
             if (($token->getType() == Token::TYPE_WORD) && ($token->getValue() === 'viewport')) {
                 return new ViewportLength(
                     $stringCalc->parse($refinedTokens),
-                    new LengthNormalizerService($emPixel),
+                    $this->lengthNormalizerService,
                     $calcString
                 );
             }
@@ -112,7 +107,7 @@ class CalcLengthFactory
         return new AbsoluteLength(
             $stringCalc->calculate($refinedTokens),
             UnitLengthInterface::UNIT_PIXEL,
-            new LengthNormalizerService($emPixel)
+            $this->lengthNormalizerService
         );
     }
 
@@ -120,18 +115,20 @@ class CalcLengthFactory
      * Refine a list of symbol tokens
      *
      * @param Token[] $tokens Symbol tokens
-     * @param int $emPixel    EM to pixel ratio
      *
      * @return Token[] Refined symbol tokens
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
-    protected static function refineCalculationTokens(array $tokens, int $emPixel = 16): array
+    protected function refineCalculationTokens(array $tokens): array
     {
         $refinedTokens = [];
         $previousToken = null;
 
         // Run through all tokens
         foreach ($tokens as $token) {
-            $previousToken = self::handleToken($refinedTokens, $token, $previousToken, $emPixel);
+            $previousToken = $this->handleToken($refinedTokens, $token, $previousToken);
         }
 
         // Add the last token
@@ -148,19 +145,17 @@ class CalcLengthFactory
      * @param Token[] $refinedTokens    Refined tokens
      * @param Token $token              Token
      * @param Token|null $previousToken Previous token
-     * @param int $emPixel              EM to pixel ratio
      *
      * @return Token|null               Stash token
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
-    protected static function handleToken(
-        array &$refinedTokens,
-        Token $token,
-        Token $previousToken = null,
-        int $emPixel = 16
-    ): ?Token {
+    protected function handleToken(array &$refinedTokens, Token $token, Token $previousToken = null): ?Token
+    {
         // If it's a word token: Handle individually
         if ($token->getType() == Token::TYPE_WORD) {
-            return self::handleWordToken($refinedTokens, $token, $previousToken, $emPixel);
+            return $this->handleWordToken($refinedTokens, $token, $previousToken);
         }
 
         // In all other cases: Register the previou token (if any)
@@ -186,17 +181,15 @@ class CalcLengthFactory
      * @param Token[] $refinedTokens    Refined tokens
      * @param Token $token              Token
      * @param Token|null $previousToken Previous token
-     * @param int $emPixel              EM to pixel ratio
      *
      * @return Token|null               Stash token
      * @throws InvalidArgumentException If the word token is invalid
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
-    protected static function handleWordToken(
-        array &$refinedTokens,
-        Token $token,
-        Token $previousToken = null,
-        int $emPixel = 16
-    ): ?Token {
+    protected function handleWordToken(array &$refinedTokens, Token $token, Token $previousToken = null): ?Token
+    {
         // If it's a calc() function call: Add the previous token and skip the current one
         if ($token->getValue() == 'calc') {
             if ($previousToken) {
@@ -209,11 +202,10 @@ class CalcLengthFactory
         // If the previous token is a number: Try to generate a unit length
         if ($previousToken && ($previousToken->getType() == Token::TYPE_NUMBER)) {
             try {
-                $unitLength = LengthFactory::createLengthFromString(
-                    $previousToken->getValue().$token->getValue(),
-                    $emPixel
+                $unitLength = (new LengthFactory($this->emPixel))->createLengthFromString(
+                    $previousToken->getValue().$token->getValue()
                 );
-                self::handleUnitLengthToken($refinedTokens, $unitLength);
+                $this->handleUnitLengthToken($refinedTokens, $unitLength);
 
                 return null;
             } catch (InvalidArgumentException $e) {
@@ -234,7 +226,7 @@ class CalcLengthFactory
      * @param Token[] $refinedTokens          Refined tokens
      * @param UnitLengthInterface $unitLength Unit length
      */
-    protected static function handleUnitLengthToken(
+    protected function handleUnitLengthToken(
         array &$refinedTokens,
         UnitLengthInterface $unitLength
     ): void {
@@ -249,7 +241,7 @@ class CalcLengthFactory
         array_push(
             $refinedTokens,
             new Token('(', Token::TYPE_CHARACTER, 0),
-            new Token(strval($unitLength->getValue() / 100), Token::TYPE_NUMBER, 0),
+            new Token(strval($unitLength->getOriginalValue() / 100), Token::TYPE_NUMBER, 0),
             new Token('*', Token::TYPE_CHARACTER, 0),
             new Token('viewport', Token::TYPE_WORD, 0),
             new Token('(', Token::TYPE_CHARACTER, 0),

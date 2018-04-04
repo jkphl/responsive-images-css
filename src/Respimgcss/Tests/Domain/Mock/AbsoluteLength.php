@@ -5,9 +5,9 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Contract
- * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
- * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
+ * @subpackage Jkphl\Respimgcss\Tests\Domain\Mock
+ * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
+ * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
@@ -34,15 +34,18 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Domain\Contract;
+namespace Jkphl\Respimgcss\Tests\Domain\Mock;
+
+use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
+use Jkphl\Respimgcss\Domain\Model\AbstractLength;
 
 /**
- * Absolute length interface
+ * Absolute length mock
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Contract
+ * @subpackage Jkphl\Respimgcss\Tests\Domain\Mock
  */
-interface AbsoluteLengthInterface extends LengthInterface
+class AbsoluteLength extends AbstractLength implements AbsoluteLengthInterface
 {
     /**
      * Return the length value
@@ -51,5 +54,8 @@ interface AbsoluteLengthInterface extends LengthInterface
      *
      * @return float AbstractLength value
      */
-    public function getValue(): float;
+    public function getValue(): float
+    {
+        return $this->value;
+    }
 }

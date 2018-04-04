@@ -39,8 +39,8 @@ namespace Jkphl\Respimgcss\Tests\Domain;
 use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
 use Jkphl\Respimgcss\Domain\Contract\LengthInterface;
 use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
-use Jkphl\Respimgcss\Domain\Model\AbstractLength;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
+use Jkphl\Respimgcss\Tests\Domain\Mock\AbsoluteLength;
 
 /**
  * Resolution media condition tests
@@ -56,7 +56,7 @@ class ResolutionMediaConditionTest extends AbstractTestBase
     public function testResolutionMediaCondition()
     {
         $resolutionMediaCondition = new ResolutionMediaCondition(
-            new AbstractLength(2.0),
+            new AbsoluteLength(2.0),
             CssMinMaxMediaConditionInterface::MAX
         );
         $this->assertInstanceOf(ResolutionMediaCondition::class, $resolutionMediaCondition);
@@ -73,6 +73,6 @@ class ResolutionMediaConditionTest extends AbstractTestBase
      */
     public function testResolutionMediaConditionInvalidModifier()
     {
-        new ResolutionMediaCondition(new AbstractLength(1.0), 'invalid');
+        new ResolutionMediaCondition(new AbsoluteLength(1.0), 'invalid');
     }
 }

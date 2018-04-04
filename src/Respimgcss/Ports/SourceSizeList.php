@@ -60,10 +60,11 @@ class SourceSizeList extends \Jkphl\Respimgcss\Infrastructure\SourceSizeList
      */
     public static function fromString($sourceSizeListStr, int $emPixel = 16)
     {
+        $sourceSizeFactory   = new SourceSizeFactory($emPixel);
         $unparsedSourceSizes = array_filter(array_map('trim', explode(',', $sourceSizeListStr)));
         $sourceSizes         = array_map(
-            function($unparsedSourceSize) use ($emPixel) {
-                return SourceSizeFactory::createFromSourceSizeStr($unparsedSourceSize, $emPixel);
+            function($unparsedSourceSize) use ($sourceSizeFactory) {
+                return $sourceSizeFactory->createFromSourceSizeStr($unparsedSourceSize);
             },
             $unparsedSourceSizes
         );

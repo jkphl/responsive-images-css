@@ -50,6 +50,22 @@ use Jkphl\Respimgcss\Tests\AbstractTestBase;
 class LengthFactoryTest extends AbstractTestBase
 {
     /**
+     * Length factory
+     *
+     * @var LengthFactory
+     */
+    protected $lengthFactory;
+
+    /**
+     * Test setup
+     */
+    protected function setUp()/* The :void return type declaration that should be here would cause a BC issue */
+    {
+        parent::setUp();
+        $this->lengthFactory = new LengthFactory(16);
+    }
+
+    /**
      * Test an invalid length string
      *
      * @expectedException \Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException
@@ -57,7 +73,7 @@ class LengthFactoryTest extends AbstractTestBase
      */
     public function testInvalidLengthString()
     {
-        LengthFactory::createLengthFromString('123abc');
+        $this->lengthFactory->createLengthFromString('123abc');
     }
 
     /**
@@ -65,7 +81,7 @@ class LengthFactoryTest extends AbstractTestBase
      */
     public function testAbsoluteLengthCreation()
     {
-        $length = LengthFactory::createLengthFromString('1px');
+        $length = $this->lengthFactory->createLengthFromString('1px');
         $this->assertInstanceOf(AbsoluteLength::class, $length);
     }
 
@@ -74,7 +90,7 @@ class LengthFactoryTest extends AbstractTestBase
      */
     public function testRelativeLengthCreation()
     {
-        $length = LengthFactory::createLengthFromString('100%');
+        $length = $this->lengthFactory->createLengthFromString('100%');
         $this->assertInstanceOf(AbstractRelativeLength::class, $length);
     }
 
@@ -86,7 +102,7 @@ class LengthFactoryTest extends AbstractTestBase
      */
     public function testInvalidLengthUnit()
     {
-        LengthFactory::createLengthFromString('123xp');
+        $this->lengthFactory->createLengthFromString('123xp');
     }
 
 }

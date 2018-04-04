@@ -82,8 +82,9 @@ abstract class Generator implements GeneratorInterface
     public function __construct(array $breakpoints, int $emPixel)
     {
         $this->emPixel     = $emPixel;
+        $lengthFactory     = new LengthFactory($this->emPixel);
         $this->breakpoints = array_map(
-            [LengthFactory::class, 'createLengthFromString'],
+            [$lengthFactory, 'createLengthFromString'],
             $breakpoints,
             array_fill(0, count($breakpoints), $this->emPixel)
         );
@@ -144,7 +145,8 @@ abstract class Generator implements GeneratorInterface
             $cssRulesetCompilerService = new CssRulesetCompilerService(
                 $cssRuleset,
                 $this->breakpoints,
-                $this->imageCandidates
+                $this->imageCandidates,
+                $this->emPixel
             );
             $cssRuleset                = new CssRuleset($cssRulesetCompilerService->compile($densities));
         }
