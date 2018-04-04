@@ -59,6 +59,7 @@ class CssRulesetCompilerServiceFactory
      * @param CssRulesetInterface $cssRuleset             CSS Ruleset
      * @param UnitLengthInterface[] $breakpoints          Breakpoints
      * @param ImageCandidateSetInterface $imageCandidates Image candidates
+     * @param int $emPixel                                EM to pixel ratio
      *
      * @return CssRulesetCompilerServiceInterface CSS Ruleset compiler service
      * @throws RuntimeException If the image candidate set is invalid or empty
@@ -66,15 +67,26 @@ class CssRulesetCompilerServiceFactory
     public static function createForImageCandidates(
         CssRulesetInterface $cssRuleset,
         array $breakpoints,
-        ImageCandidateSetInterface $imageCandidates
+        ImageCandidateSetInterface $imageCandidates,
+        int $emPixel
     ): CssRulesetCompilerServiceInterface {
         $cssRulesetCompiler = null;
+        $lengthFactory      = new LengthFactory($emPixel);
         switch ($imageCandidates->getType()) {
             case ImageCandidateInterface::TYPE_DENSITY:
-                $cssRulesetCompiler = new DensityCssRulesetCompilerService($cssRuleset, $breakpoints, $imageCandidates);
+                $cssRulesetCompiler = new DensityCssRulesetCompilerService(
+                    $cssRuleset,
+                    $breakpoints,
+                    $imageCandidates,
+                    $lengthFactory);
                 break;
             case ImageCandidateInterface::TYPE_WIDTH:
-                $cssRulesetCompiler = new WidthCssRulesetCompilerService($cssRuleset, $breakpoints, $imageCandidates);
+                $cssRulesetCompiler = new WidthCssRulesetCompilerService(
+                    $cssRuleset,
+                    $breakpoints,
+                    $imageCandidates,
+                    $lengthFactory
+                );
                 break;
             default:
                 throw new RuntimeException(

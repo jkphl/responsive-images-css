@@ -36,11 +36,12 @@
 
 namespace Jkphl\Respimgcss\Tests\Domain;
 
+use Jkphl\Respimgcss\Application\Factory\LengthFactory;
+use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
 use Jkphl\Respimgcss\Domain\Model\Css\Ruleset;
 use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
 use Jkphl\Respimgcss\Domain\Model\ImageCandidateSet;
-use Jkphl\Respimgcss\Domain\Model\AbstractLength;
 use Jkphl\Respimgcss\Domain\Service\DensityCssRulesetCompilerService;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
@@ -57,14 +58,16 @@ class DensityCssRulesetCompilerServiceTest extends AbstractTestBase
      */
     public function testDensityCssRulesetCompilerService()
     {
-        $ruleset             = new Ruleset();
-        $value               = rand(1, getrandmax());
-        $length              = new AbstractLength($value);
+        $ruleset = new Ruleset();
+        $value   = rand(1, getrandmax());
+//        $length              = new AbstractLength($value);
+        $length              = $this->createMock(AbsoluteLengthInterface::class);
         $imageCandidate      = new DensityImageCandidate('image.jpg', 3);
         $imageCandidateSet   = new ImageCandidateSet();
         $imageCandidateSet[] = $imageCandidate;
+        $lengthFactory       = new LengthFactory(16);
 
-        $compiler = new DensityCssRulesetCompilerService($ruleset, [$length], $imageCandidateSet);
+        $compiler = new DensityCssRulesetCompilerService($ruleset, [$length], $imageCandidateSet, $lengthFactory);
         $this->assertInstanceOf(DensityCssRulesetCompilerService::class, $compiler);
 
         $cssRuleset = $compiler->compile(2);

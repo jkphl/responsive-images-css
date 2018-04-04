@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Application
+ * @subpackage Jkphl\Respimgcss\Application\Model
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,36 +34,56 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Tests\Application;
-
-use Jkphl\Respimgcss\Application\Factory\LengthFactory;
-use Jkphl\Respimgcss\Application\Model\ImageCandidateSet;
-use Jkphl\Respimgcss\Application\Service\CssRulesetCompilerService;
-use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
-use Jkphl\Respimgcss\Domain\Model\Css\Ruleset;
-use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
-use Jkphl\Respimgcss\Tests\AbstractTestBase;
+namespace Jkphl\Respimgcss\Application\Model;
 
 /**
- * CSS ruleset compiler service test
+ * Unit length trait
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Application
+ * @subpackage Jkphl\Respimgcss\Application\Model
  */
-class CssRulesetCompilerServiceTest extends AbstractTestBase
+trait UnitLengthTrait
 {
     /**
-     * Test the  CSS ruleset compiler service
+     * Original value
+     *
+     * @var mixed
      */
-    public function testCssRulesetCompilerService()
-    {
-        $ruleset           = new Ruleset();
-        $breakpoints       = array_map([LengthFactory::class, 'createLengthFromString'], ['24em', '800px', '72em']);
-        $imageCandidateSet = new ImageCandidateSet(new DensityImageCandidate('image.jpg', 1));
-        $compiler          = new CssRulesetCompilerService($ruleset, $breakpoints, $imageCandidateSet, 16);
-        $this->assertInstanceOf(CssRulesetCompilerService::class, $compiler);
+    protected $originalValue;
+    /**
+     * Unit
+     *
+     * @var string
+     */
+    protected $unit;
 
-        $cssRulset = $compiler->compile([1, 2]);
-        $this->assertInstanceOf(CssRulesetInterface::class, $cssRulset);
+    /**
+     * Return the serialized length
+     *
+     * @return string Serialized length
+     */
+    public function getValueAndUnit(): string
+    {
+        return $this->getOriginalValue().$this->getUnit();
+    }
+
+    /**
+     * Return the original value (in source units)
+     *
+     * @return mixed Original value (in source units)
+     */
+    public function getOriginalValue()
+    {
+        return $this->originalValue;
+    }
+
+    /**
+     * Return the lengths unit
+     *
+     * @return string Unit
+     */
+    public function getUnit(): string
+    {
+        return $this->unit;
     }
 }

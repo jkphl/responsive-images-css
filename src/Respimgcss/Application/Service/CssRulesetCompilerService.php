@@ -67,6 +67,12 @@ class CssRulesetCompilerService
      * @var ImageCandidateSetInterface
      */
     protected $imageCandidates = null;
+    /**
+     * EM to pixel ratio
+     *
+     * @var int
+     */
+    protected $emPixel;
 
     /**
      * CSS Ruleset Compiler Service constructor
@@ -78,11 +84,13 @@ class CssRulesetCompilerService
     public function __construct(
         CssRulesetInterface $cssRuleset,
         array $breakpoints,
-        ImageCandidateSetInterface $imageCandidates
+        ImageCandidateSetInterface $imageCandidates,
+        int $emPixel
     ) {
         $this->cssRuleset      = $cssRuleset;
         $this->breakpoints     = $breakpoints;
         $this->imageCandidates = $imageCandidates;
+        $this->emPixel         = $emPixel;
     }
 
     /**
@@ -99,7 +107,8 @@ class CssRulesetCompilerService
             $this->cssRuleset = CssRulesetCompilerServiceFactory::createForImageCandidates(
                 $this->cssRuleset,
                 $this->breakpoints,
-                $this->imageCandidates
+                $this->imageCandidates,
+                $this->emPixel
             )->compile($density);
         }
 

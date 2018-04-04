@@ -36,7 +36,8 @@
 
 namespace Jkphl\Respimgcss\Tests\Domain;
 
-use Jkphl\Respimgcss\Domain\Model\AbstractLength;
+use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
+use Jkphl\Respimgcss\Domain\Model\AbstractAbsoluteLength;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
@@ -50,11 +51,14 @@ class LengthTest extends AbstractTestBase
     /**
      * Test the length
      */
-    public function testLength()
+    public function testAbsoluteLength()
     {
         $value  = rand(1, getrandmax());
-        $length = new AbstractLength($value);
-        $this->assertInstanceOf(AbstractLength::class, $length);
+        $length = $this->getMockBuilder(AbstractAbsoluteLength::class)
+                       ->setConstructorArgs([$value])
+                       ->getMock();
+
+        $this->assertInstanceOf(AbsoluteLengthInterface::class, $length);
         $this->assertTrue(is_float($length->getValue()));
         $this->assertEquals($value, $length->getValue());
     }

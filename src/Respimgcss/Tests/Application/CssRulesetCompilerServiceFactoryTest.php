@@ -40,8 +40,8 @@ use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Factory\CssRulesetCompilerServiceFactory;
 use Jkphl\Respimgcss\Application\Factory\LengthFactory;
 use Jkphl\Respimgcss\Application\Model\ImageCandidateSet;
-use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
 use Jkphl\Respimgcss\Domain\Model\Css\Ruleset;
+use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
 use Jkphl\Respimgcss\Domain\Model\WidthImageCandidate;
 use Jkphl\Respimgcss\Domain\Service\DensityCssRulesetCompilerService;
 use Jkphl\Respimgcss\Domain\Service\WidthCssRulesetCompilerService;
@@ -86,7 +86,8 @@ class CssRulesetCompilerServiceFactoryTest extends AbstractTestBase
         $compilerService = CssRulesetCompilerServiceFactory::createForImageCandidates(
             new Ruleset(),
             $this->breakpoints,
-            new ImageCandidateSet(new DensityImageCandidate('image.jpg', 1))
+            new ImageCandidateSet(new DensityImageCandidate('image.jpg', 1)),
+            16
         );
         $this->assertInstanceOf(DensityCssRulesetCompilerService::class, $compilerService);
     }
@@ -99,7 +100,8 @@ class CssRulesetCompilerServiceFactoryTest extends AbstractTestBase
         $compilerService = CssRulesetCompilerServiceFactory::createForImageCandidates(
             new Ruleset(),
             $this->breakpoints,
-            new ImageCandidateSet(new WidthImageCandidate('image.jpg', 1000))
+            new ImageCandidateSet(new WidthImageCandidate('image.jpg', 1000)),
+            16
         );
         $this->assertInstanceOf(WidthCssRulesetCompilerService::class, $compilerService);
     }

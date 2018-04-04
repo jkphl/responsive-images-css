@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Application
+ * @subpackage Jkphl\Respimgcss\Domain\Contract
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,36 +34,22 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Tests\Application;
-
-use Jkphl\Respimgcss\Application\Factory\LengthFactory;
-use Jkphl\Respimgcss\Application\Model\ImageCandidateSet;
-use Jkphl\Respimgcss\Application\Service\CssRulesetCompilerService;
-use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
-use Jkphl\Respimgcss\Domain\Model\Css\Ruleset;
-use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
-use Jkphl\Respimgcss\Tests\AbstractTestBase;
+namespace Jkphl\Respimgcss\Domain\Contract;
 
 /**
- * CSS ruleset compiler service test
+ * Length factory interface
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Application
+ * @subpackage Jkphl\Respimgcss\Domain\Contract
  */
-class CssRulesetCompilerServiceTest extends AbstractTestBase
+interface LengthFactoryInterface
 {
     /**
-     * Test the  CSS ruleset compiler service
+     * Create an absolute length
+     *
+     * @param float $value Value
+     *
+     * @return AbsoluteLengthInterface Absolute length
      */
-    public function testCssRulesetCompilerService()
-    {
-        $ruleset           = new Ruleset();
-        $breakpoints       = array_map([LengthFactory::class, 'createLengthFromString'], ['24em', '800px', '72em']);
-        $imageCandidateSet = new ImageCandidateSet(new DensityImageCandidate('image.jpg', 1));
-        $compiler          = new CssRulesetCompilerService($ruleset, $breakpoints, $imageCandidateSet, 16);
-        $this->assertInstanceOf(CssRulesetCompilerService::class, $compiler);
-
-        $cssRulset = $compiler->compile([1, 2]);
-        $this->assertInstanceOf(CssRulesetInterface::class, $cssRulset);
-    }
+    public function createAbsoluteLength(float $value): AbsoluteLengthInterface;
 }

@@ -39,6 +39,7 @@ namespace Jkphl\Respimgcss\Domain\Service;
 use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
 use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
 use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
+use Jkphl\Respimgcss\Domain\Contract\LengthFactoryInterface;
 use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
 use Jkphl\Respimgcss\Domain\Model\Css\Rule;
 use Jkphl\Respimgcss\Domain\Model\AbstractLength;
@@ -87,7 +88,7 @@ class DensityCssRulesetCompilerService extends AbstractCssRulesetCompilerService
         // If this is not the default density: Add a resolution condition
         if ($density > 1) {
             $resolutionMediaCondition = new ResolutionMediaCondition(
-                new AbstractLength($density),
+                $this->lengthFactory->createAbsoluteLength($density),
                 CssMinMaxMediaConditionInterface::MIN
             );
             $rule                     = $rule->appendCondition($resolutionMediaCondition);
