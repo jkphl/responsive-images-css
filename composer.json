@@ -24,11 +24,15 @@
         "graph-composer": {
             "type": "git",
             "url": "https://github.com/jkphl/graph-composer"
+        },
+        "string-calc": {
+            "type": "git",
+            "url": "https://github.com/jkphl/string-calc"
         }
     },
     "require": {
         "php": ">=7.1",
-        "chriskonnertz/string-calc": "^1.0",
+        "chriskonnertz/string-calc": "dev-master",
         "sabberworm/php-css-parser": "^8.1"
     },
     "autoload": {
