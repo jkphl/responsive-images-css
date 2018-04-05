@@ -73,13 +73,6 @@ interface UnitLengthInterface extends LengthInterface
     public function getOriginalValue();
 
     /**
-     * Return the serialized length
-     *
-     * @return string Serialized length
-     */
-    public function getValueAndUnit(): string;
-
-    /**
      * Return whether this is an absolute length
      *
      * @return boolean Absolute length

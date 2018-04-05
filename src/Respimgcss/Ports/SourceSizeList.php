@@ -63,7 +63,7 @@ class SourceSizeList extends \Jkphl\Respimgcss\Infrastructure\SourceSizeList
         $sourceSizeFactory   = new SourceSizeFactory($emPixel);
         $unparsedSourceSizes = array_filter(array_map('trim', explode(',', $sourceSizeListStr)));
         $sourceSizes         = array_map(
-            function($unparsedSourceSize) use ($sourceSizeFactory) {
+            function ($unparsedSourceSize) use ($sourceSizeFactory) {
                 return $sourceSizeFactory->createFromSourceSizeStr($unparsedSourceSize);
             },
             $unparsedSourceSizes

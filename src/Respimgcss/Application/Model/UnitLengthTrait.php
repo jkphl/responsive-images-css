@@ -58,16 +58,6 @@ trait UnitLengthTrait
     protected $unit;
 
     /**
-     * Return the serialized length
-     *
-     * @return string Serialized length
-     */
-    public function getValueAndUnit(): string
-    {
-        return $this->getOriginalValue().$this->getUnit();
-    }
-
-    /**
      * Return the original value (in source units)
      *
      * @return mixed Original value (in source units)

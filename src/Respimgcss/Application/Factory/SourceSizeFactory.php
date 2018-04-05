@@ -38,6 +38,7 @@ namespace Jkphl\Respimgcss\Application\Factory;
 
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException;
+use Sabberworm\CSS\Parser;
 
 /**
  * Source size factory
@@ -59,9 +60,12 @@ class SourceSizeFactory extends AbstractLengthFactory
      */
     public function createFromSourceSizeStr(string $sourceSizeStr)
     {
-        echo $sourceSizeStr.' -> ';
+        // Determine the source size value
         $sourceSizeValue = $this->parseSourceSizeValue($sourceSizeStr);
-        echo $sourceSizeValue->getValueAndUnit().' ('.get_class($sourceSizeValue).')'.PHP_EOL;
+
+        // Determine the associated media condition (if any)
+        $mediaCondition = $this->parseMediaCondition($sourceSizeStr);
+
 
         return $sourceSizeValue;
     }
@@ -144,5 +148,20 @@ class SourceSizeFactory extends AbstractLengthFactory
     protected function getCharacterBalance($char): string
     {
         return ($char === ')') ? 1 : (($char === '(') ? -1 : 0);
+    }
+
+
+    /**
+     * @param string $mediaConditionString
+     * @see https://drafts.csswg.org/mediaqueries-4/#typedef-media-condition
+     * @see https://developer.mozilla.org/de/docs/Web/CSS/Media_Queries/Using_media_queries#Pseudo-BNF_(for_those_of_you_that_like_that_kind_of_thing)
+     */
+    protected function parseMediaCondition(string $mediaConditionString)
+    {
+        $parser = new Parser('@media screen and (min-width: 10em) {div{display: block}}');
+        print_r($parser->parse());
+        // width | min-width | max-width
+        // device-width | min-device-width | max-device-width
+        // resolution | min-resolution | max-resolution
     }
 }

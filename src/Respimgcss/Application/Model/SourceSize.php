@@ -5,9 +5,9 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Application
- * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
- * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
+ * @subpackage Jkphl\Respimgcss\Application\Model
+ * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
+ * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
@@ -34,37 +34,15 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Tests\Application;
-
-use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
-use Jkphl\Respimgcss\Application\Model\AbsoluteLength;
-use Jkphl\Respimgcss\Application\Model\PercentageLength;
-use Jkphl\Respimgcss\Application\Service\LengthNormalizerService;
-use Jkphl\Respimgcss\Tests\AbstractTestBase;
+namespace Jkphl\Respimgcss\Application\Model;
 
 /**
- * Relative length test
+ * Source size
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests
+ * @subpackage Jkphl\Respimgcss\Application\Model
  */
-class PercentageLengthTest extends AbstractTestBase
+class SourceSize
 {
-    /**
-     * Test a relative length
-     */
-    public function testRelativeLength()
-    {
-        $viewportWidth = rand(500, 1000);
-        $viewport      = new AbsoluteLength(
-            $viewportWidth,
-            UnitLengthInterface::UNIT_PIXEL,
-            new LengthNormalizerService(16)
-        );
-        $length        = new PercentageLength(50);
-        $this->assertFalse($length->isAbsolute());
-        $this->assertEquals(UnitLengthInterface::UNIT_PERCENT, $length->getUnit());
-        $this->assertEquals(50, $length->getOriginalValue());
-        $this->assertEquals($viewportWidth / 2, $length->getValue($viewport));
-    }
+
 }

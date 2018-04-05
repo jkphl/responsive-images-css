@@ -110,16 +110,6 @@ class ViewportLength extends AbstractRelativeLength
     }
 
     /**
-     * Return the serialized length
-     *
-     * @return string Serialized length
-     */
-    public function getValueAndUnit(): string
-    {
-        return 'DUMMY';
-    }
-
-    /**
      * Return the length value
      *
      * @param AbsoluteLengthInterface $viewport Viewport width
