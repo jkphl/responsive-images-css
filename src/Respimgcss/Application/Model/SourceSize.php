@@ -36,6 +36,8 @@
 
 namespace Jkphl\Respimgcss\Application\Model;
 
+use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
+
 /**
  * Source size
  *
@@ -44,5 +46,48 @@ namespace Jkphl\Respimgcss\Application\Model;
  */
 class SourceSize
 {
+    /**
+     * Source size valie
+     *
+     * @var UnitLengthInterface
+     */
+    protected $value;
+    /**
+     * Media condition
+     *
+     * @var SourceSizeMediaCondition|null
+     */
+    protected $mediaCondition;
 
+    /**
+     * Source size constructor
+     *
+     * @param UnitLengthInterface $value               Source size value
+     * @param SourceSizeMediaCondition $mediaCondition Media condition
+     */
+    public function __construct(UnitLengthInterface $value, SourceSizeMediaCondition $mediaCondition = null)
+    {
+        $this->value          = $value;
+        $this->mediaCondition = $mediaCondition;
+    }
+
+    /**
+     * Return the source size value
+     *
+     * @return UnitLengthInterface Source size value
+     */
+    public function getValue(): UnitLengthInterface
+    {
+        return $this->value;
+    }
+
+    /**
+     * Return the source size media condition
+     *
+     * @return SourceSizeMediaCondition|null Media condition
+     */
+    public function getMediaCondition(): ?SourceSizeMediaCondition
+    {
+        return $this->mediaCondition;
+    }
 }

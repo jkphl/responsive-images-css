@@ -100,16 +100,6 @@ class ViewportLength extends AbstractRelativeLength
     }
 
     /**
-     * Return whether this is an absolute length
-     *
-     * @return boolean Absolute length
-     */
-    public function isAbsolute(): bool
-    {
-        return false;
-    }
-
-    /**
      * Return the length value
      *
      * @param AbsoluteLengthInterface $viewport Viewport width

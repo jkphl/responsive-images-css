@@ -46,13 +46,5 @@ use Jkphl\Respimgcss\Domain\Contract\RelativeLengthInterface;
  */
 abstract class AbstractRelativeLength extends AbstractLength implements RelativeLengthInterface
 {
-    /**
-     * Return whether this is an absolute length
-     *
-     * @return boolean Absolute length
-     */
-    public function isAbsolute(): bool
-    {
-        return false;
-    }
+
 }

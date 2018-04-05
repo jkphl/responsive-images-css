@@ -36,6 +36,8 @@
 
 namespace Jkphl\Respimgcss\Infrastructure;
 
+use Jkphl\Respimgcss\Application\Model\SourceSize;
+
 /**
  * Sizes list
  *
@@ -44,5 +46,20 @@ namespace Jkphl\Respimgcss\Infrastructure;
  */
 class SourceSizeList extends \ArrayObject
 {
+    /**
+     * Source sizes
+     *
+     * @var SourceSize[]
+     */
+    protected $sourceSizes;
 
+    /**
+     * Source size list constructor
+     *
+     * @param SourceSize[] $sourceSizes Source sizes
+     */
+    public function __construct(array $sourceSizes)
+    {
+        $this->sourceSizes = $sourceSizes;
+    }
 }

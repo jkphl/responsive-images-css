@@ -36,7 +36,6 @@
 
 namespace Jkphl\Respimgcss\Application\Factory;
 
-use ChrisKonnertz\StringCalc\Parser\Nodes\ContainerNode;
 use ChrisKonnertz\StringCalc\Tokenizer\Token;
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException;
@@ -62,7 +61,7 @@ class CalcLengthFactory extends AbstractLengthFactory
      * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
-    public function createFromString(string $calcString): UnitLengthInterface
+    public function createLengthFromString(string $calcString): UnitLengthInterface
     {
         // If the calc() string is ill-formatted
         if (!preg_match('/^calc\(.+\)$/', $calcString)) {
@@ -71,7 +70,6 @@ class CalcLengthFactory extends AbstractLengthFactory
                 InvalidArgumentException::ILL_FORMATTED_CALC_LENGTH_STRING
             );
         }
-
         return $this->createCalculationContainerFromString($calcString);
     }
 
@@ -80,7 +78,7 @@ class CalcLengthFactory extends AbstractLengthFactory
      *
      * @param string $calcString Calculation string
      *
-     * @return ContainerNode Calculation node container
+     * @return UnitLengthInterface Calculation node container
      * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
@@ -105,7 +103,9 @@ class CalcLengthFactory extends AbstractLengthFactory
 
         // Create and return an absolute length
         return new AbsoluteLength(
-            $stringCalc->calculate($refinedTokens),
+            $stringCalc->getContainer()->get('stringcalc_calculator')->calculate(
+                $stringCalc->parse($refinedTokens)
+            ),
             UnitLengthInterface::UNIT_PIXEL,
             $this->lengthNormalizerService
         );
@@ -231,7 +231,7 @@ class CalcLengthFactory extends AbstractLengthFactory
         UnitLengthInterface $unitLength
     ): void {
         // If it's an absolute value
-        if ($unitLength->isAbsolute()) {
+        if ($unitLength instanceof AbsoluteLength) {
             array_push($refinedTokens, new Token(strval($unitLength->getValue()), Token::TYPE_NUMBER, 0));
 
             return;

@@ -71,11 +71,4 @@ interface UnitLengthInterface extends LengthInterface
      * @return mixed Original value (in source units)
      */
     public function getOriginalValue();
-
-    /**
-     * Return whether this is an absolute length
-     *
-     * @return boolean Absolute length
-     */
-    public function isAbsolute(): bool;
 }

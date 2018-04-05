@@ -68,16 +68,6 @@ class AbsoluteLength extends AbstractLength implements AbsoluteLengthInterface
     }
 
     /**
-     * Return whether this is an absolute length
-     *
-     * @return boolean Absolute length
-     */
-    public function isAbsolute(): bool
-    {
-        return true;
-    }
-
-    /**
      * Return the length value
      *
      * @param AbsoluteLengthInterface $viewport Viewport width

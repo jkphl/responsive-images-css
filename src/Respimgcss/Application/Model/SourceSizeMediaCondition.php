@@ -5,9 +5,9 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
- * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
- * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
+ * @subpackage Jkphl\Respimgcss\Application\Model
+ * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
+ * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
@@ -34,41 +34,40 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Ports;
+namespace Jkphl\Respimgcss\Application\Model;
 
-use Jkphl\Respimgcss\Application\Factory\SourceSizeFactory;
+use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
 
 /**
- * Size list
+ * Source size media condition
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
- * @see        http://w3c.github.io/html/semantics-embedded-content.html#ref-for-viewport-based-selection%E2%91%A0
- * @see        http://w3c.github.io/html/semantics-embedded-content.html#valid-source-size-list
- * @see        http://w3c.github.io/html/semantics-embedded-content.html#parse-a-sizes-attribute
+ * @subpackage Jkphl\Respimgcss\Application\Model
  */
-class SourceSizeList extends \Jkphl\Respimgcss\Infrastructure\SourceSizeList
+class SourceSizeMediaCondition
 {
     /**
-     * Create a size list from a source size list
+     * Media condition string
      *
-     * @param $sourceSizeListStr SourceSizeList size list
-     * @param int $emPixel       EM to pixel ratio
-     *
-     * @return SourceSizeList Size list
-     * @api
+     * @var string
      */
-    public static function fromString($sourceSizeListStr, int $emPixel = 16): SourceSizeList
-    {
-        $sourceSizeFactory   = new SourceSizeFactory($emPixel);
-        $unparsedSourceSizes = array_filter(array_map('trim', explode(',', $sourceSizeListStr)));
-        $sourceSizes         = array_map(
-            function ($unparsedSourceSize) use ($sourceSizeFactory) {
-                return $sourceSizeFactory->createFromSourceSizeStr($unparsedSourceSize);
-            },
-            $unparsedSourceSizes
-        );
+    protected $value;
+    /**
+     * Size and resolution conditions
+     *
+     * @var CssMinMaxMediaConditionInterface[]
+     */
+    protected $conditions;
 
-        return new static($sourceSizes);
+    /**
+     * Source size media condition constructor
+     *
+     * @param string $value                                  Media condition string
+     * @param CssMinMaxMediaConditionInterface[] $conditions Size and resolution conditions
+     */
+    public function __construct(string $value, array $conditions = [])
+    {
+        $this->value      = $value;
+        $this->conditions = $conditions;
     }
 }

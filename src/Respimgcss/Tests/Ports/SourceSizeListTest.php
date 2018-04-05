@@ -52,27 +52,8 @@ class SourceSizeListTest extends AbstractTestBase
      */
     public function testSourceSizeList()
     {
-        $sourceSizeListStr = '(max-width: 30em) 100vw, (max-width: 50em) 50vw, calc(33vw - 100px)';
+        $sourceSizeListStr = '(max-width: 30em) 100vw, (max-width: calc(50em + 100px)) and (min-resolution:1) 50vw, calc(33vw - 100px)';
         $sourceSizeList    = SourceSizeList::fromString($sourceSizeListStr);
         $this->assertInstanceOf(SourceSizeList::class, $sourceSizeList);
     }
-
-//    public function _testStringCalc()
-//    {
-//        $stringCalc   = new StringCalc();
-//        $stringHelper = $stringCalc->getContainer()->get('stringcalc_stringhelper');
-//        $stringCalc->addSymbol(new Test($stringHelper));
-//        echo $stringCalc->calculate('test()');
-//        SymbolContainer::class;
-//    }
 }
-
-//class Test extends AbstractFunction
-//{
-//    protected $identifiers = ['test'];
-//
-//    public function execute(array $arguments)
-//    {
-//        return 1;
-//    }
-//}
