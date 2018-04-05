@@ -62,7 +62,7 @@ class PercentageLengthTest extends AbstractTestBase
             new LengthNormalizerService(16)
         );
         $length        = new PercentageLength(50);
-        $this->assertFalse($length->isAbsolute());
+        $this->assertInstanceOf(PercentageLength::class, $length);
         $this->assertEquals(UnitLengthInterface::UNIT_PERCENT, $length->getUnit());
         $this->assertEquals(50, $length->getOriginalValue());
         $this->assertEquals($viewportWidth / 2, $length->getValue($viewport));

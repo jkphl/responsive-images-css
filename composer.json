@@ -1,57 +1,53 @@
 {
-    "name": "jkphl/responsive-images-css",
-    "description": "PHP library for translating HTML responsive images to CSS (sort of ...)",
-    "homepage": "https://github.com/jkphl/responsive-images-css",
-    "minimum-stability": "RC",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Joschi Kuphal",
-            "email": "joschi@kuphal.net",
-            "homepage": "https://jkphl.is",
-            "role": "Developer"
-        }
-    ],
-    "support": {
-        "email": "joschi@kuphal.net",
-        "source": "https://github.com/jkphl/responsive-images-css",
-        "issues": "https://github.com/jkphl/responsive-images-css/issues"
-    },
-    "config": {
-        "sort-packages": true
-    },
-    "repositories": {
-        "graph-composer": {
-            "type": "git",
-            "url": "https://github.com/jkphl/graph-composer"
-        },
-        "string-calc": {
-            "type": "git",
-            "url": "https://github.com/jkphl/string-calc"
-        }
-    },
-    "require": {
-        "php": ">=7.1",
-        "chriskonnertz/string-calc": "dev-master",
-        "sabberworm/php-css-parser": "^8.1"
-    },
-    "autoload": {
-        "psr-4": {
-            "Jkphl\\": "src/"
-        }
-    },
-    "scripts": {
-        "phpunit": "vendor/bin/phpunit --configuration phpunit.xml.dist",
-        "depgraph": "vendor/bin/graph-composer --no-dev export . doc/dependencies.svg",
-        "check-style": "vendor/bin/phpcs -p --standard=PSR2 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src",
-        "fix-style": "vendor/bin/phpcbf -p --standard=PSR2 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src",
-        "test": "@phpunit"
-    },
-    "require-dev": {
-        "clue/graph-composer": "dev-master",
-        "codeclimate/php-test-reporter": "^0.4.4",
-        "phpunit/phpunit": "^7.0",
-        "satooshi/php-coveralls": "^1.0",
-        "squizlabs/php_codesniffer": "^3.2"
+  "name": "jkphl/responsive-images-css",
+  "description": "PHP library for translating HTML responsive images to CSS (sort of ...)",
+  "homepage": "https://github.com/jkphl/responsive-images-css",
+  "minimum-stability": "RC",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Joschi Kuphal",
+      "email": "joschi@kuphal.net",
+      "homepage": "https://jkphl.is",
+      "role": "Developer"
     }
+  ],
+  "support": {
+    "email": "joschi@kuphal.net",
+    "source": "https://github.com/jkphl/responsive-images-css",
+    "issues": "https://github.com/jkphl/responsive-images-css/issues"
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "repositories": {
+    "graph-composer": {
+      "type": "git",
+      "url": "https://github.com/jkphl/graph-composer"
+    }
+  },
+  "require": {
+    "php": ">=7.1",
+    "chriskonnertz/string-calc": "^1.0.10",
+    "sabberworm/php-css-parser": "^8.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Jkphl\\": "src/"
+    }
+  },
+  "scripts": {
+    "phpunit": "vendor/bin/phpunit --configuration phpunit.xml.dist",
+    "depgraph": "vendor/bin/graph-composer --no-dev export . doc/dependencies.svg",
+    "check-style": "vendor/bin/phpcs -p --standard=PSR2 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src",
+    "fix-style": "vendor/bin/phpcbf -p --standard=PSR2 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src",
+    "test": "@phpunit"
+  },
+  "require-dev": {
+    "clue/graph-composer": "dev-master",
+    "codeclimate/php-test-reporter": "^0.4.4",
+    "phpunit/phpunit": "^7.0",
+    "satooshi/php-coveralls": "^1.0",
+    "squizlabs/php_codesniffer": "^3.2"
+  }
 }

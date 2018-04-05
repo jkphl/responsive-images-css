@@ -57,7 +57,7 @@ class AbsoluteLengthTest extends AbstractTestBase
         $emPixel                 = rand(1, getrandmax());
         $lengthNormalizerService = new LengthNormalizerService($emPixel);
         $length                  = new AbsoluteLength(1, UnitLengthInterface::UNIT_EM, $lengthNormalizerService);
-        $this->assertTrue($length->isAbsolute());
+        $this->assertInstanceOf(AbsoluteLength::class, $length);
         $this->assertEquals(UnitLengthInterface::UNIT_EM, $length->getUnit());
         $this->assertEquals(1, $length->getOriginalValue());
         $this->assertEquals($emPixel, $length->getValue());
