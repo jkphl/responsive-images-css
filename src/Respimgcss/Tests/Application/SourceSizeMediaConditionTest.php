@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Application\Model
+ * @subpackage Jkphl\Respimgcss\Tests\Application
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,46 +34,27 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Application\Model;
+namespace Jkphl\Respimgcss\Tests\Application;
+
+use Jkphl\Respimgcss\Application\Model\SourceSizeMediaCondition;
+use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
- * Unit length trait
+ * Source size media condition tests
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Application\Model
+ * @subpackage Jkphl\Respimgcss\Tests\Application
  */
-trait UnitLengthTrait
+class SourceSizeMediaConditionTest extends AbstractTestBase
 {
     /**
-     * Original value
-     *
-     * @var mixed
+     * Test the source media condition tests
      */
-    protected $originalValue;
-    /**
-     * Unit
-     *
-     * @var string
-     */
-    protected $unit;
-
-    /**
-     * Return the original value (in source units)
-     *
-     * @return mixed Original value (in source units)
-     */
-    public function getOriginalValue()
+    public function testSourceSizeMediaCondition()
     {
-        return $this->originalValue;
-    }
-
-    /**
-     * Return the lengths unit
-     *
-     * @return string Unit
-     */
-    public function getUnit(): string
-    {
-        return $this->unit;
+        $sourceMediaCondition = new SourceSizeMediaCondition('value', ['condition']);
+        $this->assertInstanceOf(SourceSizeMediaCondition::class, $sourceMediaCondition);
+        $this->assertEquals('value', $sourceMediaCondition->getValue());
+        $this->assertEquals(['condition'], $sourceMediaCondition->getConditions());
     }
 }

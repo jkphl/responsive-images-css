@@ -36,73 +36,68 @@
 
 namespace Jkphl\Respimgcss\Tests\Application;
 
-use Jkphl\Respimgcss\Application\Factory\LengthFactory;
+use Jkphl\Respimgcss\Application\Factory\CalcLengthFactory;
 use Jkphl\Respimgcss\Application\Model\AbsoluteLength;
-use Jkphl\Respimgcss\Application\Model\AbstractRelativeLength;
+use Jkphl\Respimgcss\Application\Model\ViewportLength;
 use Jkphl\Respimgcss\Infrastructure\ViewportCalculatorServiceFactory;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
- * AbstractLength factory tests
+ * Calculation length factory tests
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests
+ * @subpackage Jkphl\Respimgcss\Tests\Application
  */
-class LengthFactoryTest extends AbstractTestBase
+class CalcLengthFactoryTest extends AbstractTestBase
 {
     /**
-     * Length factory
+     * Calculation length factory
      *
-     * @var LengthFactory
+     * @var CalcLengthFactory
      */
-    protected $lengthFactory;
+    protected $calcLengthFactory;
 
     /**
      * Test setup
      */
-    protected function setUp()/* The :void return type declaration that should be here would cause a BC issue */
+    protected function setUp()
     {
         parent::setUp();
-        $this->lengthFactory = new LengthFactory(new ViewportCalculatorServiceFactory(), 16);
+        $this->calcLengthFactory = new CalcLengthFactory(new ViewportCalculatorServiceFactory(), 16);
     }
 
     /**
-     * Test an invalid length string
+     * Test the calculation length factory with an absolute value
+     */
+    public function testCalcLengthFactoryAbsolute()
+    {
+        /** @var AbsoluteLength $calcLength */
+        $calcLength = $this->calcLengthFactory->createLengthFromString('calc(1em + 10px)');
+        $this->assertInstanceOf(AbsoluteLength::class, $calcLength);
+        $this->assertEquals(26, $calcLength->getValue());
+    }
+
+    /**
+     * Test the calculation length factory with a viewport value
+     */
+    public function testCalcLengthFactoryViewport()
+    {
+        /** @var ViewportLength $calcLength */
+        $viewportWidth  = rand(1000, getrandmax());
+        $viewportLength = $this->calcLengthFactory->createAbsoluteLength($viewportWidth);
+        $calcLength     = $this->calcLengthFactory->createLengthFromString('calc(100vw + 100px)');
+        $this->assertInstanceOf(ViewportLength::class, $calcLength);
+        $this->assertEquals($viewportWidth + 100, $calcLength->getValue($viewportLength));
+    }
+
+    /**
+     * Test the calculation length factory with an invalid calc() string
      *
      * @expectedException \Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException
-     * @expectedExceptionCode 1522492102
+     * @expectedException 1522687100
      */
-    public function testInvalidLengthString()
+    public function testCalcLengthFactoryInvalid()
     {
-        $this->lengthFactory->createLengthFromString('123abc');
-    }
-
-    /**
-     * Test the creation of an absolute length
-     */
-    public function testAbsoluteLengthCreation()
-    {
-        $length = $this->lengthFactory->createLengthFromString('1px');
-        $this->assertInstanceOf(AbsoluteLength::class, $length);
-    }
-
-    /**
-     * Test the creation of a relative length
-     */
-    public function testRelativeLengthCreation()
-    {
-        $length = $this->lengthFactory->createLengthFromString('100%');
-        $this->assertInstanceOf(AbstractRelativeLength::class, $length);
-    }
-
-    /**
-     * Test an invalid length unit
-     *
-     * @expectedException \Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException
-     * @expectedExceptionCode 1522493474
-     */
-    public function testInvalidLengthUnit()
-    {
-        $this->lengthFactory->createLengthFromString('123xp');
+        $this->calcLengthFactory->createLengthFromString('invalid');
     }
 }

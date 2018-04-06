@@ -142,7 +142,7 @@ class SourceSizeFactory extends AbstractLengthFactory
      */
     protected function getCharacterBalance($char): string
     {
-        return ($char === ')') ? 1 : (($char === '(') ? -1 : 0);
+        return ($char === '(') ? 1 : (($char === ')') ? -1 : 0);
     }
 
     /**
@@ -198,7 +198,6 @@ class SourceSizeFactory extends AbstractLengthFactory
                     $widthConditionMatches[1][$widthConditionIndex][0]
                 );
             } catch (\Exception $e) {
-                echo $e->getMessage();
                 continue;
             }
         }
@@ -290,7 +289,6 @@ class SourceSizeFactory extends AbstractLengthFactory
                     $resolutionConditionMatches[1][$resolutionConditionIndex][0]
                 );
             } catch (\Exception $e) {
-                echo $e->getMessage();
                 continue;
             }
         }

@@ -56,6 +56,7 @@ class CalcLengthFactory extends AbstractLengthFactory
      * @param string $calcString calc() size string
      *
      * @return UnitLengthInterface
+     * @throws InvalidArgumentException If the calc() string is ill-formatted
      */
     public function createLengthFromString(string $calcString): UnitLengthInterface
     {

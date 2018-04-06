@@ -5,9 +5,9 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Application\Model
- * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
- * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
+ * @subpackage Jkphl\Respimgcss\Tests\Application
+ * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
+ * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
@@ -34,60 +34,36 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Application\Model;
+namespace Jkphl\Respimgcss\Tests\Application;
 
-use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
+use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
+use Jkphl\Respimgcss\Application\Factory\LengthFactory;
+use Jkphl\Respimgcss\Application\Model\SourceSize;
+use Jkphl\Respimgcss\Application\Model\SourceSizeMediaCondition;
+use Jkphl\Respimgcss\Infrastructure\ViewportCalculatorServiceFactory;
+use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
- * Source size media condition
+ * Source size test
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Application\Model
+ * @subpackage Jkphl\Respimgcss\Tests\Application
  */
-class SourceSizeMediaCondition
+class SourceSizeTest extends AbstractTestBase
 {
     /**
-     * Media condition string
-     *
-     * @var string
+     * Test the source size
      */
-    protected $value;
-    /**
-     * Size and resolution conditions
-     *
-     * @var CssMinMaxMediaConditionInterface[]
-     */
-    protected $conditions;
-
-    /**
-     * Source size media condition constructor
-     *
-     * @param string $value                                  Media condition string
-     * @param CssMinMaxMediaConditionInterface[] $conditions Size and resolution conditions
-     */
-    public function __construct(string $value, array $conditions = [])
+    public function testSourceSize()
     {
-        $this->value      = $value;
-        $this->conditions = $conditions;
-    }
-
-    /**
-     * Return the media condition string
-     *
-     * @return string Media condition string
-     */
-    public function getValue(): string
-    {
-        return $this->value;
-    }
-
-    /**
-     * Return the size and resolution conditions
-     *
-     * @return CssMinMaxMediaConditionInterface[] Size and resolution conditions
-     */
-    public function getConditions(): array
-    {
-        return $this->conditions;
+        $lengthFactory            = new LengthFactory(new ViewportCalculatorServiceFactory(), 16);
+        $unitLength               = $lengthFactory->createLengthFromString('100px');
+        $sourceSizeMediaCondition = new SourceSizeMediaCondition('value');
+        $sourceSize               = new SourceSize($unitLength, $sourceSizeMediaCondition);
+        $this->assertInstanceOf(SourceSize::class, $sourceSize);
+        $this->assertInstanceOf(UnitLengthInterface::class, $sourceSize->getValue());
+        $this->assertEquals($unitLength, $sourceSize->getValue());
+        $this->assertInstanceOf(SourceSizeMediaCondition::class, $sourceSize->getMediaCondition());
+        $this->assertEquals($sourceSizeMediaCondition, $sourceSize->getMediaCondition());
     }
 }
