@@ -40,7 +40,7 @@ use ChrisKonnertz\StringCalc\Tokenizer\Token;
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException;
 use Jkphl\Respimgcss\Application\Model\AbsoluteLength;
-use Jkphl\Respimgcss\Application\Model\StringCalculator;
+use Jkphl\Respimgcss\Application\Model\ViewportCalculator;
 use Jkphl\Respimgcss\Application\Model\ViewportLength;
 
 /**
@@ -70,6 +70,7 @@ class CalcLengthFactory extends AbstractLengthFactory
                 InvalidArgumentException::ILL_FORMATTED_CALC_LENGTH_STRING
             );
         }
+
         return $this->createCalculationContainerFromString($calcString);
     }
 
@@ -85,7 +86,7 @@ class CalcLengthFactory extends AbstractLengthFactory
      */
     protected function createCalculationContainerFromString(string $calcString): UnitLengthInterface
     {
-        $stringCalc    = new StringCalculator();
+        $stringCalc    = new ViewportCalculator();
         $calcTokens    = $stringCalc->tokenize($calcString);
         $refinedTokens = $this->refineCalculationTokens($calcTokens);
 
@@ -94,7 +95,7 @@ class CalcLengthFactory extends AbstractLengthFactory
         foreach ($refinedTokens as $token) {
             if (($token->getType() == Token::TYPE_WORD) && ($token->getValue() === 'viewport')) {
                 return new ViewportLength(
-                    $stringCalc->parse($refinedTokens),
+                    $refinedTokens,
                     $this->lengthNormalizerService,
                     $calcString
                 );

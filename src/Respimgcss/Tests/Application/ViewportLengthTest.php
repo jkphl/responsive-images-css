@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Domain
+ * @subpackage Jkphl\Respimgcss\Tests\Application
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,45 +34,36 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Tests\Domain;
+namespace Jkphl\Respimgcss\Tests\Application;
 
+use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
+use Jkphl\Respimgcss\Application\Factory\CalcLengthFactory;
 use Jkphl\Respimgcss\Application\Factory\LengthFactory;
-use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
-use Jkphl\Respimgcss\Domain\Model\Css\Ruleset;
-use Jkphl\Respimgcss\Domain\Model\ImageCandidateSet;
-use Jkphl\Respimgcss\Domain\Model\WidthImageCandidate;
-use Jkphl\Respimgcss\Domain\Service\WidthCssRulesetCompilerService;
+use Jkphl\Respimgcss\Application\Model\ViewportLength;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
-use Jkphl\Respimgcss\Tests\Domain\Mock\AbsoluteLength;
 
 /**
- * Width CSS ruleset compiler service tests
+ * Viewport length test
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Domain
+ * @subpackage Jkphl\Respimgcss\Tests
  */
-class WidthCssRulesetCompilerServiceTest extends AbstractTestBase
+class ViewportLengthTest extends AbstractTestBase
 {
     /**
-     * Test the width CSS ruleset compiler service
+     * Test the viewport length
      */
-    public function testWidthCssRulesetCompilerService()
+    public function testViewportLength()
     {
-        $ruleset             = new Ruleset();
-        $length              = new AbsoluteLength(500);
-        $imageCandidateSet   = new ImageCandidateSet();
-        $imageCandidateSet[] = new WidthImageCandidate('small.jpg', 400);
-        $imageCandidateSet[] = new WidthImageCandidate('medium.jpg', 800);
-        $lengthFactory       = new LengthFactory(16);
-        $compiler            = new WidthCssRulesetCompilerService(
-            $ruleset,
-            [$length],
-            $imageCandidateSet,
-            $lengthFactory
-        );
-        $this->assertInstanceOf(WidthCssRulesetCompilerService::class, $compiler);
-
-        $cssRuleset = $compiler->compile(2);
-        $this->assertInstanceOf(CssRulesetInterface::class, $cssRuleset);
+        /** @var ViewportLength $viewportLength */
+        $viewportWidthPixel = rand(1000, getrandmax());
+        $viewportWidth      = (new LengthFactory(16))->createAbsoluteLength($viewportWidthPixel);
+        $viewportLengthStr  = 'calc(100vw - 100px)';
+        $calcLengthFactory  = new CalcLengthFactory(16);
+        $viewportLength     = $calcLengthFactory->createLengthFromString($viewportLengthStr);
+        $this->assertInstanceOf(ViewportLength::class, $viewportLength);
+        $this->assertEquals(UnitLengthInterface::UNIT_PIXEL, $viewportLength->getUnit());
+        $this->assertEquals($viewportLengthStr, $viewportLength->getOriginalValue());
+        $this->assertEquals($viewportWidthPixel - 100, $viewportLength->getValue($viewportWidth));
     }
 }

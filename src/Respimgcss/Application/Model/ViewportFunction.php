@@ -36,7 +36,9 @@
 
 namespace Jkphl\Respimgcss\Application\Model;
 
+use ChrisKonnertz\StringCalc\Support\StringHelperInterface;
 use ChrisKonnertz\StringCalc\Symbols\AbstractFunction;
+use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 
 /**
  * Viewport calculation function
@@ -47,28 +49,56 @@ use ChrisKonnertz\StringCalc\Symbols\AbstractFunction;
 class ViewportFunction extends AbstractFunction
 {
     /**
+     * Viewport width
+     *
+     * @var AbsoluteLengthInterface
+     */
+    protected $viewport;
+    /**
      * @inheritdoc
      */
     protected $identifiers = ['viewport'];
 
     /**
-     * This method is called when the function is executed. A function can have 0-n parameters.
-     * The implementation of this method is responsible to validate the number of arguments.
-     * The $arguments array contains these arguments. If the number of arguments is improper,
-     * the method has to throw a Exceptions\NumberOfArgumentsException exception.
-     * The items of the $arguments array will always be of type int or float. They will never be null.
-     * They keys will be integers starting at 0 and representing the positions of the arguments
-     * in ascending order.
-     * Overwrite this method in the concrete operator class.
-     * If this class does NOT return a value of type int or float,
-     * an exception will be thrown.
+     * AbstractSymbol constructor.
+     *
+     * @param StringHelperInterface $stringHelper String helper
+     * @param AbsoluteLengthInterface $viewport   Viewport width
+     *
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
+     */
+    public function __construct(StringHelperInterface $stringHelper, AbsoluteLengthInterface $viewport)
+    {
+        parent::__construct($stringHelper);
+        $this->viewport = $viewport;
+//        $this->name = rand();
+//        echo 'init '.$this->name;
+//        try {
+//        	throw new \Exception;
+//        } catch (\Exception $e) {
+//        	echo $e->getMessage().PHP_EOL.$e->getTraceAsString().PHP_EOL;
+//        }
+//        echo PHP_EOL.PHP_EOL;
+//        print_r($this->viewport);
+    }
+
+    /**
+     * Execute the function
      *
      * @param  int|float[] $arguments
      *
-     * @return int|float
+     * @return int|float Viewport width
      */
     public function execute(array $arguments)
     {
-        return 1;
+//        echo 'exec '.$this->name;
+//        try {
+//            throw new \Exception;
+//        } catch (\Exception $e) {
+//            echo $e->getMessage().PHP_EOL.$e->getTraceAsString().PHP_EOL;
+//        }
+//        print_r($this->viewport);
+//        echo PHP_EOL.PHP_EOL;
+        return $this->viewport->getValue();
     }
 }

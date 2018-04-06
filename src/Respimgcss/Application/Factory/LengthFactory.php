@@ -41,7 +41,6 @@ use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException;
 use Jkphl\Respimgcss\Application\Model\AbsoluteLength;
 use Jkphl\Respimgcss\Application\Model\PercentageLength;
-use Jkphl\Respimgcss\Application\Model\StringCalculator;
 use Jkphl\Respimgcss\Application\Model\ViewportLength;
 
 /**
@@ -83,9 +82,6 @@ class LengthFactory extends AbstractLengthFactory
      * @param string $length AbstractLength string
      *
      * @return UnitLengthInterface AbstractLength with unit
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
     public function createLengthFromString(string $length): UnitLengthInterface
     {
@@ -123,9 +119,6 @@ class LengthFactory extends AbstractLengthFactory
      *
      * @return UnitLengthInterface AbstractLength with unit
      * @throws InvalidArgumentException If the unit is invalid
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
     protected function makeInstance(string $value, string $unit): UnitLengthInterface
     {
@@ -136,18 +129,14 @@ class LengthFactory extends AbstractLengthFactory
 
         switch ($unit) {
             case UnitLengthInterface::UNIT_VW: // Viewport unit
-                $stringCalc = new StringCalculator();
-
                 return new ViewportLength(
-                    $stringCalc->parse(
-                        [
-                            new Token(strval($value / 100), Token::TYPE_NUMBER, 0),
-                            new Token('*', Token::TYPE_CHARACTER, 0),
-                            new Token('viewport', Token::TYPE_WORD, 0),
-                            new Token('(', Token::TYPE_CHARACTER, 0),
-                            new Token(')', Token::TYPE_CHARACTER, 0),
-                        ]
-                    ),
+                    [
+                        new Token(strval($value / 100), Token::TYPE_NUMBER, 0),
+                        new Token('*', Token::TYPE_CHARACTER, 0),
+                        new Token('viewport', Token::TYPE_WORD, 0),
+                        new Token('(', Token::TYPE_CHARACTER, 0),
+                        new Token(')', Token::TYPE_CHARACTER, 0),
+                    ],
                     $this->lengthNormalizerService,
                     $value
                 );

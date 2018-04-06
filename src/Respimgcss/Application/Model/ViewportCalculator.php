@@ -6,8 +6,8 @@
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Application\Model
- * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
- * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
+ * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
+ * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
@@ -36,83 +36,54 @@
 
 namespace Jkphl\Respimgcss\Application\Model;
 
+use ChrisKonnertz\StringCalc\Container\ContainerInterface;
+use ChrisKonnertz\StringCalc\StringCalc;
 use ChrisKonnertz\StringCalc\Tokenizer\Token;
-use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
-use Jkphl\Respimgcss\Application\Service\LengthNormalizerService;
+use Jkphl\Respimgcss\Application\Factory\LengthFactory;
 use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 
 /**
- * Viewport length
+ * Custom string calculator
  *
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Application\Model
  */
-class ViewportLength extends AbstractRelativeLength
+class ViewportCalculator extends StringCalc
 {
     /**
-     * Calculation
-     *
-     * @var Token[]
-     */
-    protected $tokens;
-    /**
-     * AbstractLength normalizer service
-     *
-     * @var LengthNormalizerService
-     */
-    protected $lengthNormalizerService;
-
-    /**
-     * Absolute length constructor
-     *
-     * @param Token[] $tokens                                  Calculation tokens
-     * @param LengthNormalizerService $lengthNormalizerService AbstractLength normalizer service
-     * @param string $originalValue                            Original value
-     */
-    public function __construct(
-        array $tokens,
-        LengthNormalizerService $lengthNormalizerService,
-        string $originalValue
-    ) {
-        parent::__construct(0, UnitLengthInterface::UNIT_VW, $originalValue);
-        $this->tokens                  = $tokens;
-        $this->lengthNormalizerService = $lengthNormalizerService;
-    }
-
-    /**
-     * Return the lengths unit
-     *
-     * @return string Unit
-     */
-    public function getUnit(): string
-    {
-        return UnitLengthInterface::UNIT_PIXEL;
-    }
-
-    /**
-     * Return the original value (in source units)
-     *
-     * @return mixed Original value (in source units)
-     */
-    public function getOriginalValue()
-    {
-        return $this->originalValue;
-    }
-
-    /**
-     * Return the length value
+     * Custom string calculator constructor
      *
      * @param AbsoluteLengthInterface $viewport Viewport width
+     * @param ContainerInterface $container     Container
      *
-     * @return float value
      * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
-    public function getValue(AbsoluteLengthInterface $viewport): float
+    public function __construct(AbsoluteLengthInterface $viewport = null, $container = null)
     {
-        $viewportCalculator = new ViewportCalculator($viewport);
+        parent::__construct($container);
+        $stringHelper     = $this->getContainer()->get('stringcalc_stringhelper');
+        $viewportFunction = new ViewportFunction(
+            $stringHelper,
+            $viewport ?: (new LengthFactory(1))->createAbsoluteLength(0)
+        );
+        $this->symbolContainer->add($viewportFunction);
+    }
 
-        return $viewportCalculator->evaluate($this->tokens);
+    /**
+     * Evaluate calculation tokens
+     *
+     * @param Token[] $tokens Calculation tokens
+     *
+     * @return float Result
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
+     */
+    public function evaluate(array $tokens): float
+    {
+        $calculationRootNode = $this->parse($tokens);
+
+        return $this->container->get('stringcalc_calculator')->calculate($calculationRootNode);
     }
 }
