@@ -42,6 +42,7 @@ use Jkphl\Respimgcss\Domain\Model\Css\MediaCondition;
 use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
 use Jkphl\Respimgcss\Infrastructure\CssMediaCondition;
 use Jkphl\Respimgcss\Infrastructure\CssMediaConditionFactory;
+use Jkphl\Respimgcss\Infrastructure\ViewportCalculatorServiceFactory;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
@@ -68,7 +69,7 @@ class CssMediaConditionFactoryTest extends AbstractTestBase
      */
     public function testCssMediaConditionFactoryResolution()
     {
-        $lengthFactory   = new LengthFactory(16);
+        $lengthFactory   = new LengthFactory(new ViewportCalculatorServiceFactory(), 16);
         $mediaConditions = CssMediaConditionFactory::createFromMediaCondition(
             new ResolutionMediaCondition($lengthFactory->createAbsoluteLength(2), CssMinMaxMediaConditionInterface::MAX)
         );

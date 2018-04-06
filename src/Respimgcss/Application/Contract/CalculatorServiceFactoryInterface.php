@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
+ * @subpackage Jkphl\Respimgcss\Application\Contract
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,42 +34,25 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Ports;
+namespace Jkphl\Respimgcss\Application\Contract;
 
-use Jkphl\Respimgcss\Application\Factory\SourceSizeFactory;
-use Jkphl\Respimgcss\Infrastructure\ViewportCalculatorServiceFactory;
+use ChrisKonnertz\StringCalc\Calculator\CalculatorInterface;
+use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 
 /**
- * Size list
+ * Calculator service factory interface
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
- * @see        http://w3c.github.io/html/semantics-embedded-content.html#ref-for-viewport-based-selection%E2%91%A0
- * @see        http://w3c.github.io/html/semantics-embedded-content.html#valid-source-size-list
- * @see        http://w3c.github.io/html/semantics-embedded-content.html#parse-a-sizes-attribute
+ * @subpackage Jkphl\Respimgcss\Application\Contract
  */
-class SourceSizeList extends \Jkphl\Respimgcss\Infrastructure\SourceSizeList
+interface CalculatorServiceFactoryInterface
 {
     /**
-     * Create a size list from a source size list
+     * Create a calculator service
      *
-     * @param $sourceSizeListStr SourceSizeList size list
-     * @param int $emPixel       EM to pixel ratio
+     * @param AbsoluteLengthInterface|null $viewport Viewport
      *
-     * @return SourceSizeList Size list
-     * @api
+     * @return CalculatorInterface Calculator service
      */
-    public static function fromString($sourceSizeListStr, int $emPixel = 16): SourceSizeList
-    {
-        $sourceSizeFactory   = new SourceSizeFactory(new ViewportCalculatorServiceFactory(), $emPixel);
-        $unparsedSourceSizes = array_filter(array_map('trim', explode(',', $sourceSizeListStr)));
-        $sourceSizes         = array_map(
-            function($unparsedSourceSize) use ($sourceSizeFactory) {
-                return $sourceSizeFactory->createFromSourceSizeStr($unparsedSourceSize);
-            },
-            $unparsedSourceSizes
-        );
-
-        return new static($sourceSizes);
-    }
+    public function createCalculatorService(AbsoluteLengthInterface $viewport = null): CalculatorServiceInterface;
 }

@@ -42,6 +42,7 @@ use Jkphl\Respimgcss\Application\Service\CssRulesetCompilerService;
 use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
 use Jkphl\Respimgcss\Domain\Model\Css\Ruleset;
 use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
+use Jkphl\Respimgcss\Infrastructure\ViewportCalculatorServiceFactory;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
@@ -57,11 +58,17 @@ class CssRulesetCompilerServiceTest extends AbstractTestBase
      */
     public function testCssRulesetCompilerService()
     {
-        $lengthFactory     = new LengthFactory(16);
+        $lengthFactory     = new LengthFactory(new ViewportCalculatorServiceFactory(), 16);
         $ruleset           = new Ruleset();
         $breakpoints       = array_map([$lengthFactory, 'createLengthFromString'], ['24em', '800px', '72em']);
         $imageCandidateSet = new ImageCandidateSet(new DensityImageCandidate('image.jpg', 1));
-        $compiler          = new CssRulesetCompilerService($ruleset, $breakpoints, $imageCandidateSet, 16);
+        $compiler          = new CssRulesetCompilerService(
+            $ruleset,
+            $breakpoints,
+            $imageCandidateSet,
+            new ViewportCalculatorServiceFactory(),
+            16
+        );
         $this->assertInstanceOf(CssRulesetCompilerService::class, $compiler);
 
         $cssRulset = $compiler->compile([1, 2]);

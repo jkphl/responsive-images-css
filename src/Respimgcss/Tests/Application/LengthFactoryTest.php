@@ -39,6 +39,7 @@ namespace Jkphl\Respimgcss\Tests\Application;
 use Jkphl\Respimgcss\Application\Factory\LengthFactory;
 use Jkphl\Respimgcss\Application\Model\AbsoluteLength;
 use Jkphl\Respimgcss\Application\Model\AbstractRelativeLength;
+use Jkphl\Respimgcss\Infrastructure\ViewportCalculatorServiceFactory;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
@@ -62,7 +63,7 @@ class LengthFactoryTest extends AbstractTestBase
     protected function setUp()/* The :void return type declaration that should be here would cause a BC issue */
     {
         parent::setUp();
-        $this->lengthFactory = new LengthFactory(16);
+        $this->lengthFactory = new LengthFactory(new ViewportCalculatorServiceFactory(), 16);
     }
 
     /**

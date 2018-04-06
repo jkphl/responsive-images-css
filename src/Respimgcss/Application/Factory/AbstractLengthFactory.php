@@ -36,6 +36,7 @@
 
 namespace Jkphl\Respimgcss\Application\Factory;
 
+use Jkphl\Respimgcss\Application\Contract\CalculatorServiceFactoryInterface;
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Model\AbsoluteLength;
 use Jkphl\Respimgcss\Application\Service\LengthNormalizerService;
@@ -50,6 +51,12 @@ use Jkphl\Respimgcss\Domain\Contract\LengthFactoryInterface;
  */
 abstract class AbstractLengthFactory implements LengthFactoryInterface
 {
+    /**
+     * Calculator service factory
+     *
+     * @var CalculatorServiceFactoryInterface
+     */
+    protected $calculatorServiceFactory;
     /**
      * EM to pixel ratio
      *
@@ -66,12 +73,14 @@ abstract class AbstractLengthFactory implements LengthFactoryInterface
     /**
      * Length factory constructor
      *
-     * @param int $emPixel EM to pixel ratio
+     * @param CalculatorServiceFactoryInterface $calculatorServiceFactory Calculator service interface
+     * @param int $emPixel                                                EM to pixel ratio
      */
-    public function __construct(int $emPixel)
+    public function __construct(CalculatorServiceFactoryInterface $calculatorServiceFactory, int $emPixel)
     {
-        $this->emPixel                 = $emPixel;
-        $this->lengthNormalizerService = new LengthNormalizerService($this->emPixel);
+        $this->calculatorServiceFactory = $calculatorServiceFactory;
+        $this->emPixel                  = $emPixel;
+        $this->lengthNormalizerService  = new LengthNormalizerService($this->emPixel);
     }
 
     /**

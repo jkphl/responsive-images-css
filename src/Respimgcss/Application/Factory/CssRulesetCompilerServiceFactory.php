@@ -36,6 +36,7 @@
 
 namespace Jkphl\Respimgcss\Application\Factory;
 
+use Jkphl\Respimgcss\Application\Contract\CalculatorServiceFactoryInterface;
 use Jkphl\Respimgcss\Application\Contract\ImageCandidateSetInterface;
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Exceptions\RuntimeException;
@@ -56,22 +57,23 @@ class CssRulesetCompilerServiceFactory
     /**
      * CSS Ruleset Compiler Service constructor
      *
-     * @param CssRulesetInterface $cssRuleset             CSS Ruleset
-     * @param UnitLengthInterface[] $breakpoints          Breakpoints
-     * @param ImageCandidateSetInterface $imageCandidates Image candidates
-     * @param int $emPixel                                EM to pixel ratio
+     * @param CssRulesetInterface $cssRuleset                             CSS Ruleset
+     * @param UnitLengthInterface[] $breakpoints                          Breakpoints
+     * @param ImageCandidateSetInterface $imageCandidates                 Image candidates
+     * @param CalculatorServiceFactoryInterface $calculatorServiceFactory Calculator service factory
+     * @param int $emPixel                                                EM to pixel ratio
      *
      * @return CssRulesetCompilerServiceInterface CSS Ruleset compiler service
-     * @throws RuntimeException If the image candidate set is invalid or empty
      */
     public static function createForImageCandidates(
         CssRulesetInterface $cssRuleset,
         array $breakpoints,
         ImageCandidateSetInterface $imageCandidates,
+        CalculatorServiceFactoryInterface $calculatorServiceFactory,
         int $emPixel
     ): CssRulesetCompilerServiceInterface {
         $cssRulesetCompiler = null;
-        $lengthFactory      = new LengthFactory($emPixel);
+        $lengthFactory      = new LengthFactory($calculatorServiceFactory, $emPixel);
         switch ($imageCandidates->getType()) {
             case ImageCandidateInterface::TYPE_DENSITY:
                 $cssRulesetCompiler = new DensityCssRulesetCompilerService(

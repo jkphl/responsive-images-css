@@ -40,6 +40,7 @@ use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Factory\CalcLengthFactory;
 use Jkphl\Respimgcss\Application\Factory\LengthFactory;
 use Jkphl\Respimgcss\Application\Model\ViewportLength;
+use Jkphl\Respimgcss\Infrastructure\ViewportCalculatorServiceFactory;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
@@ -57,9 +58,10 @@ class ViewportLengthTest extends AbstractTestBase
     {
         /** @var ViewportLength $viewportLength */
         $viewportWidthPixel = rand(1000, getrandmax());
-        $viewportWidth      = (new LengthFactory(16))->createAbsoluteLength($viewportWidthPixel);
+        $viewportWidth      = (new LengthFactory(new ViewportCalculatorServiceFactory(), 16))
+            ->createAbsoluteLength($viewportWidthPixel);
         $viewportLengthStr  = 'calc(100vw - 100px)';
-        $calcLengthFactory  = new CalcLengthFactory(16);
+        $calcLengthFactory  = new CalcLengthFactory(new ViewportCalculatorServiceFactory(), 16);
         $viewportLength     = $calcLengthFactory->createLengthFromString($viewportLengthStr);
         $this->assertInstanceOf(ViewportLength::class, $viewportLength);
         $this->assertEquals(UnitLengthInterface::UNIT_PIXEL, $viewportLength->getUnit());

@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Application
+ * @subpackage Jkphl\Respimgcss\Infrastructure
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,33 +34,32 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Tests\Application;
+namespace Jkphl\Respimgcss\Infrastructure;
 
-use ChrisKonnertz\StringCalc\Support\StringHelper;
-use Jkphl\Respimgcss\Application\Factory\LengthFactory;
-use Jkphl\Respimgcss\Application\Model\ViewportFunction;
-use Jkphl\Respimgcss\Tests\AbstractTestBase;
+use Jkphl\Respimgcss\Application\Contract\CalculatorServiceFactoryInterface;
+use Jkphl\Respimgcss\Application\Contract\CalculatorServiceInterface;
+use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 
 /**
- * Viewport function test
+ * Calculator service factory
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests
+ * @subpackage Jkphl\Respimgcss\Infrastructure
  */
-class ViewportFunctionTest extends AbstractTestBase
+class ViewportCalculatorServiceFactory implements CalculatorServiceFactoryInterface
 {
     /**
-     * Test the viewport function
+     * Create a calculator service
+     *
+     * @param AbsoluteLengthInterface|null $viewport Viewport
+     *
+     * @return CalculatorServiceInterface Calculator service
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
+     * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
-    public function testViewportFunction()
+    public function createCalculatorService(AbsoluteLengthInterface $viewport = null): CalculatorServiceInterface
     {
-        $viewportWidth    = rand(1, getrandmax());
-        $viewportFunction = new ViewportFunction(
-            new StringHelper(),
-            (new LengthFactory(16))->createAbsoluteLength($viewportWidth)
-        );
-        $this->assertInstanceOf(ViewportFunction::class, $viewportFunction);
-        $this->assertEquals(['viewport'], $viewportFunction->getIdentifiers());
-        $this->assertEquals($viewportWidth, $viewportFunction->execute([]));
+        return new ViewportCalculatorService($viewport);
     }
 }

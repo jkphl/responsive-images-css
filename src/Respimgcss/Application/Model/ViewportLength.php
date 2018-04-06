@@ -37,8 +37,8 @@
 namespace Jkphl\Respimgcss\Application\Model;
 
 use ChrisKonnertz\StringCalc\Tokenizer\Token;
+use Jkphl\Respimgcss\Application\Contract\CalculatorServiceFactoryInterface;
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
-use Jkphl\Respimgcss\Application\Service\LengthNormalizerService;
 use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 
 /**
@@ -56,27 +56,28 @@ class ViewportLength extends AbstractRelativeLength
      */
     protected $tokens;
     /**
-     * AbstractLength normalizer service
+     * Calculator service factory
      *
-     * @var LengthNormalizerService
+     * /**
+     * @var CalculatorServiceFactoryInterface
      */
-    protected $lengthNormalizerService;
+    protected $calculatorServiceFactory;
 
     /**
      * Absolute length constructor
      *
-     * @param Token[] $tokens                                  Calculation tokens
-     * @param LengthNormalizerService $lengthNormalizerService AbstractLength normalizer service
-     * @param string $originalValue                            Original value
+     * @param CalculatorServiceFactoryInterface $calculatorServiceFactory
+     * @param Token[] $tokens       Calculation tokens
+     * @param string $originalValue Original value
      */
     public function __construct(
+        CalculatorServiceFactoryInterface $calculatorServiceFactory,
         array $tokens,
-        LengthNormalizerService $lengthNormalizerService,
         string $originalValue
     ) {
         parent::__construct(0, UnitLengthInterface::UNIT_VW, $originalValue);
-        $this->tokens                  = $tokens;
-        $this->lengthNormalizerService = $lengthNormalizerService;
+        $this->calculatorServiceFactory = $calculatorServiceFactory;
+        $this->tokens                   = $tokens;
     }
 
     /**
@@ -104,15 +105,10 @@ class ViewportLength extends AbstractRelativeLength
      *
      * @param AbsoluteLengthInterface $viewport Viewport width
      *
-     * @return float value
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
+     * @return float Length value
      */
     public function getValue(AbsoluteLengthInterface $viewport): float
     {
-        $viewportCalculator = new ViewportCalculator($viewport);
-
-        return $viewportCalculator->evaluate($this->tokens);
+        return $this->calculatorServiceFactory->createCalculatorService($viewport)->evaluate($this->tokens);
     }
 }

@@ -130,6 +130,7 @@ class LengthFactory extends AbstractLengthFactory
         switch ($unit) {
             case UnitLengthInterface::UNIT_VW: // Viewport unit
                 return new ViewportLength(
+                    $this->calculatorServiceFactory,
                     [
                         new Token(strval($value / 100), Token::TYPE_NUMBER, 0),
                         new Token('*', Token::TYPE_CHARACTER, 0),
@@ -137,7 +138,6 @@ class LengthFactory extends AbstractLengthFactory
                         new Token('(', Token::TYPE_CHARACTER, 0),
                         new Token(')', Token::TYPE_CHARACTER, 0),
                     ],
-                    $this->lengthNormalizerService,
                     $value
                 );
 

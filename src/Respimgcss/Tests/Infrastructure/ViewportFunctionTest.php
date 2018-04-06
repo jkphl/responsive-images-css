@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
+ * @subpackage Jkphl\Respimgcss\Tests\Application
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,42 +34,34 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Ports;
+namespace Jkphl\Respimgcss\Tests\Application;
 
-use Jkphl\Respimgcss\Application\Factory\SourceSizeFactory;
+use ChrisKonnertz\StringCalc\Support\StringHelper;
+use Jkphl\Respimgcss\Application\Factory\LengthFactory;
 use Jkphl\Respimgcss\Infrastructure\ViewportCalculatorServiceFactory;
+use Jkphl\Respimgcss\Infrastructure\ViewportFunction;
+use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
- * Size list
+ * Viewport function test
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
- * @see        http://w3c.github.io/html/semantics-embedded-content.html#ref-for-viewport-based-selection%E2%91%A0
- * @see        http://w3c.github.io/html/semantics-embedded-content.html#valid-source-size-list
- * @see        http://w3c.github.io/html/semantics-embedded-content.html#parse-a-sizes-attribute
+ * @subpackage Jkphl\Respimgcss\Tests
  */
-class SourceSizeList extends \Jkphl\Respimgcss\Infrastructure\SourceSizeList
+class ViewportFunctionTest extends AbstractTestBase
 {
     /**
-     * Create a size list from a source size list
-     *
-     * @param $sourceSizeListStr SourceSizeList size list
-     * @param int $emPixel       EM to pixel ratio
-     *
-     * @return SourceSizeList Size list
-     * @api
+     * Test the viewport function
      */
-    public static function fromString($sourceSizeListStr, int $emPixel = 16): SourceSizeList
+    public function testViewportFunction()
     {
-        $sourceSizeFactory   = new SourceSizeFactory(new ViewportCalculatorServiceFactory(), $emPixel);
-        $unparsedSourceSizes = array_filter(array_map('trim', explode(',', $sourceSizeListStr)));
-        $sourceSizes         = array_map(
-            function($unparsedSourceSize) use ($sourceSizeFactory) {
-                return $sourceSizeFactory->createFromSourceSizeStr($unparsedSourceSize);
-            },
-            $unparsedSourceSizes
+        $viewportWidth    = rand(1, getrandmax());
+        $viewportFunction = new ViewportFunction(
+            new StringHelper(),
+            (new LengthFactory(new ViewportCalculatorServiceFactory(), 16))->createAbsoluteLength($viewportWidth)
         );
-
-        return new static($sourceSizes);
+        $this->assertInstanceOf(ViewportFunction::class, $viewportFunction);
+        $this->assertEquals(['viewport'], $viewportFunction->getIdentifiers());
+        $this->assertEquals($viewportWidth, $viewportFunction->execute([]));
     }
 }

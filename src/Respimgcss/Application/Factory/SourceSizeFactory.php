@@ -104,7 +104,8 @@ class SourceSizeFactory extends AbstractLengthFactory
         $sourceSizeStr = trim($sourceSizeStrMatch[1]);
 
         // Return the parsed length
-        return (new LengthFactory($this->emPixel))->createLengthFromString($sourceSizeStrMatch[2]);
+        return (new LengthFactory($this->calculatorServiceFactory, $this->emPixel))
+            ->createLengthFromString($sourceSizeStrMatch[2]);
     }
 
     /**
@@ -126,9 +127,8 @@ class SourceSizeFactory extends AbstractLengthFactory
         for ($pos = 0; $pos < strlen($sourceSizeStr); ++$pos) {
             $balance += $this->getCharacterBalance($sourceSizeRev[$pos]);
             if ($balance === 0) {
-                $length        = (new CalcLengthFactory($this->emPixel))->createLengthFromString(
-                    substr($sourceSizeStr, -($pos + 5))
-                );
+                $length        = (new CalcLengthFactory($this->calculatorServiceFactory, $this->emPixel))
+                    ->createLengthFromString(substr($sourceSizeStr, -($pos + 5)));
                 $sourceSizeStr = trim(substr($sourceSizeStr, 0, -($pos + 5)));
 
                 return $length;
@@ -153,7 +153,6 @@ class SourceSizeFactory extends AbstractLengthFactory
     {
         return ($char === ')') ? 1 : (($char === '(') ? -1 : 0);
     }
-
 
     /**
      * Parse and instantiate a source size media condition
@@ -232,13 +231,15 @@ class SourceSizeFactory extends AbstractLengthFactory
 
         // Try to parse as simple unit length
         try {
-            return (new LengthFactory($this->emPixel))->createLengthFromString($widthMediaConditionValueStr);
+            return (new LengthFactory($this->calculatorServiceFactory, $this->emPixel))
+                ->createLengthFromString($widthMediaConditionValueStr);
         } catch (InvalidArgumentException $e) {
             // Skip
         }
 
         // Try to parse as calc() length
-        return (new CalcLengthFactory($this->emPixel))->createLengthFromString($widthMediaConditionValueStr);
+        return (new CalcLengthFactory($this->calculatorServiceFactory, $this->emPixel))
+            ->createLengthFromString($widthMediaConditionValueStr);
     }
 
     /**
@@ -265,6 +266,7 @@ class SourceSizeFactory extends AbstractLengthFactory
                 return substr($mediaConditionValueStr, 0, $char);
             }
         }
+
         return $mediaConditionValueStr;
     }
 
@@ -318,6 +320,7 @@ class SourceSizeFactory extends AbstractLengthFactory
     protected function parseResolutionMediaConditionValue(string $resolutionMediaConditionStr): LengthInterface
     {
         $resolutionMediaConditionValueStr = $this->shiftMediaConditionValue($resolutionMediaConditionStr);
+
         return $this->createAbsoluteLength($resolutionMediaConditionValueStr);
     }
 }

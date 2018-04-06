@@ -36,6 +36,7 @@
 
 namespace Jkphl\Respimgcss\Application\Service;
 
+use Jkphl\Respimgcss\Application\Contract\CalculatorServiceFactoryInterface;
 use Jkphl\Respimgcss\Application\Contract\ImageCandidateSetInterface;
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Factory\CssRulesetCompilerServiceFactory;
@@ -68,6 +69,12 @@ class CssRulesetCompilerService
      */
     protected $imageCandidates = null;
     /**
+     * Calculator service factory
+     *
+     * @var CalculatorServiceFactoryInterface
+     */
+    protected $calculatorServiceFactory;
+    /**
      * EM to pixel ratio
      *
      * @var int
@@ -77,20 +84,24 @@ class CssRulesetCompilerService
     /**
      * CSS Ruleset Compiler Service constructor
      *
-     * @param CssRulesetInterface $cssRuleset
-     * @param UnitLengthInterface[] $breakpoints Breakpoints
-     * @param ImageCandidateSetInterface $imageCandidates
+     * @param CssRulesetInterface $cssRuleset                             CSS ruleset
+     * @param UnitLengthInterface[] $breakpoints                          Breakpoints
+     * @param ImageCandidateSetInterface $imageCandidates                 Image candidates
+     * @param CalculatorServiceFactoryInterface $calculatorServiceFactory Calculator service factory
+     * @param int $emPixel                                                EM to pixel ratio
      */
     public function __construct(
         CssRulesetInterface $cssRuleset,
         array $breakpoints,
         ImageCandidateSetInterface $imageCandidates,
+        CalculatorServiceFactoryInterface $calculatorServiceFactory,
         int $emPixel
     ) {
-        $this->cssRuleset      = $cssRuleset;
-        $this->breakpoints     = $breakpoints;
-        $this->imageCandidates = $imageCandidates;
-        $this->emPixel         = $emPixel;
+        $this->cssRuleset               = $cssRuleset;
+        $this->breakpoints              = $breakpoints;
+        $this->imageCandidates          = $imageCandidates;
+        $this->calculatorServiceFactory = $calculatorServiceFactory;
+        $this->emPixel                  = $emPixel;
     }
 
     /**
@@ -108,6 +119,7 @@ class CssRulesetCompilerService
                 $this->cssRuleset,
                 $this->breakpoints,
                 $this->imageCandidates,
+                $this->calculatorServiceFactory,
                 $this->emPixel
             )->compile($density);
         }

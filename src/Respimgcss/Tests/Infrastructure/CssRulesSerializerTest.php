@@ -42,6 +42,7 @@ use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
 use Jkphl\Respimgcss\Domain\Model\Css\Rule;
 use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
 use Jkphl\Respimgcss\Infrastructure\CssRulesSerializer;
+use Jkphl\Respimgcss\Infrastructure\ViewportCalculatorServiceFactory;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
@@ -97,7 +98,7 @@ class CssRulesSerializerTest extends AbstractTestBase
     protected function setUp()/* The :void return type declaration that should be here would cause a BC issue */
     {
         parent::setUp();
-        $lengthFactory   = new LengthFactory(16);
+        $lengthFactory   = new LengthFactory(new ViewportCalculatorServiceFactory(), 16);
         $imageCandidate1 = new DensityImageCandidate('small.jpg', 1);
         $this->rule1     = new Rule($imageCandidate1, []);
         $imageCandidate2 = new DensityImageCandidate('large.jpg', 2);

@@ -34,11 +34,12 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Application\Model;
+namespace Jkphl\Respimgcss\Infrastructure;
 
 use ChrisKonnertz\StringCalc\Container\ContainerInterface;
 use ChrisKonnertz\StringCalc\StringCalc;
 use ChrisKonnertz\StringCalc\Tokenizer\Token;
+use Jkphl\Respimgcss\Application\Contract\CalculatorServiceInterface;
 use Jkphl\Respimgcss\Application\Factory\LengthFactory;
 use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 
@@ -48,7 +49,7 @@ use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
  * @package    Jkphl\Respimgcss
  * @subpackage Jkphl\Respimgcss\Application\Model
  */
-class ViewportCalculator extends StringCalc
+class ViewportCalculatorService extends StringCalc implements CalculatorServiceInterface
 {
     /**
      * Custom string calculator constructor
@@ -60,13 +61,13 @@ class ViewportCalculator extends StringCalc
      * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
      * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
-    public function __construct(AbsoluteLengthInterface $viewport = null, $container = null)
+    public function __construct(AbsoluteLengthInterface $viewport = null)
     {
-        parent::__construct($container);
+        parent::__construct();
         $stringHelper     = $this->getContainer()->get('stringcalc_stringhelper');
         $viewportFunction = new ViewportFunction(
             $stringHelper,
-            $viewport ?: (new LengthFactory(1))->createAbsoluteLength(0)
+            $viewport ?: (new LengthFactory(new ViewportCalculatorServiceFactory(), 16))->createAbsoluteLength(0)
         );
         $this->symbolContainer->add($viewportFunction);
     }

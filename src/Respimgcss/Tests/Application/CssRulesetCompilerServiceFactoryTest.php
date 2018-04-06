@@ -45,6 +45,7 @@ use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
 use Jkphl\Respimgcss\Domain\Model\WidthImageCandidate;
 use Jkphl\Respimgcss\Domain\Service\DensityCssRulesetCompilerService;
 use Jkphl\Respimgcss\Domain\Service\WidthCssRulesetCompilerService;
+use Jkphl\Respimgcss\Infrastructure\ViewportCalculatorServiceFactory;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 use Jkphl\Respimgcss\Tests\Application\Mocks\ImageCandidateMock;
 
@@ -75,6 +76,7 @@ class CssRulesetCompilerServiceFactoryTest extends AbstractTestBase
             new Ruleset(),
             $this->breakpoints,
             new ImageCandidateSet(new ImageCandidateMock('image.jpg', 1)),
+            new ViewportCalculatorServiceFactory(),
             16
         );
     }
@@ -88,6 +90,7 @@ class CssRulesetCompilerServiceFactoryTest extends AbstractTestBase
             new Ruleset(),
             $this->breakpoints,
             new ImageCandidateSet(new DensityImageCandidate('image.jpg', 1)),
+            new ViewportCalculatorServiceFactory(),
             16
         );
         $this->assertInstanceOf(DensityCssRulesetCompilerService::class, $compilerService);
@@ -102,6 +105,7 @@ class CssRulesetCompilerServiceFactoryTest extends AbstractTestBase
             new Ruleset(),
             $this->breakpoints,
             new ImageCandidateSet(new WidthImageCandidate('image.jpg', 1000)),
+            new ViewportCalculatorServiceFactory(),
             16
         );
         $this->assertInstanceOf(WidthCssRulesetCompilerService::class, $compilerService);
@@ -113,7 +117,7 @@ class CssRulesetCompilerServiceFactoryTest extends AbstractTestBase
     protected function setUp()/* The :void return type declaration that should be here would cause a BC issue */
     {
         parent::setUp();
-        $lengthFactory       = new LengthFactory(16);
+        $lengthFactory       = new LengthFactory(new ViewportCalculatorServiceFactory(), 16);
         $this->breakpoints[] = $lengthFactory->createLengthFromString('24em');
         $this->breakpoints[] = $lengthFactory->createLengthFromString('800px');
         $this->breakpoints[] = $lengthFactory->createLengthFromString('72em');

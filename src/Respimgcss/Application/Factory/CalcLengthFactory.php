@@ -40,7 +40,6 @@ use ChrisKonnertz\StringCalc\Tokenizer\Token;
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException;
 use Jkphl\Respimgcss\Application\Model\AbsoluteLength;
-use Jkphl\Respimgcss\Application\Model\ViewportCalculator;
 use Jkphl\Respimgcss\Application\Model\ViewportLength;
 
 /**
@@ -86,7 +85,7 @@ class CalcLengthFactory extends AbstractLengthFactory
      */
     protected function createCalculationContainerFromString(string $calcString): UnitLengthInterface
     {
-        $stringCalc    = new ViewportCalculator();
+        $stringCalc    = $this->calculatorServiceFactory->createCalculatorService();
         $calcTokens    = $stringCalc->tokenize($calcString);
         $refinedTokens = $this->refineCalculationTokens($calcTokens);
 
@@ -95,8 +94,8 @@ class CalcLengthFactory extends AbstractLengthFactory
         foreach ($refinedTokens as $token) {
             if (($token->getType() == Token::TYPE_WORD) && ($token->getValue() === 'viewport')) {
                 return new ViewportLength(
+                    $this->calculatorServiceFactory,
                     $refinedTokens,
-                    $this->lengthNormalizerService,
                     $calcString
                 );
             }
@@ -203,10 +202,11 @@ class CalcLengthFactory extends AbstractLengthFactory
         // If the previous token is a number: Try to generate a unit length
         if ($previousToken && ($previousToken->getType() == Token::TYPE_NUMBER)) {
             try {
-                $unitLength = (new LengthFactory($this->emPixel))->createLengthFromString(
-                    $previousToken->getValue().$token->getValue()
+                $this->handleUnitLengthToken(
+                    $refinedTokens,
+                    (new LengthFactory($this->calculatorServiceFactory, $this->emPixel))
+                        ->createLengthFromString($previousToken->getValue().$token->getValue())
                 );
-                $this->handleUnitLengthToken($refinedTokens, $unitLength);
 
                 return null;
             } catch (InvalidArgumentException $e) {

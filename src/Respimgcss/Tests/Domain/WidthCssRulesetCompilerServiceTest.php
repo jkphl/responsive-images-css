@@ -42,6 +42,7 @@ use Jkphl\Respimgcss\Domain\Model\Css\Ruleset;
 use Jkphl\Respimgcss\Domain\Model\ImageCandidateSet;
 use Jkphl\Respimgcss\Domain\Model\WidthImageCandidate;
 use Jkphl\Respimgcss\Domain\Service\WidthCssRulesetCompilerService;
+use Jkphl\Respimgcss\Infrastructure\ViewportCalculatorServiceFactory;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 use Jkphl\Respimgcss\Tests\Domain\Mock\AbsoluteLength;
 
@@ -63,7 +64,7 @@ class WidthCssRulesetCompilerServiceTest extends AbstractTestBase
         $imageCandidateSet   = new ImageCandidateSet();
         $imageCandidateSet[] = new WidthImageCandidate('small.jpg', 400);
         $imageCandidateSet[] = new WidthImageCandidate('medium.jpg', 800);
-        $lengthFactory       = new LengthFactory(16);
+        $lengthFactory       = new LengthFactory(new ViewportCalculatorServiceFactory(), 16);
         $compiler            = new WidthCssRulesetCompilerService(
             $ruleset,
             [$length],
