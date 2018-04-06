@@ -36,7 +36,6 @@
 
 namespace Jkphl\Respimgcss\Application\Contract;
 
-use ChrisKonnertz\StringCalc\Calculator\CalculatorInterface;
 use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 
 /**
@@ -52,7 +51,7 @@ interface CalculatorServiceFactoryInterface
      *
      * @param AbsoluteLengthInterface|null $viewport Viewport
      *
-     * @return CalculatorInterface Calculator service
+     * @return CalculatorServiceInterface Calculator service
      */
     public function createCalculatorService(AbsoluteLengthInterface $viewport = null): CalculatorServiceInterface;
 }

@@ -36,7 +36,6 @@
 
 namespace Jkphl\Respimgcss\Application\Factory;
 
-use ChrisKonnertz\StringCalc\Tokenizer\Token;
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException;
 use Jkphl\Respimgcss\Application\Model\AbsoluteLength;
@@ -131,13 +130,9 @@ class LengthFactory extends AbstractLengthFactory
             case UnitLengthInterface::UNIT_VW: // Viewport unit
                 return new ViewportLength(
                     $this->calculatorServiceFactory,
-                    [
-                        new Token(strval($value / 100), Token::TYPE_NUMBER, 0),
-                        new Token('*', Token::TYPE_CHARACTER, 0),
-                        new Token('viewport', Token::TYPE_WORD, 0),
-                        new Token('(', Token::TYPE_CHARACTER, 0),
-                        new Token(')', Token::TYPE_CHARACTER, 0),
-                    ],
+                    $this->calculatorServiceFactory->createCalculatorService()->tokenize(
+                        strval($value / 100).' * viewport()'
+                    ),
                     $value
                 );
 

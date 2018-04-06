@@ -47,9 +47,37 @@ interface CalculatorServiceInterface
     /**
      * Evaluate calculation tokens
      *
-     * @param array $tokens Calculation tokens
+     * @param array[] $tokens Calculation tokens
      *
      * @return float Calculation result
      */
     public function evaluate(array $tokens): float;
+
+    /**
+     * Tokenize a term
+     *
+     * @param string $term Calculation term
+     *
+     * @return array Calculation tokens
+     */
+    public function tokenize($term);
+
+    /**
+     * Refine a list of calculation tokens
+     *
+     * @param array $tokens Calculation tokens
+     * @param int $emPixel  EM to pixel ratio
+     *
+     * @return array Refined Calculation tokens
+     */
+    public function refineCalculationTokens(array $tokens, int $emPixel): array;
+
+    /**
+     * Test whether a calculation token is a viewport token
+     *
+     * @param mixed $token Calculation token
+     *
+     * @return bool Is viewport token
+     */
+    public function isViewportToken($token): bool;
 }

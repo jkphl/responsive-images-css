@@ -58,9 +58,6 @@ class SourceSizeFactory extends AbstractLengthFactory
      * @param string $sourceSizeStr Source size string
      *
      * @return SourceSize Source size
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
     public function createFromSourceSizeStr(string $sourceSizeStr): SourceSize
     {
@@ -81,9 +78,6 @@ class SourceSizeFactory extends AbstractLengthFactory
      *
      * @return UnitLengthInterface AbstractLength component
      * @throws InvalidArgumentException If the source size string is ill-formatted
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
     protected function parseSourceSizeValue(string &$sourceSizeStr): UnitLengthInterface
     {
@@ -115,9 +109,6 @@ class SourceSizeFactory extends AbstractLengthFactory
      *
      * @return UnitLengthInterface AbstractLength component
      * @throws InvalidArgumentException If the source size string is ill-formatted
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
     protected function parseSourceSizeCalculatedValue(string &$sourceSizeStr): UnitLengthInterface
     {
@@ -221,9 +212,6 @@ class SourceSizeFactory extends AbstractLengthFactory
      * @param string $widthMediaConditionStr Width media condition string
      *
      * @return UnitLengthInterface Width media condition value
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\ContainerException
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\InvalidIdentifierException
-     * @throws \ChrisKonnertz\StringCalc\Exceptions\NotFoundException
      */
     protected function parseWidthMediaConditionValue(string $widthMediaConditionStr): UnitLengthInterface
     {

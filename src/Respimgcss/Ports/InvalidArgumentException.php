@@ -56,4 +56,16 @@ class InvalidArgumentException extends \Jkphl\Respimgcss\Application\Exceptions\
      * @var int
      */
     const INVALID_CSS_SELECTOR = 1522574161;
+    /**
+     * Invalid word token in source size value
+     *
+     * @var string
+     */
+    const INVALID_WORD_TOKEN_IN_SOURCE_SIZE_VALUE_STR = 'Invalid word token "%s" in source size value';
+    /**
+     * Invalid word token in source size value
+     *
+     * @var int
+     */
+    const INVALID_WORD_TOKEN_IN_SOURCE_SIZE_VALUE = 1522701212;
 }

@@ -36,7 +36,6 @@
 
 namespace Jkphl\Respimgcss\Application\Model;
 
-use ChrisKonnertz\StringCalc\Tokenizer\Token;
 use Jkphl\Respimgcss\Application\Contract\CalculatorServiceFactoryInterface;
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
@@ -50,9 +49,9 @@ use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 class ViewportLength extends AbstractRelativeLength
 {
     /**
-     * Calculation
+     * Calculation tokens
      *
-     * @var Token[]
+     * @var array
      */
     protected $tokens;
     /**
@@ -67,7 +66,7 @@ class ViewportLength extends AbstractRelativeLength
      * Absolute length constructor
      *
      * @param CalculatorServiceFactoryInterface $calculatorServiceFactory
-     * @param Token[] $tokens       Calculation tokens
+     * @param array $tokens         Calculation tokens
      * @param string $originalValue Original value
      */
     public function __construct(
