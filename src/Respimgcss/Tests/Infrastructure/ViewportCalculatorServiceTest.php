@@ -94,19 +94,28 @@ class ViewportCalculatorServiceTest extends AbstractTestBase
         $this->assertEquals(11, count($refinedCalculationTokens));
 
         // Test for viewport tokens
-        $this->assertEquals(
-            1,
-            array_reduce(
-                $refinedCalculationTokens,
-                function($sum, $token) {
-                    return $sum + $this->calculatorService->isViewportToken($token) * 1;
-                },
-                0
-            )
-        );
+        $this->assertEquals(1, $this->countViewportTokens($refinedCalculationTokens));
 
         // Evaluate
         $this->assertEquals(900, $this->calculatorService->evaluate($refinedCalculationTokens));
+    }
+
+    /**
+     * Count the number of viewport tokens
+     *
+     * @param array $tokens Calculation tokens
+     *
+     * @return int Number of viewport tokens
+     */
+    protected function countViewportTokens(array $tokens): int
+    {
+        return array_reduce(
+            $tokens,
+            function ($sum, $token) {
+                return $sum + $this->calculatorService->isViewportToken($token) * 1;
+            },
+            0
+        );
     }
 
     /**
@@ -131,9 +140,6 @@ class ViewportCalculatorServiceTest extends AbstractTestBase
 
         if ($expectedException) {
             $this->expectException($expectedException);
-        }
-
-        if ($expectedExceptionCode) {
             $this->expectExceptionCode($expectedExceptionCode);
         }
 

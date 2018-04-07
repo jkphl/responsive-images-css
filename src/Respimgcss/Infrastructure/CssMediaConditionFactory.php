@@ -99,7 +99,7 @@ class CssMediaConditionFactory
         ];
 
         return array_map(
-            function($resolutionProperty, $resolutionValue) use ($resolutionModifier) {
+            function ($resolutionProperty, $resolutionValue) use ($resolutionModifier) {
                 return self::createMediaCondition($resolutionProperty, $resolutionModifier, $resolutionValue);
             },
             $resolutionProperties,

@@ -159,22 +159,13 @@ abstract class Generator implements GeneratorInterface
      * @param string $sizes                              Source sizes
      *
      * @return CssRulesetInterface Compile CSS ruleset
-     * @throws InvalidArgumentException If source sizes are used with resolution based image candidates
      */
     protected function compileCssRuleset(
         CssRuleset $baseCssRuleset,
         array $densities,
         string $sizes
     ): CssRulesetInterface {
-        $sourceSizeList = $this->makeSourceSizeList($sizes);
-
-        // If source sizes are used with resolution based image candidates
-        if ($sourceSizeList && ($this->imageCandidates->getType() == ImageCandidateInterface::TYPE_DENSITY)) {
-            throw new InvalidArgumentException(
-                InvalidArgumentException::SIZES_NOT_ALLOWED_STR,
-                InvalidArgumentException::SIZES_NOT_ALLOWED
-            );
-        }
+        $sourceSizeList = $this->validateSourceSizeList($this->makeSourceSizeList($sizes));
 
         // Instantiate a CSS ruleset compiler service and compile for all densities
         $cssRulesetCompilerService = new CssRulesetCompilerService(
@@ -189,6 +180,27 @@ abstract class Generator implements GeneratorInterface
     }
 
     /**
+     * Check whether a source sizes list can be applied
+     *
+     * @param SourceSizeList|null $sourceSizeList Source size list
+     *
+     * @return SourceSizeList|null Source size list
+     * @throws InvalidArgumentException If source sizes are used with resolution based image candidates
+     */
+    protected function validateSourceSizeList(SourceSizeList $sourceSizeList = null): ?SourceSizeList
+    {
+        // If source sizes are used with resolution based image candidates
+        if ($sourceSizeList && ($this->imageCandidates->getType() == ImageCandidateInterface::TYPE_DENSITY)) {
+            throw new InvalidArgumentException(
+                InvalidArgumentException::SIZES_NOT_ALLOWED_STR,
+                InvalidArgumentException::SIZES_NOT_ALLOWED
+            );
+        }
+
+        return $sourceSizeList;
+    }
+
+    /**
      * Create a size list from a source size list
      *
      * @param string $sourceSizeListStr SourceSizeList size list
@@ -200,7 +212,7 @@ abstract class Generator implements GeneratorInterface
         $sourceSizeFactory   = new SourceSizeFactory(new ViewportCalculatorServiceFactory(), $this->emPixel);
         $unparsedSourceSizes = array_filter(array_map('trim', explode(',', $sourceSizeListStr)));
         $sourceSizes         = array_map(
-            function($unparsedSourceSize) use ($sourceSizeFactory) {
+            function ($unparsedSourceSize) use ($sourceSizeFactory) {
                 return $sourceSizeFactory->createFromSourceSizeStr($unparsedSourceSize);
             },
             $unparsedSourceSizes

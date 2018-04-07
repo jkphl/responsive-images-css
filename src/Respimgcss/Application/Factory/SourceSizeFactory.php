@@ -153,7 +153,6 @@ class SourceSizeFactory extends AbstractLengthFactory
      * @return SourceSizeMediaCondition|null Source size media condition
      * @see https://drafts.csswg.org/mediaqueries-4/#typedef-media-condition
      * @see https://developer.mozilla.org/de/docs/Web/CSS/Media_Queries/Using_media_queries#Pseudo-BNF_(for_those_of_you_that_like_that_kind_of_thing)
-     *
      */
     protected function parseMediaCondition(string $mediaConditionString): ?SourceSizeMediaCondition
     {
@@ -175,7 +174,13 @@ class SourceSizeFactory extends AbstractLengthFactory
      */
     protected function parseWidthMediaConditions(string $mediaConditionString): array
     {
-        $widthMediaConditions = [];
+        $widthMediaConditions  = [];
+        $widthConditionMatches = $this->matchMediaConditions(
+            $mediaConditionString,
+            // width | min-width | max-width
+            // device-width | min-device-width | max-device-width
+            '/((?:min|max)\-)?(?:device\-)?width\s*\:\s*/'
+        );
 
         // width | min-width | max-width
         // device-width | min-device-width | max-device-width
@@ -241,20 +246,25 @@ class SourceSizeFactory extends AbstractLengthFactory
         $stringLength = strlen($mediaConditionValueStr);
         $balance      = 1;
         for ($char = 0; $char < $stringLength; ++$char) {
-            switch ($mediaConditionValueStr[$char]) {
-                case ')':
-                    --$balance;
-                    break;
-                case '(':
-                    ++$balance;
-                    break;
-            }
+            $balance += $this->getCharacterBalanceModifier($mediaConditionValueStr[$char]);
             if ($balance == 0) {
                 return substr($mediaConditionValueStr, 0, $char);
             }
         }
 
         return $mediaConditionValueStr;
+    }
+
+    /**
+     * Return the balance modifier for a particular character
+     *
+     * @param string $char Character
+     *
+     * @return int Balance modifier
+     */
+    protected function getCharacterBalanceModifier(string $char): int
+    {
+        return ($char == ')') ? -1 : (($char == '(') ? 1 : 0);
     }
 
     /**
@@ -266,16 +276,12 @@ class SourceSizeFactory extends AbstractLengthFactory
      */
     protected function parseResolutionMediaConditions(string $mediaConditionString): array
     {
-        $resolutionMediaConditions = [];
-
-        // resolution | min-resolution | max-resolution
-        preg_match_all(
-            '/((?:min|max)\-)?resolution\s*\:\s*/',
+        $resolutionMediaConditions  = [];
+        $resolutionConditionMatches = $this->matchMediaConditions(
             $mediaConditionString,
-            $resolutionConditionMatches,
-            PREG_OFFSET_CAPTURE
+            // resolution | min-resolution | max-resolution
+            '/((?:min|max)\-)?resolution\s*\:\s*/'
         );
-
 
         // Run through all width condition matches
         foreach ($resolutionConditionMatches[0] as $resolutionConditionIndex => $resolutionConditionMatch) {
@@ -308,5 +314,20 @@ class SourceSizeFactory extends AbstractLengthFactory
         $resolutionMediaConditionValueStr = $this->shiftMediaConditionValue($resolutionMediaConditionStr);
 
         return $this->createAbsoluteLength($resolutionMediaConditionValueStr);
+    }
+
+    /**
+     * Match a media condition string
+     *
+     * @param string $mediaConditionString Media condition string
+     * @param string $pattern              PCRE pattern
+     *
+     * @return array Matches
+     */
+    protected function matchMediaConditions(string $mediaConditionString, string $pattern): array
+    {
+        preg_match_all($pattern, $mediaConditionString, $matches, PREG_OFFSET_CAPTURE);
+
+        return $matches;
     }
 }
