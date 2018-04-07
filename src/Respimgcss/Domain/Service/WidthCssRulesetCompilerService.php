@@ -36,9 +36,14 @@
 
 namespace Jkphl\Respimgcss\Domain\Service;
 
+use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
 use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
 use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
+use Jkphl\Respimgcss\Domain\Contract\ImageCandidateSetInterface;
+use Jkphl\Respimgcss\Domain\Contract\LengthFactoryInterface;
+use Jkphl\Respimgcss\Domain\Contract\SourceSizeImageCandidateMatch;
+use Jkphl\Respimgcss\Domain\Contract\SourceSizeListInterface;
 use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
 use Jkphl\Respimgcss\Domain\Model\Css\Rule;
 use Jkphl\Respimgcss\Domain\Model\Css\WidthMediaCondition;
@@ -53,13 +58,77 @@ use Jkphl\Respimgcss\Tests\Domain\Mock\AbsoluteLength;
 class WidthCssRulesetCompilerService extends AbstractCssRulesetCompilerService
 {
     /**
-     * Compile a CSS ruleset based on the registered breakpoints, image candidates and a given density
+     * Source sizes list
+     *
+     * @var SourceSizeListInterface|null
+     */
+    protected $sourceSizeList;
+
+    /**
+     * Width CSS Ruleset Compiler Service constructor
+     *
+     * @param CssRulesetInterface $cssRuleset              CSS Ruleset
+     * @param AbsoluteLengthInterface[] $breakpoints       Breakpoints
+     * @param ImageCandidateSetInterface $imageCandidates  Image candidates
+     * @param LengthFactoryInterface $lengthFactory        Length factory
+     * @param SourceSizeListInterface|null $sourceSizeList Source sizes list
+     */
+    public function __construct(
+        CssRulesetInterface $cssRuleset,
+        array $breakpoints,
+        ImageCandidateSetInterface $imageCandidates,
+        LengthFactoryInterface $lengthFactory,
+        SourceSizeListInterface $sourceSizeList = null
+    ) {
+        parent::__construct($cssRuleset, $breakpoints, $imageCandidates, $lengthFactory);
+        $this->sourceSizeList = $sourceSizeList;
+    }
+
+    /**
+     * Compile a CSS ruleset for a given density
      *
      * @param float $density Density
      *
      * @return CssRulesetInterface CSS ruleset
      */
     public function compile(float $density): CssRulesetInterface
+    {
+        ($this->sourceSizeList instanceof SourceSizeListInterface) ?
+            $this->compileForSourceSizes($density) :
+            $this->compileForImageCandidates($density);
+
+        return $this->cssRuleset;
+    }
+
+    /**
+     * Compile a CSS ruleset based on a list of source sizes
+     *
+     * @param float $density Density
+     */
+    protected function compileForSourceSizes(float $density): void
+    {
+        // Run through all breakpoints
+        /** @var AbsoluteLengthInterface $breakpoint */
+        foreach ($this->breakpoints as $breakpoint) {
+            $imageCandidateMatch = $this->sourceSizeList->findImageCandidate(
+                $this->imageCandidates,
+                $breakpoint,
+                $density
+            );
+            if ($imageCandidateMatch instanceof SourceSizeImageCandidateMatch) {
+                $this->cssRuleset->appendRule(
+                    $this->createSourceSizeMatchRule($imageCandidateMatch, $density)
+                );
+            }
+        }
+    }
+
+    /**
+     * Compile a CSS ruleset based on the registered breakpoints, image candidates and a given density
+     *
+     * @param float $density Density
+     */
+    protected function compileForImageCandidates(float $density): void
     {
         // Initialize a virtual breakpoint
         $lastImageCandidateWidth = 0;
@@ -74,8 +143,6 @@ class WidthCssRulesetCompilerService extends AbstractCssRulesetCompilerService
             }
             $lastImageCandidateWidth = $imageCandidate->getValue();
         }
-
-        return $this->cssRuleset;
     }
 
     /**
@@ -94,6 +161,21 @@ class WidthCssRulesetCompilerService extends AbstractCssRulesetCompilerService
     ): Rule {
         $rule = new Rule($imageCandidate);
         $rule = $this->addWidthCondition($rule, $imageCandidateWidth, $density);
+
+        return $this->addDensityCondition($rule, $density);
+    }
+
+    /**
+     * Create a source size based CSS rule
+     *
+     * @param SourceSizeImageCandidateMatch $imageCandidateMatch Source size match
+     * @param float $density                                     Density
+     *
+     * @return Rule Source size based CSS rule
+     */
+    protected function createSourceSizeMatchRule(SourceSizeImageCandidateMatch $imageCandidateMatch, float $density)
+    {
+        $rule = new Rule($imageCandidateMatch->getImageCandidate(), [$imageCandidateMatch->getMediaCondition()]);
 
         return $this->addDensityCondition($rule, $density);
     }

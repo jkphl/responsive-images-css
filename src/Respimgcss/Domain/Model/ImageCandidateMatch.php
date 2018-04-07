@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Domain\Mock
+ * @subpackage Jkphl\Respimgcss\Domain\Model
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,26 +34,62 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Tests\Domain\Mock;
+namespace Jkphl\Respimgcss\Domain\Model;
 
-use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
-use Jkphl\Respimgcss\Domain\Model\AbstractLength;
+use Jkphl\Respimgcss\Domain\Contract\CssMediaConditionInterface;
+use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
+use Jkphl\Respimgcss\Domain\Contract\SourceSizeImageCandidateMatch;
 
 /**
- * Absolute length mock
+ * Source size image candidate match
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Domain\Mock
+ * @subpackage Jkphl\Respimgcss\Domain\Model
  */
-class AbsoluteLength extends AbstractLength implements AbsoluteLengthInterface
+class ImageCandidateMatch implements SourceSizeImageCandidateMatch
 {
     /**
-     * Return the length value
+     * Source size media condition
      *
-     * @return float AbstractLength value
+     * @var CssMediaConditionInterface
      */
-    public function getValue(): float
+    protected $mediaCondition;
+    /**
+     * Image candidate
+     *
+     * @var ImageCandidateInterface
+     */
+    protected $imageCandidate;
+
+    /**
+     * Source size image candidate match
+     *
+     * @param CssMediaConditionInterface $mediaCondition Source size media condition
+     * @param ImageCandidateInterface $imageCandidate    Image candidate
+     */
+    public function __construct(CssMediaConditionInterface $mediaCondition, ImageCandidateInterface $imageCandidate)
     {
-        return $this->value;
+        $this->mediaCondition = $mediaCondition;
+        $this->imageCandidate = $imageCandidate;
+    }
+
+    /**
+     * Return the media condition
+     *
+     * @return CssMediaConditionInterface Media condition
+     */
+    public function getMediaCondition(): CssMediaConditionInterface
+    {
+        return $this->mediaCondition;
+    }
+
+    /**
+     * Return the image candidate
+     *
+     * @return ImageCandidateInterface Image Candidate
+     */
+    public function getImageCandidate(): ImageCandidateInterface
+    {
+        return $this->imageCandidate;
     }
 }

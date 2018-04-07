@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Domain\Mock
+ * @subpackage Jkphl\Respimgcss\Domain\Contract
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,26 +34,28 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Tests\Domain\Mock;
-
-use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
-use Jkphl\Respimgcss\Domain\Model\AbstractLength;
+namespace Jkphl\Respimgcss\Domain\Contract;
 
 /**
- * Absolute length mock
+ * Source size list interface
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Domain\Mock
+ * @subpackage Jkphl\Respimgcss\Domain\Contract
  */
-class AbsoluteLength extends AbstractLength implements AbsoluteLengthInterface
+interface SourceSizeListInterface extends \IteratorAggregate, \ArrayAccess, \Serializable, \Countable
 {
     /**
-     * Return the length value
+     * Find the optimum image candidate for a particular breakpoint
      *
-     * @return float AbstractLength value
+     * @param ImageCandidateSetInterface $imageCandidates Image candidates
+     * @param AbsoluteLengthInterface $breakpoint         Breakpoint
+     * @param float $density                              Density
+     *
+     * @return SourceSizeImageCandidateMatch|null Image candidate match
      */
-    public function getValue(): float
-    {
-        return $this->value;
-    }
+    public function findImageCandidate(
+        ImageCandidateSetInterface $imageCandidates,
+        AbsoluteLengthInterface $breakpoint,
+        float $density
+    ): ?SourceSizeImageCandidateMatch;
 }

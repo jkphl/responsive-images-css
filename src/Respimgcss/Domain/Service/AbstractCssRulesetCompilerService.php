@@ -36,11 +36,11 @@
 
 namespace Jkphl\Respimgcss\Domain\Service;
 
+use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 use Jkphl\Respimgcss\Domain\Contract\CssRulesetCompilerServiceInterface;
 use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
 use Jkphl\Respimgcss\Domain\Contract\ImageCandidateSetInterface;
 use Jkphl\Respimgcss\Domain\Contract\LengthFactoryInterface;
-use Jkphl\Respimgcss\Domain\Contract\LengthInterface;
 
 /**
  * Abstract CSS Ruleset compiler service
@@ -59,7 +59,7 @@ abstract class AbstractCssRulesetCompilerService implements CssRulesetCompilerSe
     /**
      * Breakpoints
      *
-     * @var LengthInterface[]
+     * @var AbsoluteLengthInterface[]
      */
     protected $breakpoints;
     /**
@@ -79,7 +79,7 @@ abstract class AbstractCssRulesetCompilerService implements CssRulesetCompilerSe
      * CSS Ruleset Compiler Service constructor
      *
      * @param CssRulesetInterface $cssRuleset             CSS Ruleset
-     * @param LengthInterface[] $breakpoints              Breakpoints
+     * @param AbsoluteLengthInterface[] $breakpoints      Breakpoints
      * @param ImageCandidateSetInterface $imageCandidates Image candidates
      * @param LengthFactoryInterface $lengthFactory       Length factory
      */

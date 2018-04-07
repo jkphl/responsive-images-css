@@ -38,6 +38,9 @@ namespace Jkphl\Respimgcss\Tests\Domain;
 
 use Jkphl\Respimgcss\Application\Factory\LengthFactory;
 use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
+use Jkphl\Respimgcss\Domain\Contract\SourceSizeImageCandidateMatch;
+use Jkphl\Respimgcss\Domain\Contract\SourceSizeListInterface;
+use Jkphl\Respimgcss\Domain\Model\Css\MediaCondition;
 use Jkphl\Respimgcss\Domain\Model\Css\Ruleset;
 use Jkphl\Respimgcss\Domain\Model\ImageCandidateSet;
 use Jkphl\Respimgcss\Domain\Model\WidthImageCandidate;
@@ -45,6 +48,7 @@ use Jkphl\Respimgcss\Domain\Service\WidthCssRulesetCompilerService;
 use Jkphl\Respimgcss\Infrastructure\ViewportCalculatorServiceFactory;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 use Jkphl\Respimgcss\Tests\Domain\Mock\AbsoluteLength;
+use PHPUnit\Framework\MockObject\Stub\ConsecutiveCalls;
 
 /**
  * Width CSS ruleset compiler service tests
@@ -55,9 +59,9 @@ use Jkphl\Respimgcss\Tests\Domain\Mock\AbsoluteLength;
 class WidthCssRulesetCompilerServiceTest extends AbstractTestBase
 {
     /**
-     * Test the width CSS ruleset compiler service
+     * Test the width CSS ruleset compiler service using the image candidates
      */
-    public function testWidthCssRulesetCompilerService()
+    public function testWidthCssRulesetCompilerServiceImageCandidates()
     {
         $ruleset             = new Ruleset();
         $length              = new AbsoluteLength(500);
@@ -75,5 +79,56 @@ class WidthCssRulesetCompilerServiceTest extends AbstractTestBase
 
         $cssRuleset = $compiler->compile(2);
         $this->assertInstanceOf(CssRulesetInterface::class, $cssRuleset);
+    }
+
+    /**
+     * Test the width CSS ruleset compiler service using a source sizes list
+     */
+    public function testWidthCssRulesetCompilerServiceSourceSizes()
+    {
+        $ruleset             = new Ruleset();
+        $imageCandidateSet   = new ImageCandidateSet();
+        $imageCandidateSet[] = new WidthImageCandidate('small.jpg', 400);
+        $imageCandidateSet[] = new WidthImageCandidate('medium.jpg', 800);
+        $imageCandidateSet[] = new WidthImageCandidate('large.jpg', 1200);
+        $imageCandidateSet[] = new WidthImageCandidate('extralarge.jpg', 1600);
+        $lengthFactory       = new LengthFactory(new ViewportCalculatorServiceFactory(), 16);
+        $sourceSizeList      = $this->createMock(SourceSizeListInterface::class);
+        $sourceSizeList->method('findImageCandidate')->will($this->getImageCandidateMatches($imageCandidateSet));
+
+        $compiler = new WidthCssRulesetCompilerService(
+            $ruleset,
+            [new AbsoluteLength(400), new AbsoluteLength(800), new AbsoluteLength(1200), new AbsoluteLength(1600)],
+            $imageCandidateSet,
+            $lengthFactory,
+            $sourceSizeList
+        );
+        $this->assertInstanceOf(WidthCssRulesetCompilerService::class, $compiler);
+
+        $cssRuleset = $compiler->compile(1);
+        $this->assertInstanceOf(CssRulesetInterface::class, $cssRuleset);
+    }
+
+    /**
+     * Create a list of consecutive image candidate matches
+     *
+     * @param ImageCandidateSet $imageCandidateSet Image candidate set
+     *
+     * @return ConsecutiveCalls Image candidate matches
+     * @throws \ReflectionException
+     */
+    protected function getImageCandidateMatches(ImageCandidateSet $imageCandidateSet): ConsecutiveCalls
+    {
+        $imageCandidates = [];
+        foreach ($imageCandidateSet as $imageCandidate) {
+            $imageCandidateReturn = $this->createMock(SourceSizeImageCandidateMatch::class);
+            $imageCandidateReturn->method('getMediaCondition')->willReturn(
+                new MediaCondition('', '(min-width: '.$imageCandidate->getValue().'px)')
+            );
+            $imageCandidateReturn->method('getImageCandidate')->willReturn($imageCandidate);
+            $imageCandidates[] = $imageCandidateReturn;
+        }
+
+        return call_user_func_array([$this, 'onConsecutiveCalls'], $imageCandidates);
     }
 }

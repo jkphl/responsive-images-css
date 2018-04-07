@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Domain\Mock
+ * @subpackage Jkphl\Respimgcss\Tests\Domain
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,26 +34,32 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Tests\Domain\Mock;
+namespace Jkphl\Respimgcss\Tests\Domain;
 
-use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
-use Jkphl\Respimgcss\Domain\Model\AbstractLength;
+use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
+use Jkphl\Respimgcss\Domain\Model\Css\MediaCondition;
+use Jkphl\Respimgcss\Domain\Model\ImageCandidateMatch;
+use Jkphl\Respimgcss\Domain\Model\WidthImageCandidate;
+use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
- * Absolute length mock
+ * Image candidate match tests
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Domain\Mock
+ * @subpackage Jkphl\Respimgcss\Tests\Domain
  */
-class AbsoluteLength extends AbstractLength implements AbsoluteLengthInterface
+class ImageCandidateMatchTest extends AbstractTestBase
 {
     /**
-     * Return the length value
-     *
-     * @return float AbstractLength value
+     * Test the image candidate match
      */
-    public function getValue(): float
+    public function testImageCandidateMatch()
     {
-        return $this->value;
+        $mediaCondition      = new MediaCondition('property', 'value');
+        $imageCandidate      = new WidthImageCandidate('small.jpg', 400);
+        $imageCandidateMatch = new ImageCandidateMatch($mediaCondition, $imageCandidate);
+        $this->assertInstanceOf(ImageCandidateMatch::class, $imageCandidateMatch);
+        $this->assertInstanceOf(MediaCondition::class, $imageCandidateMatch->getMediaCondition());
+        $this->assertInstanceOf(ImageCandidateInterface::class, $imageCandidateMatch->getImageCandidate());
     }
 }

@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Domain\Mock
+ * @subpackage Jkphl\Respimgcss\Domain\Contract
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,26 +34,27 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Tests\Domain\Mock;
-
-use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
-use Jkphl\Respimgcss\Domain\Model\AbstractLength;
+namespace Jkphl\Respimgcss\Domain\Contract;
 
 /**
- * Absolute length mock
+ * Source size image candidate match
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Domain\Mock
+ * @subpackage Jkphl\Respimgcss\Domain\Contract
  */
-class AbsoluteLength extends AbstractLength implements AbsoluteLengthInterface
+interface SourceSizeImageCandidateMatch
 {
     /**
-     * Return the length value
+     * Return the media condition
      *
-     * @return float AbstractLength value
+     * @return CssMediaConditionInterface Media condition
      */
-    public function getValue(): float
-    {
-        return $this->value;
-    }
+    public function getMediaCondition(): CssMediaConditionInterface;
+
+    /**
+     * Return the image candidate
+     *
+     * @return ImageCandidateInterface Image Candidate
+     */
+    public function getImageCandidate(): ImageCandidateInterface;
 }
