@@ -36,7 +36,9 @@
 
 namespace Jkphl\Respimgcss\Application\Model;
 
+use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
+use Jkphl\Respimgcss\Domain\Model\Css\WidthMediaCondition;
 
 /**
  * Source size media condition
@@ -89,5 +91,30 @@ class SourceSizeMediaCondition
     public function getConditions(): array
     {
         return $this->conditions;
+    }
+
+    /**
+     * Test if this source size condition matches a particular width and density
+     *
+     * @param AbsoluteLengthInterface $width Width
+     * @param float $density                 Density
+     *
+     * @return bool This source size condition matches
+     */
+    public function matches(AbsoluteLengthInterface $width, float $density): bool
+    {
+        $match = true;
+
+        // Run through all conditions
+        /** @var CssMinMaxMediaConditionInterface $condition */
+        foreach ($this->conditions as $condition) {
+            $value = ($condition instanceof WidthMediaCondition) ? $width->getValue() : $density;
+            if (!$condition->matches($value)) {
+                $match = false;
+                break;
+            }
+        }
+
+        return $match;
     }
 }

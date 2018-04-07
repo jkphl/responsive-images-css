@@ -173,7 +173,8 @@ abstract class Generator implements GeneratorInterface
             $this->breakpoints,
             $this->imageCandidates,
             new ViewportCalculatorServiceFactory(),
-            $this->emPixel
+            $this->emPixel,
+            $sourceSizeList
         );
 
         return new CssRuleset($cssRulesetCompilerService->compile($densities));

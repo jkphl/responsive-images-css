@@ -113,4 +113,26 @@ abstract class AbstractMinMaxMediaCondition extends MediaCondition implements Cs
     {
         return $this->value;
     }
+
+    /**
+     * Test whether this condition matches a value
+     *
+     * @param float $value Value
+     *
+     * @return bool Successful match
+     */
+    public function matches(float $value): bool
+    {
+        $conditionValue = $this->value->getValue();
+
+        if ($this->modifier === self::MIN) {
+            return $value >= $conditionValue;
+        }
+
+        if ($this->modifier === self::MAX) {
+            return $value <= $conditionValue;
+        }
+
+        return $value == $conditionValue;
+    }
 }

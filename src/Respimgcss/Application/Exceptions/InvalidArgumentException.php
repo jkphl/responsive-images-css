@@ -164,4 +164,16 @@ class InvalidArgumentException extends \Jkphl\Respimgcss\Domain\Exceptions\Inval
      * @var int
      */
     const NON_WELL_FORMED_NUMERIC_VALUE = 1523097732;
+    /**
+     * Invalid value type
+     *
+     * @var string
+     */
+    const INVALID_VALUE_TYPE_STR = 'Invalid value type (neither absolute nor relative)';
+    /**
+     * Invalid value type
+     *
+     * @var int
+     */
+    const INVALID_VALUE_TYPE = 1523114805;
 }

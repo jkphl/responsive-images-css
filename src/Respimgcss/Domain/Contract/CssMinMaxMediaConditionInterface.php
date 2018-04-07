@@ -55,4 +55,13 @@ interface CssMinMaxMediaConditionInterface extends CssMediaConditionInterface
      * @return string Property modifier
      */
     public function getModifier(): string;
+
+    /**
+     * Test whether this condition matches a value
+     *
+     * @param float $value Value
+     *
+     * @return bool Successful match
+     */
+    public function matches(float $value): bool;
 }

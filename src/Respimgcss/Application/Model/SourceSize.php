@@ -37,6 +37,9 @@
 namespace Jkphl\Respimgcss\Application\Model;
 
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
+use Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException;
+use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
+use Jkphl\Respimgcss\Domain\Contract\RelativeLengthInterface;
 
 /**
  * Source size
@@ -49,7 +52,7 @@ class SourceSize
     /**
      * Source size valie
      *
-     * @var UnitLengthInterface
+     * @var AbsoluteLengthInterface|RelativeLengthInterface
      */
     protected $value;
     /**
@@ -62,11 +65,19 @@ class SourceSize
     /**
      * Source size constructor
      *
-     * @param UnitLengthInterface $value               Source size value
-     * @param SourceSizeMediaCondition $mediaCondition Media condition
+     * @param AbsoluteLengthInterface|RelativeLengthInterface $value Source size value
+     * @param SourceSizeMediaCondition $mediaCondition               Media condition
      */
     public function __construct(UnitLengthInterface $value, SourceSizeMediaCondition $mediaCondition = null)
     {
+        // If the value is neither absolute nor relative
+        if (!($value instanceof AbsoluteLengthInterface) && !($value instanceof RelativeLengthInterface)) {
+            throw new InvalidArgumentException(
+                InvalidArgumentException::INVALID_VALUE_TYPE_STR,
+                InvalidArgumentException::INVALID_VALUE_TYPE
+            );
+        }
+
         $this->value          = $value;
         $this->mediaCondition = $mediaCondition;
     }
@@ -74,7 +85,7 @@ class SourceSize
     /**
      * Return the source size value
      *
-     * @return UnitLengthInterface Source size value
+     * @return AbsoluteLengthInterface|RelativeLengthInterface Source size value
      */
     public function getValue(): UnitLengthInterface
     {

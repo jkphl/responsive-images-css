@@ -40,6 +40,7 @@ use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Factory\LengthFactory;
 use Jkphl\Respimgcss\Application\Model\SourceSize;
 use Jkphl\Respimgcss\Application\Model\SourceSizeMediaCondition;
+use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 use Jkphl\Respimgcss\Infrastructure\ViewportCalculatorServiceFactory;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
@@ -53,6 +54,9 @@ class SourceSizeTest extends AbstractTestBase
 {
     /**
      * Test the source size
+     *
+     * @expectedException \Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException
+     * @expectedExceptionCode 1523114805
      */
     public function testSourceSize()
     {
@@ -61,9 +65,12 @@ class SourceSizeTest extends AbstractTestBase
         $sourceSizeMediaCondition = new SourceSizeMediaCondition('value');
         $sourceSize               = new SourceSize($unitLength, $sourceSizeMediaCondition);
         $this->assertInstanceOf(SourceSize::class, $sourceSize);
-        $this->assertInstanceOf(UnitLengthInterface::class, $sourceSize->getValue());
+        $this->assertInstanceOf(AbsoluteLengthInterface::class, $sourceSize->getValue());
         $this->assertEquals($unitLength, $sourceSize->getValue());
         $this->assertInstanceOf(SourceSizeMediaCondition::class, $sourceSize->getMediaCondition());
         $this->assertEquals($sourceSizeMediaCondition, $sourceSize->getMediaCondition());
+
+        // Test with an invalid unit type
+        new SourceSize($this->createMock(UnitLengthInterface::class), $sourceSizeMediaCondition);
     }
 }
