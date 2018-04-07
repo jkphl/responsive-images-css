@@ -58,9 +58,7 @@ class DensityCssRulesetCompilerServiceTest extends AbstractTestBase
      */
     public function testDensityCssRulesetCompilerService()
     {
-        $ruleset = new Ruleset();
-        $value   = rand(1, getrandmax());
-//        $length              = new AbstractLength($value);
+        $ruleset             = new Ruleset();
         $length              = $this->createMock(AbsoluteLengthInterface::class);
         $imageCandidate      = new DensityImageCandidate('image.jpg', 3);
         $imageCandidateSet   = new ImageCandidateSet();

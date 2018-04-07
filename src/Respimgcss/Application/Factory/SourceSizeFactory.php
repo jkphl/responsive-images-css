@@ -197,6 +197,27 @@ class SourceSizeFactory extends AbstractLengthFactory
     }
 
     /**
+     * Match a media condition string
+     *
+     * @param string $mediaConditionString Media condition string
+     * @param string $pattern              PCRE pattern
+     *
+     * @return array Matches
+     */
+    protected function matchMediaConditions(string $mediaConditionString, string $pattern): array
+    {
+        preg_match_all($pattern, $mediaConditionString, $matches, PREG_OFFSET_CAPTURE);
+        $refinedMatches = [];
+        foreach ($matches[0] as $index => $match) {
+            $matchLength      = strlen($match[0]) + $match[1];
+            $matchModifier    = is_array($matches[1][$index]) ? $matches[1][$index][0] : '';
+            $refinedMatches[] = [substr($mediaConditionString, $matchLength), $matchModifier];
+        }
+
+        return $refinedMatches;
+    }
+
+    /**
      * Parse a width media condition value
      *
      * @param string $widthMediaConditionStr Width media condition string
@@ -284,37 +305,25 @@ class SourceSizeFactory extends AbstractLengthFactory
     }
 
     /**
-     * Match a media condition string
-     *
-     * @param string $mediaConditionString Media condition string
-     * @param string $pattern              PCRE pattern
-     *
-     * @return array Matches
-     */
-    protected function matchMediaConditions(string $mediaConditionString, string $pattern): array
-    {
-        preg_match_all($pattern, $mediaConditionString, $matches, PREG_OFFSET_CAPTURE);
-        $refinedMatches = [];
-        foreach ($matches[0] as $index => $match) {
-            $matchLength      = strlen($match[0]) + $match[1];
-            $matchModifier    = is_array($matches[1][$index]) ? $matches[1][$index][0] : '';
-            $refinedMatches[] = [substr($mediaConditionString, $matchLength), $matchModifier];
-        }
-
-        return $refinedMatches;
-    }
-
-    /**
      * Parse a resolution media condition value
      *
      * @param string $resolutionMediaConditionStr Resolution media condition string
      *
      * @return LengthInterface Resolution media condition value
+     * @throws InvalidArgumentException If the value is not numeric
      */
     protected function parseResolutionMediaConditionValue(string $resolutionMediaConditionStr): LengthInterface
     {
         $resolutionMediaConditionValueStr = $this->shiftMediaConditionValue($resolutionMediaConditionStr);
 
-        return $this->createAbsoluteLength($resolutionMediaConditionValueStr);
+        // If the value is not numeric
+        if (!is_numeric($resolutionMediaConditionValueStr)) {
+            throw new InvalidArgumentException(
+                sprintf(InvalidArgumentException::NON_WELL_FORMED_NUMERIC_VALUE_STR, $resolutionMediaConditionValueStr),
+                InvalidArgumentException::NON_WELL_FORMED_NUMERIC_VALUE
+            );
+        }
+
+        return $this->createAbsoluteLength(floatval($resolutionMediaConditionValueStr));
     }
 }

@@ -183,7 +183,6 @@ class ViewportCalculatorService extends StringCalc implements CalculatorServiceI
      * @param Token|null $previousToken Previous token
      *
      * @return Token|null               Stash token
-     * @throws InvalidArgumentException If the word token is invalid
      */
     protected function handleWordToken(
         array &$refinedTokens,
@@ -193,15 +192,42 @@ class ViewportCalculatorService extends StringCalc implements CalculatorServiceI
     ): ?Token {
         // If it's a calc() function call: Add the previous token and skip the current one
         if ($token->getValue() == 'calc') {
-            return $this->handleCalcToken($refinedTokens, $previousToken);
+            if ($previousToken) {
+                array_push($refinedTokens, $previousToken);
+            }
+
+            return null;
         }
 
+        $this->handleUnitWordToken($refinedTokens, $emPixel, $token, $previousToken);
+
+        return null;
+    }
+
+    /**
+     * Handle a unit word token
+     *
+     * The method returns a list of zero or more (possibly refined) tokens to preerve
+     *
+     * @param Token[] $refinedTokens    Refined tokens
+     * @param int $emPixel              EM to pixel ratio
+     * @param Token $token              Token
+     * @param Token|null $previousToken Previous token
+     *
+     * @throws InvalidArgumentException If the word token is invalid
+     */
+    protected function handleUnitWordToken(
+        array &$refinedTokens,
+        int $emPixel,
+        Token $token,
+        Token $previousToken = null
+    ): void {
         // If the previous token is a number: Try to generate a unit length
         if ($previousToken && ($previousToken->getType() == Token::TYPE_NUMBER)) {
             try {
                 $this->createAndHandleUnitLengthToken($refinedTokens, $emPixel, $token, $previousToken);
 
-                return null;
+                return;
             } catch (ApplicationInvalidArgumentException $e) {
                 // Ignore
             }
@@ -214,22 +240,6 @@ class ViewportCalculatorService extends StringCalc implements CalculatorServiceI
         );
     }
 
-    /**
-     * Handle a calc() token
-     *
-     * @param array $refinedTokens      Refined tokens
-     * @param Token|null $previousToken Previous token
-     *
-     * @return null
-     */
-    protected function handleCalcToken(array &$refinedTokens, Token $previousToken = null)
-    {
-        if ($previousToken) {
-            array_push($refinedTokens, $previousToken);
-        }
-
-        return null;
-    }
 
     /**
      * Create and handle a unit length token
@@ -248,9 +258,11 @@ class ViewportCalculatorService extends StringCalc implements CalculatorServiceI
         $unitLength = (new LengthFactory(new ViewportCalculatorServiceFactory(), $emPixel))
             ->createLengthFromString($previousToken->getValue().$token->getValue());
 
-        // If it's an absolute value
+        // If it's an absolute length value
         if ($unitLength instanceof AbsoluteLength) {
-            array_push($refinedTokens, new Token(strval($unitLength->getValue()), Token::TYPE_NUMBER, 0));
+            $lengthValue = strval($unitLength->/** @scrutinizer ignore-call */
+            getValue());
+            array_push($refinedTokens, new Token($lengthValue, Token::TYPE_NUMBER, 0));
 
             return;
         }

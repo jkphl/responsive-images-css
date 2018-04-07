@@ -152,4 +152,16 @@ class InvalidArgumentException extends \Jkphl\Respimgcss\Domain\Exceptions\Inval
      * @var int
      */
     const ILL_FORMATTED_CALC_LENGTH_STRING = 1522687100;
+    /**
+     * Non well formed numeric value
+     *
+     * @var string
+     */
+    const NON_WELL_FORMED_NUMERIC_VALUE_STR = 'Non well formed numeric value "%s"';
+    /**
+     * Non well formed numeric value
+     *
+     * @var int
+     */
+    const NON_WELL_FORMED_NUMERIC_VALUE = 1523097732;
 }

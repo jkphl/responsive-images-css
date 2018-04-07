@@ -36,8 +36,8 @@
 
 namespace Jkphl\Respimgcss\Tests\Domain;
 
+use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
-use Jkphl\Respimgcss\Domain\Contract\LengthInterface;
 use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 use Jkphl\Respimgcss\Tests\Domain\Mock\AbsoluteLength;
@@ -60,9 +60,12 @@ class ResolutionMediaConditionTest extends AbstractTestBase
             CssMinMaxMediaConditionInterface::MAX
         );
         $this->assertInstanceOf(ResolutionMediaCondition::class, $resolutionMediaCondition);
-        $this->assertInstanceOf(LengthInterface::class, $resolutionMediaCondition->getValue());
-        $this->assertEquals(2.0, $resolutionMediaCondition->getValue()->getValue());
-        $this->assertEquals(CssMinMaxMediaConditionInterface::MAX, $resolutionMediaCondition->getModifier());
+        $resolutionConditionValue = $resolutionMediaCondition->getValue();
+        $this->assertInstanceOf(AbsoluteLengthInterface::class, $resolutionConditionValue);
+        if ($resolutionConditionValue instanceof AbsoluteLengthInterface) {
+            $this->assertEquals(2.0, $resolutionConditionValue->getValue());
+            $this->assertEquals(CssMinMaxMediaConditionInterface::MAX, $resolutionMediaCondition->getModifier());
+        }
     }
 
     /**

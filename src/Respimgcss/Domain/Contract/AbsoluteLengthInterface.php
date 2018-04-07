@@ -47,8 +47,6 @@ interface AbsoluteLengthInterface extends LengthInterface
     /**
      * Return the length value
      *
-     * @param AbsoluteLengthInterface $viewport Viewport width
-     *
      * @return float AbstractLength value
      */
     public function getValue(): float;

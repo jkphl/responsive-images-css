@@ -125,7 +125,7 @@ class SourceSizeFactoryTest extends AbstractTestBase
      */
     public function testSourceSizeFactoryInvalidWidthResolution()
     {
-        $sourceSize = $this->sourceSizeFactory->createFromSourceSizeStr('((min-width: 123abc) and (min-resolution: 123abc)) 100vw');
+        $sourceSize = $this->sourceSizeFactory->createFromSourceSizeStr('((min-width: 123abc) and (min-resolution: 456abc)) 100vw');
         $this->assertInstanceOf(SourceSize::class, $sourceSize);
         $this->assertTrue(is_array($sourceSize->getMediaCondition()->getConditions()));
         $this->assertEquals([], $sourceSize->getMediaCondition()->getConditions());

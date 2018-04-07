@@ -36,6 +36,8 @@
 
 namespace Jkphl\Respimgcss\Domain\Model\Css;
 
+use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
+
 /**
  * Resolution based min/max media condition
  *
@@ -44,6 +46,12 @@ namespace Jkphl\Respimgcss\Domain\Model\Css;
  */
 class ResolutionMediaCondition extends AbstractMinMaxMediaCondition
 {
+    /**
+     * Property value
+     *
+     * @var AbsoluteLengthInterface
+     */
+    protected $value;
     /**
      * Property name
      *
