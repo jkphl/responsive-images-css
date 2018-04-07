@@ -37,7 +37,6 @@
 namespace Jkphl\Respimgcss\Infrastructure;
 
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
-use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 use Jkphl\Respimgcss\Domain\Contract\CssMediaConditionInterface as DomainMediaConditionInterface;
 use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
 use Jkphl\Respimgcss\Domain\Model\Css\WidthMediaCondition;
@@ -90,27 +89,22 @@ class CssMediaConditionFactory
     protected static function createFromResolutionMediaCondition(
         ResolutionMediaCondition $resolutionMediaCondition
     ): array {
-        $resolutionConditionValue = $resolutionMediaCondition->getValue();
-        if ($resolutionConditionValue instanceof AbsoluteLengthInterface) {
-            $resolutionValue      = $resolutionConditionValue->getValue();
-            $resolutionModifier   = $resolutionMediaCondition->getModifier();
-            $resolutionProperties = ['-webkit-%sdevice-pixel-ratio', '%sresolution', '%sresolution'];
-            $resolutionValues     = [
-                strval($resolutionValue),
-                round($resolutionValue * 96).'dpi',
-                $resolutionValue.'ddpx'
-            ];
+        $resolutionValue      = $resolutionMediaCondition->getValue()->getValue();
+        $resolutionModifier   = $resolutionMediaCondition->getModifier();
+        $resolutionProperties = ['-webkit-%sdevice-pixel-ratio', '%sresolution', '%sresolution'];
+        $resolutionValues     = [
+            strval($resolutionValue),
+            round($resolutionValue * 96).'dpi',
+            $resolutionValue.'ddpx'
+        ];
 
-            return array_map(
-                function ($resolutionProperty, $resolutionValue) use ($resolutionModifier) {
-                    return self::createMediaCondition($resolutionProperty, $resolutionModifier, $resolutionValue);
-                },
-                $resolutionProperties,
-                $resolutionValues
-            );
-        }
-
-        return [];
+        return array_map(
+            function ($resolutionProperty, $resolutionValue) use ($resolutionModifier) {
+                return self::createMediaCondition($resolutionProperty, $resolutionModifier, $resolutionValue);
+            },
+            $resolutionProperties,
+            $resolutionValues
+        );
     }
 
     /**

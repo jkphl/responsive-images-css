@@ -62,10 +62,8 @@ class ResolutionMediaConditionTest extends AbstractTestBase
         $this->assertInstanceOf(ResolutionMediaCondition::class, $resolutionMediaCondition);
         $resolutionConditionValue = $resolutionMediaCondition->getValue();
         $this->assertInstanceOf(AbsoluteLengthInterface::class, $resolutionConditionValue);
-        if ($resolutionConditionValue instanceof AbsoluteLengthInterface) {
-            $this->assertEquals(2.0, $resolutionConditionValue->getValue());
-            $this->assertEquals(CssMinMaxMediaConditionInterface::MAX, $resolutionMediaCondition->getModifier());
-        }
+        $this->assertEquals(2.0, $resolutionConditionValue->getValue());
+        $this->assertEquals(CssMinMaxMediaConditionInterface::MAX, $resolutionMediaCondition->getModifier());
     }
 
     /**
