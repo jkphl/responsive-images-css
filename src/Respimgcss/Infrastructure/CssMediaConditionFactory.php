@@ -67,7 +67,13 @@ class CssMediaConditionFactory
                 $renderableMediaConditions = self::createFromWidthMediaCondition($mediaCondition);
                 break;
             default:
-                $renderableMediaConditions = [];
+                $renderableMediaConditions = [
+                    self::createMediaCondition(
+                        $mediaCondition->getProperty(),
+                        '',
+                        $mediaCondition->getValue()
+                    )
+                ];
         }
 
         return $renderableMediaConditions;

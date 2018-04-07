@@ -43,6 +43,7 @@ use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
 use Jkphl\Respimgcss\Domain\Model\Css\WidthMediaCondition;
 use Jkphl\Respimgcss\Infrastructure\CssMediaCondition;
 use Jkphl\Respimgcss\Infrastructure\CssMediaConditionFactory;
+use Jkphl\Respimgcss\Infrastructure\CssMediaConditionInterface;
 use Jkphl\Respimgcss\Infrastructure\ViewportCalculatorServiceFactory;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
@@ -62,7 +63,12 @@ class CssMediaConditionFactoryTest extends AbstractTestBase
         $mediaConditions = CssMediaConditionFactory::createFromMediaCondition(
             new MediaCondition('property', 'value')
         );
-        $this->assertEquals([], $mediaConditions);
+        $this->assertTrue(is_array($mediaConditions));
+        $this->assertEquals(1, count($mediaConditions));
+
+        /** @var CssMediaConditionInterface $mediaCondition */
+        $mediaCondition = $mediaConditions[0];
+        $this->assertInstanceOf(CssMediaConditionInterface::class, $mediaCondition);
     }
 
     /**

@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
+ * @subpackage Jkphl\Respimgcss\Tests\Ports
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,42 +34,34 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Ports;
+namespace Jkphl\Respimgcss\Tests\Ports;
 
+use Jkphl\Respimgcss\Domain\Model\Css\MediaCondition;
+use Jkphl\Respimgcss\Domain\Model\Css\Rule;
 use Jkphl\Respimgcss\Domain\Model\Css\Ruleset;
-use Jkphl\Respimgcss\Infrastructure\CssRulesSerializer;
+use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
+use Jkphl\Respimgcss\Ports\CssRuleset;
+use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
- * CSS Ruleset
+ * CSS ruleset tests
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
+ * @subpackage Jkphl\Respimgcss\Tests\Ports
  */
-class CssRuleset extends Ruleset implements CssRulesetInterface
+class CssRulesetTest extends AbstractTestBase
 {
     /**
-     * CSS ruleset constructor
-     *
-     * @param Ruleset|null $ruleset Optional: Domain ruleset to import rules from
+     * Test the CSS ruleset
      */
-    public function __construct(Ruleset $ruleset = null)
+    public function testCssRuleset()
     {
-        if ($ruleset !== null) {
-            $this->rules = $ruleset->rules;
-        }
-    }
-
-    /**
-     * Serialize the CSS ruleset
-     *
-     * @param string $selector Selector
-     *
-     * @return mixed
-     */
-    public function toCss(string $selector): string
-    {
-        $serializer = new CssRulesSerializer($this->rules);
-
-        return $serializer->toCss($selector);
+        $imageCandidate = new DensityImageCandidate('image.jpg', 1);
+        $mediaCondition = new MediaCondition('property', 'value');
+        $ruleset        = (new Ruleset())->appendRule(new Rule($imageCandidate, [$mediaCondition]));
+        $cssRuleset     = new CssRuleset($ruleset);
+        $this->assertInstanceOf(CssRuleset::class, $cssRuleset);
+        $this->assertEquals('@media (property: value) {.test {background-image: url("image.jpg");}}',
+            $cssRuleset->toCss('.test'));
     }
 }
