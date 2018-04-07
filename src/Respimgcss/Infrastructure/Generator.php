@@ -121,16 +121,6 @@ abstract class Generator implements GeneratorInterface
     }
 
     /**
-     * Return the registered image candidates
-     *
-     * @return ImageCandidateInterface[] Image candidates
-     */
-    public function getImageCandidates(): array
-    {
-        return ($this->imageCandidates === null) ? [] : $this->imageCandidates->toArray();
-    }
-
-    /**
      * Create a CSS ruleset for the registered image candidates
      *
      * @param float[] $densities Device display densities
@@ -148,6 +138,16 @@ abstract class Generator implements GeneratorInterface
         }
 
         return $cssRuleset;
+    }
+
+    /**
+     * Return the registered image candidates
+     *
+     * @return ImageCandidateInterface[] Image candidates
+     */
+    public function getImageCandidates(): array
+    {
+        return ($this->imageCandidates === null) ? [] : $this->imageCandidates->toArray();
     }
 
     /**
@@ -218,7 +218,7 @@ abstract class Generator implements GeneratorInterface
             },
             $unparsedSourceSizes
         );
-
-        return count($sourceSizes) ? new SourceSizeList($sourceSizes) : null;
+        $legthFactory        = new LengthFactory(new ViewportCalculatorServiceFactory(), $this->emPixel);
+        return count($sourceSizes) ? new SourceSizeList($sourceSizes, $legthFactory) : null;
     }
 }

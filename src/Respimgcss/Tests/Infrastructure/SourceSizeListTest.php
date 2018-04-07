@@ -36,6 +36,8 @@
 
 namespace Jkphl\Respimgcss\Tests\Infrastructure;
 
+use Jkphl\Respimgcss\Application\Contract\CalculatorServiceFactoryInterface;
+use Jkphl\Respimgcss\Application\Factory\LengthFactory;
 use Jkphl\Respimgcss\Application\Factory\SourceSizeFactory;
 use Jkphl\Respimgcss\Application\Model\ImageCandidateSet;
 use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
@@ -59,17 +61,22 @@ class SourceSizeListTest extends AbstractTestBase
     public function testSourceSizeList()
     {
         $sourceSizeFactory = new SourceSizeFactory(new ViewportCalculatorServiceFactory(), 16);
-        $sourceSize1       = $sourceSizeFactory->createFromSourceSizeStr('((min-width: 200px) and (min-resolution: 2)) 80vw');
-        $sourceSize2       = $sourceSizeFactory->createFromSourceSizeStr('(min-width: 400px) 80vw');
-        $sourceSize3       = $sourceSizeFactory->createFromSourceSizeStr('(min-width: 800px) 50vw');
-        $sourceSize4       = $sourceSizeFactory->createFromSourceSizeStr('100vw');
-        $sourceSizeList    = new SourceSizeList([$sourceSize1, $sourceSize2, $sourceSize3, $sourceSize4]);
+        $sourceSize1       = $sourceSizeFactory->createFromSourceSizeStr(
+            '((min-width: 200px) and (min-resolution: 2)) 80vw'
+        );
+        $sourceSize2       = $sourceSizeFactory->createFromSourceSizeStr('(min-width: 800px) 50vw');
+        $sourceSize3       = $sourceSizeFactory->createFromSourceSizeStr('100vw');
+        $sourceSize4       = $sourceSizeFactory->createFromSourceSizeStr('(min-width: 400px) 80vw');
+        $sourceSizeList    = new SourceSizeList(
+            [$sourceSize1, $sourceSize2, $sourceSize3, $sourceSize4],
+            $sourceSizeFactory
+        );
         $this->assertInstanceOf(SourceSizeList::class, $sourceSizeList);
         $this->assertEquals(4, count($sourceSizeList));
+        $this->assertEquals($sourceSize2, $sourceSizeList[0]);
+        $this->assertEquals($sourceSize4, $sourceSizeList[1]);
         $this->assertEquals($sourceSize1, $sourceSizeList[2]);
-        $this->assertEquals($sourceSize2, $sourceSizeList[1]);
-        $this->assertEquals($sourceSize3, $sourceSizeList[0]);
-        $this->assertEquals($sourceSize4, $sourceSizeList[3]);
+        $this->assertEquals($sourceSize3, $sourceSizeList[3]);
 
         $this->matchImageCandidates(
             $sourceSizeList,
@@ -96,14 +103,17 @@ class SourceSizeListTest extends AbstractTestBase
         $imageCandidateSet[] = new WidthImageCandidate('large.jpg', 1200);
         $imageCandidateSet[] = new WidthImageCandidate('extralarge.jpg', 1600);
 
+        $imageCandidateResultFiles = ['small.jpg', 'medium.jpg', 'extralarge.jpg'];
+
         foreach ([1] as $density) {
             /** @var AbsoluteLengthInterface $breakpoint */
             foreach ($breakpoints as $breakpoint) {
                 $imageCandidateMatch = $sourceSizeList->findImageCandidate($imageCandidateSet, $breakpoint, $density);
-//                echo $breakpoint->getValue().': ';
-//                print_r($imageCandidateMatch->getImageCandidate());
-//                echo PHP_EOL;
                 $this->assertInstanceOf(ImageCandidateMatch::class, $imageCandidateMatch);
+                $this->assertEquals(
+                    $imageCandidateMatch->getImageCandidate()->getFile(),
+                    array_shift($imageCandidateResultFiles)
+                );
             }
         }
     }
@@ -116,6 +126,7 @@ class SourceSizeListTest extends AbstractTestBase
      */
     public function testSourceSizeListInvalid()
     {
-        new SourceSizeList(['test']);
+        $lengthFactory = new LengthFactory($this->createMock(CalculatorServiceFactoryInterface::class), 16);
+        new SourceSizeList(['test'], $lengthFactory);
     }
 }

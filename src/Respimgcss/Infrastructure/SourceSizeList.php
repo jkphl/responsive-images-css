@@ -39,6 +39,7 @@ namespace Jkphl\Respimgcss\Infrastructure;
 use Jkphl\Respimgcss\Application\Contract\LengthFactoryInterface;
 use Jkphl\Respimgcss\Application\Contract\SourceSizeListInterface;
 use Jkphl\Respimgcss\Application\Model\SourceSize;
+use Jkphl\Respimgcss\Application\Model\SourceSizeMediaCondition;
 use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
 use Jkphl\Respimgcss\Domain\Contract\ImageCandidateSetInterface;
@@ -68,11 +69,12 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
     /**
      * Source size list constructor
      *
-     * @param SourceSize[] $sourceSizes Source sizes
+     * @param SourceSize[] $sourceSizes             Source sizes
+     * @param LengthFactoryInterface $lengthFactory Length factory
      *
      * @throws InvalidArgumentException If the source size is invalid
      */
-    public function __construct(array $sourceSizes)
+    public function __construct(array $sourceSizes, LengthFactoryInterface $lengthFactory)
     {
         // Run through all source sizes
         foreach ($sourceSizes as $sourceSize) {
@@ -84,29 +86,11 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
                 );
             }
         }
-        parent::__construct($this->sortSourceSizes($sourceSizes));
-    }
 
-    /**
-     * Sort the list of source sizes
-     *
-     * @param SourceSize[] $sourceSizes Source sizes
-     *
-     * @return SourceSize[] Sorted source sizes
-     */
-    protected function sortSourceSizes(array $sourceSizes): array
-    {
-        $sourceSizesCount = count($sourceSizes);
-        if ($sourceSizesCount) {
-            $defaultSize = strlen($sourceSizes[$sourceSizesCount - 1]->getMediaCondition()->getValue()) ?
-                null : array_pop($sourceSizes);
-            $sourceSizes = array_reverse($sourceSizes);
-            if ($defaultSize) {
-                array_push($sourceSizes, $defaultSize);
-            }
-        }
+        usort($sourceSizes, [$this, 'sortSourceSizes']);
+        parent::__construct($sourceSizes);
 
-        return $sourceSizes;
+        $this->lengthFactory = $lengthFactory;
     }
 
     /**
@@ -126,10 +110,18 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
 
         // Run through the source sizes
         /** @var SourceSize $sourceSize */
+        $lastMinimumWidth = null;
         foreach ($this->getArrayCopy() as $sourceSize) {
-            if ($sourceSize->getMediaCondition()->matches($breakpoint, $density)) {
-                return $this->findImageCandidateForSourceSize($sourceSize, $breakpoint, $imageCandidates);
+            $mediaCondition = $sourceSize->getMediaCondition();
+            if ($mediaCondition->matches($breakpoint, $density)) {
+                return $this->findImageCandidateForSourceSize(
+                    $sourceSize,
+                    $imageCandidates,
+                    $breakpoint,
+                    $this->getSourceSizeMaximumWidth($mediaCondition, $lastMinimumWidth)
+                );
             }
+            $lastMinimumWidth = $mediaCondition->getMinimumWidth();
         }
 
         return null;
@@ -139,18 +131,27 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
      * Find an image candidate for a particular source size
      *
      * @param SourceSize $sourceSize                      Matching source size
-     * @param AbsoluteLengthInterface $breakpoint         Breakpoint
      * @param ImageCandidateSetInterface $imageCandidates Image candidates
+     * @param AbsoluteLengthInterface $minWidth           Minimum viewport width
+     * @param AbsoluteLengthInterface|null $maxWidth      Maximum viewport width
      *
      * @return SourceSizeImageCandidateMatch|null
      */
     protected function findImageCandidateForSourceSize(
         SourceSize $sourceSize,
-        AbsoluteLengthInterface $breakpoint,
-        ImageCandidateSetInterface $imageCandidates
+        ImageCandidateSetInterface $imageCandidates,
+        AbsoluteLengthInterface $minWidth,
+        AbsoluteLengthInterface $maxWidth = null
     ): ?SourceSizeImageCandidateMatch {
-        // Calculate the effective image width for the current source size and breakpoint
-        $minImageWidth = $sourceSize->getValue()->getValue($breakpoint);
+        // If there's no upper limit: Use the largest image candidate anyway
+        if ($maxWidth === null) {
+            return $this->createLargestImageCandidateMatch($sourceSize, $imageCandidates);
+        }
+        // Calculate the effective minimum image width for the current source size and breakpoint
+        $minImageWidth = max(
+            $sourceSize->getValue()->getValue($minWidth),
+            $sourceSize->getValue()->getValue($maxWidth)
+        );
 
         // Run through all image candidates
         /** @var ImageCandidateInterface $imageCandidate */
@@ -158,6 +159,26 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
             if ($imageCandidate->getValue() >= $minImageWidth) {
                 return $this->createImageCandidateMatch($sourceSize, $imageCandidate);
             }
+        }
+
+        return null;
+    }
+
+    /**
+     * Create and return a match for the largest image candidate
+     *
+     * @param SourceSize $sourceSize                      Source size
+     * @param ImageCandidateSetInterface $imageCandidates Image candidates
+     *
+     * @return SourceSizeImageCandidateMatch|null Largest image candidate match
+     */
+    protected function createLargestImageCandidateMatch(
+        SourceSize $sourceSize,
+        ImageCandidateSetInterface $imageCandidates
+    ): ?SourceSizeImageCandidateMatch {
+        if (count($imageCandidates)) {
+            $largestImageCandidate = $imageCandidates[count($imageCandidates) - 1];
+            return $this->createImageCandidateMatch($sourceSize, $largestImageCandidate);
         }
 
         return null;
@@ -181,12 +202,103 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
     }
 
     /**
-     * Inject a length factory
+     * Get the maximum width for a source size
      *
-     * @param LengthFactoryInterface $lengthFactory Length factory
+     * @param SourceSizeMediaCondition $condition Source size media condition
+     * @param float|null $lastMinimumWidth        Last source size minimum width
+     *
+     * @return AbsoluteLengthInterface Maximum width
      */
-    public function setLengthFactory(LengthFactoryInterface $lengthFactory): void
+    protected function getSourceSizeMaximumWidth(
+        SourceSizeMediaCondition $condition,
+        float $lastMinimumWidth = null
+    ): ?AbsoluteLengthInterface {
+        $maximumWidth = $condition->getMaximumWidth();
+        if (($maximumWidth === null) && ($lastMinimumWidth !== null)) {
+            $maximumWidth = max(0, $lastMinimumWidth - 1);
+        }
+        if ($maximumWidth === null) {
+            return null;
+        }
+        if ($lastMinimumWidth !== null) {
+            $maximumWidth = max(0, min($maximumWidth, $lastMinimumWidth - 1));
+        }
+        return $this->lengthFactory->createAbsoluteLength($maximumWidth);
+    }
+
+    /**
+     * Compare and sort two source sizes against each other
+     *
+     * @param SourceSize $sourceSize1 Source size 1
+     * @param SourceSize $sourceSize2 Source size 2
+     *
+     * @return int Sort order
+     */
+    protected function sortSourceSizes(SourceSize $sourceSize1, SourceSize $sourceSize2): int
     {
-        $this->lengthFactory = $lengthFactory;
+        $hasConditions1 = $sourceSize1->hasConditions();
+        $hasConditions2 = $sourceSize2->hasConditions();
+
+        // If one of the sources sizes doesn't have conditions: Default source size (move to the end)
+        if ($hasConditions1 !== $hasConditions2) {
+            return $hasConditions1 ? -1 : 1;
+        }
+
+        return $hasConditions1 ? $this->sortSourceSizesByWidth($sourceSize1, $sourceSize2) : 0;
+    }
+
+    /**
+     * Compare and sort two source sizes by width
+     *
+     * @param SourceSize $sourceSize1 Source size 1
+     * @param SourceSize $sourceSize2 Source size 2
+     *
+     * @return int Sort order
+     */
+    protected function sortSourceSizesByWidth(SourceSize $sourceSize1, SourceSize $sourceSize2): int
+    {
+        // Sort by maximum width
+        $maxWidth1 = $sourceSize1->getMediaCondition()->getMaximumWidth();
+        $maxWidth2 = $sourceSize2->getMediaCondition()->getMaximumWidth();
+        if ($maxWidth1 != $maxWidth2) {
+            return ($maxWidth1 > $maxWidth2) ? -1 : 1;
+        }
+
+        // Sort by minimum width
+        $minWidth1 = $sourceSize1->getMediaCondition()->getMinimumWidth();
+        $minWidth2 = $sourceSize2->getMediaCondition()->getMinimumWidth();
+        if ($minWidth1 != $minWidth2) {
+            return ($minWidth1 > $minWidth2) ? -1 : 1;
+        }
+
+        // Sort by resolution
+        return $this->sortSourceSizesByResolution($sourceSize1, $sourceSize2);
+    }
+
+    /**
+     * Compare and sort two source sizes by resolution
+     *
+     * @param SourceSize $sourceSize1 Source size 1
+     * @param SourceSize $sourceSize2 Source size 2
+     *
+     * @return int Sort order
+     */
+    protected function sortSourceSizesByResolution(SourceSize $sourceSize1, SourceSize $sourceSize2): int
+    {
+        // Sort by maximum resolution
+        $maxResolution1 = $sourceSize1->getMediaCondition()->getMaximumResolution();
+        $maxResolution2 = $sourceSize2->getMediaCondition()->getMaximumResolution();
+        if ($maxResolution1 != $maxResolution2) {
+            return ($maxResolution1 > $maxResolution2) ? -1 : 1;
+        }
+
+        // Sort by minimum resolution
+        $minResolution1 = $sourceSize1->getMediaCondition()->getMinimumResolution();
+        $minResolution2 = $sourceSize2->getMediaCondition()->getMinimumResolution();
+        if ($minResolution1 != $minResolution2) {
+            return ($minResolution1 > $minResolution2) ? -1 : 1;
+        }
+
+        return 0;
     }
 }

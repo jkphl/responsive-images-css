@@ -36,6 +36,7 @@
 
 namespace Jkphl\Respimgcss\Tests\Application;
 
+use Jkphl\Respimgcss\Application\Contract\CalculatorServiceFactoryInterface;
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Factory\CssRulesetCompilerServiceFactory;
 use Jkphl\Respimgcss\Application\Factory\LengthFactory;
@@ -117,7 +118,8 @@ class CssRulesetCompilerServiceFactoryTest extends AbstractTestBase
      */
     public function testFactoryWithSourceSizes()
     {
-        $sourceSizeList  = new SourceSizeList([]);
+        $lengthFactory   = new LengthFactory($this->createMock(CalculatorServiceFactoryInterface::class), 16);
+        $sourceSizeList  = new SourceSizeList([], $lengthFactory);
         $compilerService = CssRulesetCompilerServiceFactory::createForImageCandidates(
             new Ruleset(),
             $this->breakpoints,

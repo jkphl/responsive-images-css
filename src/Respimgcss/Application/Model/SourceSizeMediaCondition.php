@@ -38,6 +38,7 @@ namespace Jkphl\Respimgcss\Application\Model;
 
 use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
+use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
 use Jkphl\Respimgcss\Domain\Model\Css\WidthMediaCondition;
 
 /**
@@ -60,6 +61,30 @@ class SourceSizeMediaCondition
      * @var CssMinMaxMediaConditionInterface[]
      */
     protected $conditions;
+    /**
+     * Minimum width
+     *
+     * @var int|null
+     */
+    protected $minimumWidth = null;
+    /**
+     * Maximum width
+     *
+     * @var int|null
+     */
+    protected $maximumWidth = null;
+    /**
+     * Minimum resolution
+     *
+     * @var float
+     */
+    protected $minimumResolution = 1;
+    /**
+     * Maximum resolution
+     *
+     * @var float
+     */
+    protected $maximumResolution = 1;
 
     /**
      * Source size media condition constructor
@@ -71,6 +96,56 @@ class SourceSizeMediaCondition
     {
         $this->value      = $value;
         $this->conditions = $conditions;
+        $this->initialize();
+    }
+
+    /**
+     * Initialize the minimum / maximum values
+     */
+    protected function initialize(): void
+    {
+        /** @var CssMinMaxMediaConditionInterface $condition */
+        foreach ($this->conditions as $condition) {
+            // If this is a width condition
+            if ($condition instanceof WidthMediaCondition) {
+                $this->initializeCondition($condition, 'minimumWidth', 'maximumWidth');
+                continue;
+            }
+            // If this is a resolution condition
+            if ($condition instanceof ResolutionMediaCondition) {
+                $this->initializeCondition($condition, 'minimumResolution', 'maximumResolution');
+            }
+        }
+    }
+
+    /**
+     * Initialize a media condition
+     *
+     * @param CssMinMaxMediaConditionInterface $condition Media condition
+     * @param string $minProperty                         Minimum property name
+     * @param string $maxProperty                         Maximum property name
+     */
+    protected function initializeCondition(
+        CssMinMaxMediaConditionInterface $condition,
+        string $minProperty,
+        string $maxProperty
+    ): void {
+        $modifier = $condition->getModifier();
+        $value    = $condition->getValue()->getValue();
+
+        // Minimum value
+        if ($modifier == CssMinMaxMediaConditionInterface::MIN) {
+            $this->$minProperty = ($this->$minProperty === null) ? $value : (min($value, $this->$minProperty));
+            return;
+        }
+
+        // Maximum value
+        if ($modifier == CssMinMaxMediaConditionInterface::MAX) {
+            $this->$maxProperty = ($this->$maxProperty === null) ? $value : (max($value, $this->$maxProperty));
+            return;
+        }
+
+        $this->$minProperty = $this->$maxProperty = $value;
     }
 
     /**
@@ -116,5 +191,55 @@ class SourceSizeMediaCondition
         }
 
         return $match;
+    }
+
+    /**
+     * Return the minimum width
+     *
+     * @return int|null Minimum width
+     */
+    public function getMinimumWidth(): ?int
+    {
+        return $this->minimumWidth;
+    }
+
+    /**
+     * Return the maximum width
+     *
+     * @return int|null Maximum width
+     */
+    public function getMaximumWidth(): ?int
+    {
+        return $this->maximumWidth;
+    }
+
+    /**
+     * Return the minimum resolution
+     *
+     * @return float Minimum resolution
+     */
+    public function getMinimumResolution(): float
+    {
+        return $this->minimumResolution;
+    }
+
+    /**
+     * Return the maximum resolution
+     *
+     * @return float Maximum resolution
+     */
+    public function getMaximumResolution(): float
+    {
+        return $this->maximumResolution;
+    }
+
+    /**
+     * Initialize a resolution media condition
+     *
+     * @param WidthMediaCondition $condition Resolution media condition
+     */
+    protected function initializeResolutionCondition(WidthMediaCondition $condition)
+    {
+
     }
 }

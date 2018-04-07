@@ -101,4 +101,14 @@ class SourceSize
     {
         return $this->mediaCondition;
     }
+
+    /**
+     * Return whether this source size has associated media conditions
+     *
+     * @return bool Has associated media conditions
+     */
+    public function hasConditions()
+    {
+        return $this->mediaCondition ? (count($this->mediaCondition->getConditions()) > 0) : false;
+    }
 }

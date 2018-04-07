@@ -44,10 +44,5 @@ namespace Jkphl\Respimgcss\Application\Contract;
  */
 interface SourceSizeListInterface extends \Jkphl\Respimgcss\Domain\Contract\SourceSizeListInterface
 {
-    /**
-     * Inject a length factory
-     *
-     * @param LengthFactoryInterface $lengthFactory Length factory
-     */
-    public function setLengthFactory(LengthFactoryInterface $lengthFactory): void;
+
 }

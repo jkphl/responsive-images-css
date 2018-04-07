@@ -62,7 +62,7 @@ class CssRulesetCompilerServiceFactory
      */
     const COMPILERS = [
         ImageCandidateInterface::TYPE_DENSITY => DensityCssRulesetCompilerService::class,
-        ImageCandidateInterface::TYPE_WIDTH   => WidthCssRulesetCompilerService::class,
+        ImageCandidateInterface::TYPE_WIDTH => WidthCssRulesetCompilerService::class,
     ];
 
     /**
@@ -96,11 +96,6 @@ class CssRulesetCompilerServiceFactory
         }
         $compilerClass = self::COMPILERS[$imageCandidates->getType()];
         $lengthFactory = new LengthFactory($calculatorServiceFactory, $emPixel);
-
-        // Inject the length factory into the source sizes list
-        if ($sourceSizeList instanceof SourceSizeListInterface) {
-            $sourceSizeList->setLengthFactory($lengthFactory);
-        }
 
         return new $compilerClass($cssRuleset, $breakpoints, $imageCandidates, $lengthFactory, $sourceSizeList);
     }
