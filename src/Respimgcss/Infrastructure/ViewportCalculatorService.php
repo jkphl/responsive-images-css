@@ -41,6 +41,7 @@ use ChrisKonnertz\StringCalc\StringCalc;
 use ChrisKonnertz\StringCalc\Tokenizer\Token;
 use Jkphl\Respimgcss\Application\Contract\CalculatorServiceInterface;
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
+use Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException as ApplicationInvalidArgumentException;
 use Jkphl\Respimgcss\Application\Factory\LengthFactory;
 use Jkphl\Respimgcss\Application\Model\AbsoluteLength;
 use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
@@ -138,7 +139,7 @@ class ViewportCalculatorService extends StringCalc implements CalculatorServiceI
             return $this->handleWordToken($refinedTokens, $emPixel, $token, $previousToken);
         }
 
-        // In all other cases: Register the previou token (if any)
+        // In all other cases: Register the previous token (if any)
         if ($previousToken) {
             array_push($refinedTokens, $previousToken);
         }
@@ -191,7 +192,7 @@ class ViewportCalculatorService extends StringCalc implements CalculatorServiceI
                 );
 
                 return null;
-            } catch (InvalidArgumentException $e) {
+            } catch (ApplicationInvalidArgumentException $e) {
                 // Ignore
             }
         }

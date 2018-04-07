@@ -36,6 +36,8 @@
 
 namespace Jkphl\Respimgcss\Infrastructure;
 
+use Jkphl\Respimgcss\Ports\InvalidArgumentException;
+
 /**
  * Abstract logical media condition
  *
@@ -61,9 +63,22 @@ abstract class AbstractLogicalCssMediaCondition implements LogicalCssMediaCondit
      * Abstract logical media condition constructor
      *
      * @param CssMediaConditionInterface[] $mediaConditions Media conditions
+     *
+     * @throws InvalidArgumentException If the media condition is invalid
      */
     public function __construct(array $mediaConditions = [])
     {
+        // Run through all media conditions
+        foreach ($mediaConditions as $mediaCondition) {
+            // If the media condition is invalid
+            if (!($mediaCondition instanceof CssMediaConditionInterface)) {
+                throw new InvalidArgumentException(
+                    InvalidArgumentException::INVALID_MEDIA_CONDITION_STR,
+                    InvalidArgumentException::INVALID_MEDIA_CONDITION
+                );
+            }
+        }
+
         $this->mediaConditions = $mediaConditions;
     }
 

@@ -40,6 +40,7 @@ use Jkphl\Respimgcss\Application\Factory\LengthFactory;
 use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
 use Jkphl\Respimgcss\Domain\Model\Css\MediaCondition;
 use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
+use Jkphl\Respimgcss\Domain\Model\Css\WidthMediaCondition;
 use Jkphl\Respimgcss\Infrastructure\CssMediaCondition;
 use Jkphl\Respimgcss\Infrastructure\CssMediaConditionFactory;
 use Jkphl\Respimgcss\Infrastructure\ViewportCalculatorServiceFactory;
@@ -65,7 +66,7 @@ class CssMediaConditionFactoryTest extends AbstractTestBase
     }
 
     /**
-     * Test the CSS media condition factory
+     * Test the CSS media condition factory with a resolution condition
      */
     public function testCssMediaConditionFactoryResolution()
     {
@@ -84,6 +85,26 @@ class CssMediaConditionFactoryTest extends AbstractTestBase
         foreach ($mediaConditions as $mediaCondition) {
             $this->assertInstanceOf(CssMediaCondition::class, $mediaCondition);
             $this->assertEquals(array_shift($mediaConditionsSpecs), strval($mediaCondition));
+        }
+    }
+
+    /**
+     * Test the CSS media condition factory with a width condition
+     */
+    public function testCssMediaConditionFactoryWidth()
+    {
+        $lengthFactory       = new LengthFactory(new ViewportCalculatorServiceFactory(), 16);
+        $widthMediaCondition = new WidthMediaCondition(
+            $lengthFactory->createLengthFromString('1000px'),
+            CssMinMaxMediaConditionInterface::MAX
+        );
+        $mediaConditions     = CssMediaConditionFactory::createFromMediaCondition($widthMediaCondition);
+        $this->assertTrue(is_array($mediaConditions));
+        $this->assertEquals(1, count($mediaConditions));
+        /** @var CssMediaCondition $mediaCondition */
+        foreach ($mediaConditions as $mediaCondition) {
+            $this->assertInstanceOf(CssMediaCondition::class, $mediaCondition);
+            $this->assertEquals('(max-width: 1000px)', strval($mediaCondition));
         }
     }
 }

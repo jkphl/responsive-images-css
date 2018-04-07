@@ -1,0 +1,2 @@
+.example {background-image: url("small.jpg");}
+@media (-webkit-min-device-pixel-ratio: 2) and (min-width: 500px),(min-resolution: 192dpi) and (min-width: 500px),(min-resolution: 2ddpx) and (min-width: 500px) {.example {background-image: url("large.jpg");}}

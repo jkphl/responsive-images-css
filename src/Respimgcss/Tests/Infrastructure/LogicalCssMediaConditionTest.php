@@ -101,4 +101,15 @@ class LogicalCssMediaConditionTest extends AbstractTestBase
         $logicalAnd->appendCondition($this->cssMediaCondition2);
         $this->assertEquals('(property1: value1;) or (property2: value2;)', strval($logicalAnd));
     }
+
+    /**
+     * Test the logical media conditions with an invalid operand
+     *
+     * @expectedException \Jkphl\Respimgcss\Ports\InvalidArgumentException
+     * @expectedExceptionCode 1523084780
+     */
+    public function testCssLogicalMediaConditionInvalid()
+    {
+        new LogicalAndCssMediaCondition(['invalid']);
+    }
 }

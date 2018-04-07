@@ -36,6 +36,7 @@
 
 namespace Jkphl\Respimgcss\Infrastructure;
 
+use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Domain\Contract\CssMediaConditionInterface as DomainMediaConditionInterface;
 use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
 use Jkphl\Respimgcss\Domain\Model\Css\WidthMediaCondition;
@@ -90,8 +91,9 @@ class CssMediaConditionFactory
             round($resolutionValue * 96).'dpi',
             $resolutionValue.'ddpx'
         ];
+
         return array_map(
-            function ($resolutionProperty, $resolutionValue) use ($resolutionModifier) {
+            function($resolutionProperty, $resolutionValue) use ($resolutionModifier) {
                 return self::createMediaCondition($resolutionProperty, $resolutionModifier, $resolutionValue);
             },
             $resolutionProperties,
@@ -115,6 +117,7 @@ class CssMediaConditionFactory
     ): CssMediaConditionInterface {
         $rule = new CssMediaConditionRule(sprintf($property, $modifier));
         $rule->setValue($value);
+
         return new CssMediaCondition($rule);
     }
 
@@ -125,13 +128,13 @@ class CssMediaConditionFactory
      *
      * @return RenderableMediaConditionInterface[] Renderable media conditions
      */
-    protected static function createFromWidthMediaCondition(
-        WidthMediaCondition $widthMediaCondition
-    ): array {
+    protected static function createFromWidthMediaCondition(WidthMediaCondition $widthMediaCondition): array
+    {
         $widthValue    = $widthMediaCondition->getValue();
+        $widthUnit     = ($widthValue instanceof UnitLengthInterface) ? $widthValue->getUnit() : '';
         $widthModifier = $widthMediaCondition->getModifier();
         $widthRule     = new CssMediaConditionRule(sprintf('%swidth', $widthModifier));
-        $widthRule->setValue($widthValue->getValue());
+        $widthRule->setValue($widthValue->getValue().$widthUnit);
 
         return [new CssMediaCondition($widthRule)];
     }

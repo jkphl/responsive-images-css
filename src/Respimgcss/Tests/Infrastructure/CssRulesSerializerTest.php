@@ -40,6 +40,7 @@ use Jkphl\Respimgcss\Application\Factory\LengthFactory;
 use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
 use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
 use Jkphl\Respimgcss\Domain\Model\Css\Rule;
+use Jkphl\Respimgcss\Domain\Model\Css\WidthMediaCondition;
 use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
 use Jkphl\Respimgcss\Infrastructure\CssRulesSerializer;
 use Jkphl\Respimgcss\Infrastructure\ViewportCalculatorServiceFactory;
@@ -76,7 +77,7 @@ class CssRulesSerializerTest extends AbstractTestBase
 
         $css = $serializer->toCss('.example');
         $this->assertTrue(is_string($css));
-        $this->assertStringEqualsFile(dirname(__DIR__).'/Fixture/Css/DensityImageCandidates.css', $css);
+        $this->assertStringEqualsFile(dirname(__DIR__).'/Fixture/Css/RulesSerializer.css', $css);
     }
 
     /**
@@ -98,14 +99,18 @@ class CssRulesSerializerTest extends AbstractTestBase
     protected function setUp()/* The :void return type declaration that should be here would cause a BC issue */
     {
         parent::setUp();
-        $lengthFactory   = new LengthFactory(new ViewportCalculatorServiceFactory(), 16);
-        $imageCandidate1 = new DensityImageCandidate('small.jpg', 1);
-        $this->rule1     = new Rule($imageCandidate1, []);
-        $imageCandidate2 = new DensityImageCandidate('large.jpg', 2);
-        $mediaCondition  = new ResolutionMediaCondition(
+        $lengthFactory            = new LengthFactory(new ViewportCalculatorServiceFactory(), 16);
+        $imageCandidate1          = new DensityImageCandidate('small.jpg', 1);
+        $this->rule1              = new Rule($imageCandidate1, []);
+        $imageCandidate2          = new DensityImageCandidate('large.jpg', 2);
+        $resolutionMediaCondition = new ResolutionMediaCondition(
             $lengthFactory->createAbsoluteLength(2),
             CssMinMaxMediaConditionInterface::MIN
         );
-        $this->rule2     = new Rule($imageCandidate2, [$mediaCondition]);
+        $widthMediaCondition      = new WidthMediaCondition(
+            $lengthFactory->createAbsoluteLength(500),
+            CssMinMaxMediaConditionInterface::MIN
+        );
+        $this->rule2              = new Rule($imageCandidate2, [$resolutionMediaCondition, $widthMediaCondition]);
     }
 }

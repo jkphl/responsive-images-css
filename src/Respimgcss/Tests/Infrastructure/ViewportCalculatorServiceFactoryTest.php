@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
+ * @subpackage Jkphl\Respimgcss\Tests\Infrastructure
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -34,62 +34,32 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Ports;
+namespace Jkphl\Respimgcss\Tests\Infrastructure;
+
+use Jkphl\Respimgcss\Application\Contract\CalculatorServiceInterface;
+use Jkphl\Respimgcss\Application\Factory\LengthFactory;
+use Jkphl\Respimgcss\Infrastructure\ViewportCalculatorServiceFactory;
+use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
- * Invalid argument exception
+ * Viewport calculator service factory test
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
+ * @subpackage Jkphl\Respimgcss\Tests\Infrastructure
  */
-class InvalidArgumentException extends \Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException
+class ViewportCalculatorServiceFactoryTest extends AbstractTestBase
 {
     /**
-     * Invalid CSS selector
-     *
-     * @var string
+     * Test the viewport calculator service factory
      */
-    const INVALID_CSS_SELECTOR_STR = 'Invalid CSS selector "%s"';
-    /**
-     * Invalid CSS selector
-     *
-     * @var int
-     */
-    const INVALID_CSS_SELECTOR = 1522574161;
-    /**
-     * Invalid word token in source size value
-     *
-     * @var string
-     */
-    const INVALID_WORD_TOKEN_IN_SOURCE_SIZE_VALUE_STR = 'Invalid word token "%s" in source size value';
-    /**
-     * Invalid word token in source size value
-     *
-     * @var int
-     */
-    const INVALID_WORD_TOKEN_IN_SOURCE_SIZE_VALUE = 1522701212;
-    /**
-     * Invalid source size
-     *
-     * @var string
-     */
-    const INVALID_SOURCE_SIZE_STR = 'Invalid source size';
-    /**
-     * Invalid source size
-     *
-     * @var int
-     */
-    const INVALID_SOURCE_SIZE = 1523047851;
-    /**
-     * Invalid media condition
-     *
-     * @var string
-     */
-    const INVALID_MEDIA_CONDITION_STR = 'Invalid media condition';
-    /**
-     * Invalid media condition
-     *
-     * @var int
-     */
-    const INVALID_MEDIA_CONDITION = 1523084780;
+    public function testViewportCalculatorServiceFactory()
+    {
+        $viewportCalculatorServiceFactory = new ViewportCalculatorServiceFactory();
+        $this->assertInstanceOf(ViewportCalculatorServiceFactory::class, $viewportCalculatorServiceFactory);
+
+        $absoluteLength            = (new LengthFactory(new ViewportCalculatorServiceFactory(), 16))
+            ->createAbsoluteLength(1000);
+        $viewportCalculatorService = $viewportCalculatorServiceFactory->createCalculatorService($absoluteLength);
+        $this->assertInstanceOf(CalculatorServiceInterface::class, $viewportCalculatorService);
+    }
 }
