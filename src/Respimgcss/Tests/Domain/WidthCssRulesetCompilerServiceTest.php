@@ -98,7 +98,7 @@ class WidthCssRulesetCompilerServiceTest extends AbstractTestBase
 
         $compiler = new WidthCssRulesetCompilerService(
             $ruleset,
-            [new AbsoluteLength(400), new AbsoluteLength(800), new AbsoluteLength(1200), new AbsoluteLength(1600)],
+            [new AbsoluteLength(400), new AbsoluteLength(800), new AbsoluteLength(1200)],
             $imageCandidateSet,
             $lengthFactory,
             $sourceSizeList

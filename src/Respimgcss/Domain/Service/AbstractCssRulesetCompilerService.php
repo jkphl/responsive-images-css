@@ -93,5 +93,6 @@ abstract class AbstractCssRulesetCompilerService implements CssRulesetCompilerSe
         $this->breakpoints     = $breakpoints;
         $this->imageCandidates = $imageCandidates;
         $this->lengthFactory   = $lengthFactory;
+        array_unshift($this->breakpoints, $this->lengthFactory->createAbsoluteLength(0));
     }
 }
