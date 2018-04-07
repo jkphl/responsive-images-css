@@ -92,4 +92,16 @@ class InvalidArgumentException extends \Jkphl\Respimgcss\Application\Exceptions\
      * @var int
      */
     const INVALID_MEDIA_CONDITION = 1523084780;
+    /**
+     * Source sizes not allowed with resolution based image candidates
+     *
+     * @var string
+     */
+    const SIZES_NOT_ALLOWED_STR = 'Source sizes not allowed with resolution based image candidates';
+    /**
+     * Source sizes not allowed with resolution based image candidates
+     *
+     * @var int
+     */
+    const SIZES_NOT_ALLOWED = 1523091652;
 }

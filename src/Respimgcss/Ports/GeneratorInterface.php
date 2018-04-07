@@ -65,11 +65,12 @@ interface GeneratorInterface
     public function getImageCandidates(): array;
 
     /**
-     * Create a CSS rulset for the registered image candidates
+     * Create a CSS ruleset for the registered image candidates
      *
      * @param float[] $densities Device display densities
+     * @param string $sizes Source sizes
      *
      * @return CssRulesetInterface CSS Ruleset
      */
-    public function make(array $densities = [1]): CssRulesetInterface;
+    public function make(array $densities = [1], string $sizes = ''): CssRulesetInterface;
 }

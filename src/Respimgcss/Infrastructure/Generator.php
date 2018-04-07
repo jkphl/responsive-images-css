@@ -39,12 +39,14 @@ namespace Jkphl\Respimgcss\Infrastructure;
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Factory\ImageCandidateFactory;
 use Jkphl\Respimgcss\Application\Factory\LengthFactory;
+use Jkphl\Respimgcss\Application\Factory\SourceSizeFactory;
 use Jkphl\Respimgcss\Application\Model\ImageCandidateSet;
 use Jkphl\Respimgcss\Application\Service\CssRulesetCompilerService;
 use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
 use Jkphl\Respimgcss\Ports\CssRuleset;
 use Jkphl\Respimgcss\Ports\CssRulesetInterface;
 use Jkphl\Respimgcss\Ports\GeneratorInterface;
+use Jkphl\Respimgcss\Ports\InvalidArgumentException;
 
 /**
  * Responsive image CSS generator (internal)
@@ -129,29 +131,81 @@ abstract class Generator implements GeneratorInterface
     }
 
     /**
-     * Create a CSS rulset for the registered image candidates
+     * Create a CSS ruleset for the registered image candidates
      *
      * @param float[] $densities Device display densities
+     * @param string $sizes      Source sizes
      *
      * @return CssRulesetInterface CSS Ruleset
      */
-    public function make(array $densities = [1]): CssRulesetInterface
+    public function make(array $densities = [1], string $sizes = ''): CssRulesetInterface
     {
         $cssRuleset = new CssRuleset();
 
         // If all necessary properties are given
-        if (count($this->breakpoints) && count($this->imageCandidates) && count($densities)) {
-            // Instantiate a CSS ruleset compiler service and compile for all densities
-            $cssRulesetCompilerService = new CssRulesetCompilerService(
-                $cssRuleset,
-                $this->breakpoints,
-                $this->imageCandidates,
-                new ViewportCalculatorServiceFactory(),
-                $this->emPixel
-            );
-            $cssRuleset                = new CssRuleset($cssRulesetCompilerService->compile($densities));
+        if (count($this->breakpoints) && count($this->getImageCandidates()) && count($densities)) {
+            $cssRuleset = $this->compileCssRuleset($cssRuleset, $densities, $sizes);
         }
 
         return $cssRuleset;
+    }
+
+    /**
+     * Compile a CSS ruleset
+     *
+     * @param CssRuleset $baseCssRuleset                 Base CSS ruleset
+     * @param ImageCandidateInterface[] $imageCandidates Image candidates
+     * @param int[] $densities                           Densities
+     * @param string $sizes                              Source sizes
+     *
+     * @return CssRulesetInterface Compile CSS ruleset
+     * @throws InvalidArgumentException If source sizes are used with resolution based image candidates
+     */
+    protected function compileCssRuleset(
+        CssRuleset $baseCssRuleset,
+        array $densities,
+        string $sizes
+    ): CssRulesetInterface {
+        $sourceSizeList = $this->makeSourceSizeList($sizes);
+
+        // If source sizes are used with resolution based image candidates
+        if ($sourceSizeList && ($this->imageCandidates->getType() == ImageCandidateInterface::TYPE_DENSITY)) {
+            throw new InvalidArgumentException(
+                InvalidArgumentException::SIZES_NOT_ALLOWED_STR,
+                InvalidArgumentException::SIZES_NOT_ALLOWED
+            );
+        }
+
+        // Instantiate a CSS ruleset compiler service and compile for all densities
+        $cssRulesetCompilerService = new CssRulesetCompilerService(
+            $baseCssRuleset,
+            $this->breakpoints,
+            $this->imageCandidates,
+            new ViewportCalculatorServiceFactory(),
+            $this->emPixel
+        );
+
+        return new CssRuleset($cssRulesetCompilerService->compile($densities));
+    }
+
+    /**
+     * Create a size list from a source size list
+     *
+     * @param string $sourceSizeListStr SourceSizeList size list
+     *
+     * @return SourceSizeList Size list
+     */
+    protected function makeSourceSizeList(string $sourceSizeListStr): ?SourceSizeList
+    {
+        $sourceSizeFactory   = new SourceSizeFactory(new ViewportCalculatorServiceFactory(), $this->emPixel);
+        $unparsedSourceSizes = array_filter(array_map('trim', explode(',', $sourceSizeListStr)));
+        $sourceSizes         = array_map(
+            function($unparsedSourceSize) use ($sourceSizeFactory) {
+                return $sourceSizeFactory->createFromSourceSizeStr($unparsedSourceSize);
+            },
+            $unparsedSourceSizes
+        );
+
+        return count($sourceSizes) ? new SourceSizeList($sourceSizes) : null;
     }
 }

@@ -85,15 +85,16 @@ class Generator extends \Jkphl\Respimgcss\Infrastructure\Generator
     }
 
     /**
-     * Create a CSS rulset for the registered image candidates
+     * Create a CSS ruleset for the registered image candidates
      *
      * @param float[] $densities Device display densities
+     * @param string $sizes      Source sizes
      *
      * @return CssRulesetInterface CSS Ruleset
      * @api
      */
-    public function make(array $densities = [1]): CssRulesetInterface
+    public function make(array $densities = [1], string $sizes = ''): CssRulesetInterface
     {
-        return parent::make($densities);
+        return parent::make($densities, $sizes);
     }
 }

@@ -83,6 +83,22 @@ class GeneratorTest extends AbstractTestBase
     }
 
     /**
+     * Test the internal generator with density based image candidates and source sizes
+     *
+     * @depends               testGeneratorDensityImageCandidates
+     * @expectedException \Jkphl\Respimgcss\Ports\InvalidArgumentException
+     * @expectedExceptionCode 1523091652
+     */
+    public function testGeneratorDensityImageCandidatesSourceSizes()
+    {
+        $generator = new Generator(['24em', '800px', '72em'], 16);
+        $this->assertInstanceOf(InternalGenerator::class, $generator);
+        $generator->registerImageCandidate('small.jpg');
+        $generator->registerImageCandidate('large.jpg', '2x');
+        $generator->make([1, 2], '(min-width: 100px) 100vw');
+    }
+
+    /**
      * Test the internal generator with width based image candidates
      */
     public function testGeneratorWidthImageCandidates()
