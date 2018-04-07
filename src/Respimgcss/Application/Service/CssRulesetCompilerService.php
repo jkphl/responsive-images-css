@@ -41,6 +41,7 @@ use Jkphl\Respimgcss\Application\Contract\ImageCandidateSetInterface;
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Factory\CssRulesetCompilerServiceFactory;
 use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
+use Jkphl\Respimgcss\Infrastructure\SourceSizeList;
 
 /**
  * CSS Ruleset Compiler Service
@@ -80,6 +81,12 @@ class CssRulesetCompilerService
      * @var int
      */
     protected $emPixel;
+    /**
+     * Source sizes list
+     *
+     * @var SourceSizeList|null
+     */
+    protected $sourceSizeList;
 
     /**
      * CSS Ruleset Compiler Service constructor
@@ -89,19 +96,22 @@ class CssRulesetCompilerService
      * @param ImageCandidateSetInterface $imageCandidates                 Image candidates
      * @param CalculatorServiceFactoryInterface $calculatorServiceFactory Calculator service factory
      * @param int $emPixel                                                EM to pixel ratio
+     * @param SourceSizeList|null $sourceSizeList                         Source sizes list
      */
     public function __construct(
         CssRulesetInterface $cssRuleset,
         array $breakpoints,
         ImageCandidateSetInterface $imageCandidates,
         CalculatorServiceFactoryInterface $calculatorServiceFactory,
-        int $emPixel
+        int $emPixel,
+        SourceSizeList $sourceSizeList = null
     ) {
         $this->cssRuleset               = $cssRuleset;
         $this->breakpoints              = $breakpoints;
         $this->imageCandidates          = $imageCandidates;
         $this->calculatorServiceFactory = $calculatorServiceFactory;
         $this->emPixel                  = $emPixel;
+        $this->sourceSizeList           = $sourceSizeList;
     }
 
     /**
@@ -120,7 +130,8 @@ class CssRulesetCompilerService
                 $this->breakpoints,
                 $this->imageCandidates,
                 $this->calculatorServiceFactory,
-                $this->emPixel
+                $this->emPixel,
+                $this->sourceSizeList
             )->compile($density);
         }
 

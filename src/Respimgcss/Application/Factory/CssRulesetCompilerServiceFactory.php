@@ -38,6 +38,7 @@ namespace Jkphl\Respimgcss\Application\Factory;
 
 use Jkphl\Respimgcss\Application\Contract\CalculatorServiceFactoryInterface;
 use Jkphl\Respimgcss\Application\Contract\ImageCandidateSetInterface;
+use Jkphl\Respimgcss\Application\Contract\SourceSizeListInterface;
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Exceptions\RuntimeException;
 use Jkphl\Respimgcss\Domain\Contract\CssRulesetCompilerServiceInterface;
@@ -55,6 +56,16 @@ use Jkphl\Respimgcss\Domain\Service\WidthCssRulesetCompilerService;
 class CssRulesetCompilerServiceFactory
 {
     /**
+     * Compiler classes
+     *
+     * @var array
+     */
+    const COMPILERS = [
+        ImageCandidateInterface::TYPE_DENSITY => DensityCssRulesetCompilerService::class,
+        ImageCandidateInterface::TYPE_WIDTH   => WidthCssRulesetCompilerService::class,
+    ];
+
+    /**
      * CSS Ruleset Compiler Service constructor
      *
      * @param CssRulesetInterface $cssRuleset                             CSS Ruleset
@@ -62,31 +73,35 @@ class CssRulesetCompilerServiceFactory
      * @param ImageCandidateSetInterface $imageCandidates                 Image candidates
      * @param CalculatorServiceFactoryInterface $calculatorServiceFactory Calculator service factory
      * @param int $emPixel                                                EM to pixel ratio
+     * @param SourceSizeListInterface|null $sourceSizeList                Source sizes list
      *
      * @return CssRulesetCompilerServiceInterface CSS Ruleset compiler service
+     * @throws RuntimeException If there's no suitable ruleset compiler
      */
     public static function createForImageCandidates(
         CssRulesetInterface $cssRuleset,
         array $breakpoints,
         ImageCandidateSetInterface $imageCandidates,
         CalculatorServiceFactoryInterface $calculatorServiceFactory,
-        int $emPixel
+        int $emPixel,
+        SourceSizeListInterface $sourceSizeList = null
     ): CssRulesetCompilerServiceInterface {
+
+        // If there's no suitable ruleset compiler
+        if (empty(self::COMPILERS[$imageCandidates->getType()])) {
+            throw new RuntimeException(
+                RuntimeException::INVALID_OR_EMPTY_IMAGE_CANDIDATE_SET_STR,
+                RuntimeException::INVALID_OR_EMPTY_IMAGE_CANDIDATE_SET
+            );
+        }
+        $compilerClass = self::COMPILERS[$imageCandidates->getType()];
         $lengthFactory = new LengthFactory($calculatorServiceFactory, $emPixel);
 
-        // If it's a width based image candidate set
-        if ($imageCandidates->getType() === ImageCandidateInterface::TYPE_DENSITY) {
-            return new DensityCssRulesetCompilerService($cssRuleset, $breakpoints, $imageCandidates, $lengthFactory);
+        // Inject the length factory into the source sizes list
+        if ($sourceSizeList instanceof SourceSizeListInterface) {
+            $sourceSizeList->setLengthFactory($lengthFactory);
         }
 
-        // If it's a density based image candidate set
-        if ($imageCandidates->getType() === ImageCandidateInterface::TYPE_WIDTH) {
-            return new WidthCssRulesetCompilerService($cssRuleset, $breakpoints, $imageCandidates, $lengthFactory);
-        }
-
-        throw new RuntimeException(
-            RuntimeException::INVALID_OR_EMPTY_IMAGE_CANDIDATE_SET_STR,
-            RuntimeException::INVALID_OR_EMPTY_IMAGE_CANDIDATE_SET
-        );
+        return new $compilerClass($cssRuleset, $breakpoints, $imageCandidates, $lengthFactory, $sourceSizeList);
     }
 }

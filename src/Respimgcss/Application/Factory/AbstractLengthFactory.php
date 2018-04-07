@@ -37,11 +37,11 @@
 namespace Jkphl\Respimgcss\Application\Factory;
 
 use Jkphl\Respimgcss\Application\Contract\CalculatorServiceFactoryInterface;
+use Jkphl\Respimgcss\Application\Contract\LengthFactoryInterface;
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Model\AbsoluteLength;
 use Jkphl\Respimgcss\Application\Service\LengthNormalizerService;
 use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
-use Jkphl\Respimgcss\Domain\Contract\LengthFactoryInterface;
 
 /**
  * Abstract length factory
@@ -81,6 +81,16 @@ abstract class AbstractLengthFactory implements LengthFactoryInterface
         $this->calculatorServiceFactory = $calculatorServiceFactory;
         $this->emPixel                  = $emPixel;
         $this->lengthNormalizerService  = new LengthNormalizerService($this->emPixel);
+    }
+
+    /**
+     * Return the associated calculator service factory
+     *
+     * @return CalculatorServiceFactoryInterface Calculator service factory
+     */
+    public function getCalculatorServiceFactory(): CalculatorServiceFactoryInterface
+    {
+        return $this->calculatorServiceFactory;
     }
 
     /**

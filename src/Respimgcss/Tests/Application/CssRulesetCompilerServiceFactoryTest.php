@@ -45,6 +45,7 @@ use Jkphl\Respimgcss\Domain\Model\DensityImageCandidate;
 use Jkphl\Respimgcss\Domain\Model\WidthImageCandidate;
 use Jkphl\Respimgcss\Domain\Service\DensityCssRulesetCompilerService;
 use Jkphl\Respimgcss\Domain\Service\WidthCssRulesetCompilerService;
+use Jkphl\Respimgcss\Infrastructure\SourceSizeList;
 use Jkphl\Respimgcss\Infrastructure\ViewportCalculatorServiceFactory;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 use Jkphl\Respimgcss\Tests\Application\Mocks\ImageCandidateMock;
@@ -107,6 +108,23 @@ class CssRulesetCompilerServiceFactoryTest extends AbstractTestBase
             new ImageCandidateSet(new WidthImageCandidate('image.jpg', 1000)),
             new ViewportCalculatorServiceFactory(),
             16
+        );
+        $this->assertInstanceOf(WidthCssRulesetCompilerService::class, $compilerService);
+    }
+
+    /**
+     * Test the CSS Ruleset compiler service factory with a width based image candidate set and source sizes
+     */
+    public function testFactoryWithSourceSizes()
+    {
+        $sourceSizeList  = new SourceSizeList([]);
+        $compilerService = CssRulesetCompilerServiceFactory::createForImageCandidates(
+            new Ruleset(),
+            $this->breakpoints,
+            new ImageCandidateSet(new WidthImageCandidate('image.jpg', 1000)),
+            new ViewportCalculatorServiceFactory(),
+            16,
+            $sourceSizeList
         );
         $this->assertInstanceOf(WidthCssRulesetCompilerService::class, $compilerService);
     }

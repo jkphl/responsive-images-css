@@ -36,9 +36,11 @@
 
 namespace Jkphl\Respimgcss\Tests\Application;
 
+use Jkphl\Respimgcss\Application\Contract\CalculatorServiceFactoryInterface;
 use Jkphl\Respimgcss\Application\Factory\LengthFactory;
 use Jkphl\Respimgcss\Application\Model\AbsoluteLength;
 use Jkphl\Respimgcss\Application\Model\AbstractRelativeLength;
+use Jkphl\Respimgcss\Application\Model\ViewportLength;
 use Jkphl\Respimgcss\Infrastructure\ViewportCalculatorServiceFactory;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
@@ -67,8 +69,21 @@ class LengthFactoryTest extends AbstractTestBase
     }
 
     /**
+     * Test the length factory
+     */
+    public function testLengthFactory()
+    {
+        $this->assertInstanceOf(LengthFactory::class, $this->lengthFactory);
+        $this->assertInstanceOf(
+            CalculatorServiceFactoryInterface::class,
+            $this->lengthFactory->getCalculatorServiceFactory()
+        );
+    }
+
+    /**
      * Test an invalid length string
      *
+     * @depends               testLengthFactory
      * @expectedException \Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException
      * @expectedExceptionCode 1522492102
      */
@@ -79,17 +94,33 @@ class LengthFactoryTest extends AbstractTestBase
 
     /**
      * Test the creation of an absolute length
+     *
+     * @depends testLengthFactory
      */
     public function testAbsoluteLengthCreation()
     {
         $length = $this->lengthFactory->createLengthFromString('1px');
         $this->assertInstanceOf(AbsoluteLength::class, $length);
+        $this->assertInstanceOf(AbsoluteLength::class, $this->lengthFactory->createAbsoluteLength(1));
     }
 
     /**
-     * Test the creation of a relative length
+     * Test the creation of a viewport length
+     *
+     * @depends testLengthFactory
      */
-    public function testRelativeLengthCreation()
+    public function testViewportLengthCreation()
+    {
+        $length = $this->lengthFactory->createLengthFromString('100vw');
+        $this->assertInstanceOf(ViewportLength::class, $length);
+    }
+
+    /**
+     * Test the creation of a percentage length
+     *
+     * @depends testLengthFactory
+     */
+    public function testPercentageLengthCreation()
     {
         $length = $this->lengthFactory->createLengthFromString('100%');
         $this->assertInstanceOf(AbstractRelativeLength::class, $length);
@@ -98,6 +129,7 @@ class LengthFactoryTest extends AbstractTestBase
     /**
      * Test an invalid length unit
      *
+     * @depends               testLengthFactory
      * @expectedException \Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException
      * @expectedExceptionCode 1522493474
      */
