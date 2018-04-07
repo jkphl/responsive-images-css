@@ -37,6 +37,7 @@
 namespace Jkphl\Respimgcss\Infrastructure;
 
 use Jkphl\Respimgcss\Application\Model\SourceSize;
+use Jkphl\Respimgcss\Ports\InvalidArgumentException;
 
 /**
  * Sizes list
@@ -47,19 +48,24 @@ use Jkphl\Respimgcss\Application\Model\SourceSize;
 class SourceSizeList extends \ArrayObject
 {
     /**
-     * Source sizes
-     *
-     * @var SourceSize[]
-     */
-    protected $sourceSizes;
-
-    /**
      * Source size list constructor
      *
      * @param SourceSize[] $sourceSizes Source sizes
+     *
+     * @throws InvalidArgumentException If the source size is invalid
      */
     public function __construct(array $sourceSizes)
     {
-        $this->sourceSizes = $sourceSizes;
+        // Run through all source sizes
+        foreach ($sourceSizes as $sourceSize) {
+            // If the source size is invalid
+            if (!($sourceSize instanceof SourceSize)) {
+                throw new InvalidArgumentException(
+                    InvalidArgumentException::INVALID_SOURCE_SIZE_STR,
+                    InvalidArgumentException::INVALID_SOURCE_SIZE
+                );
+            }
+        }
+        parent::__construct($sourceSizes);
     }
 }

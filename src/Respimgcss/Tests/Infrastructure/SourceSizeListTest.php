@@ -5,9 +5,9 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
- * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
- * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
+ * @subpackage Jkphl\Respimgcss\Tests\Infrastructure
+ * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
+ * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
  */
 
@@ -34,50 +34,42 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Jkphl\Respimgcss\Ports;
+namespace Jkphl\Respimgcss\Tests\Infrastructure;
+
+use Jkphl\Respimgcss\Application\Factory\SourceSizeFactory;
+use Jkphl\Respimgcss\Infrastructure\SourceSizeList;
+use Jkphl\Respimgcss\Infrastructure\ViewportCalculatorServiceFactory;
+use Jkphl\Respimgcss\Tests\AbstractTestBase;
 
 /**
- * Invalid argument exception
+ * Source size list test
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Ports
+ * @subpackage Jkphl\Respimgcss\Tests\Infrastructure
  */
-class InvalidArgumentException extends \Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException
+class SourceSizeListTest extends AbstractTestBase
 {
     /**
-     * Invalid CSS selector
-     *
-     * @var string
+     * Test the source size list
      */
-    const INVALID_CSS_SELECTOR_STR = 'Invalid CSS selector "%s"';
+    public function testSourceSizeList()
+    {
+        $sourceSizeFactory = new SourceSizeFactory(new ViewportCalculatorServiceFactory(), 16);
+        $sourceSize        = $sourceSizeFactory->createFromSourceSizeStr('(min-width: 100px) 100vw');
+        $sourceSizeList    = new SourceSizeList([$sourceSize]);
+        $this->assertInstanceOf(SourceSizeList::class, $sourceSizeList);
+        $this->assertEquals(1, count($sourceSizeList));
+        $this->assertEquals($sourceSize, $sourceSizeList[0]);
+    }
+
     /**
-     * Invalid CSS selector
+     * Test the source size list with invalid source size
      *
-     * @var int
+     * @expectedException \Jkphl\Respimgcss\Ports\InvalidArgumentException
+     * @expectedExceptionCode 1523047851
      */
-    const INVALID_CSS_SELECTOR = 1522574161;
-    /**
-     * Invalid word token in source size value
-     *
-     * @var string
-     */
-    const INVALID_WORD_TOKEN_IN_SOURCE_SIZE_VALUE_STR = 'Invalid word token "%s" in source size value';
-    /**
-     * Invalid word token in source size value
-     *
-     * @var int
-     */
-    const INVALID_WORD_TOKEN_IN_SOURCE_SIZE_VALUE = 1522701212;
-    /**
-     * Invalid source size
-     *
-     * @var string
-     */
-    const INVALID_SOURCE_SIZE_STR = 'Invalid source size';
-    /**
-     * Invalid source size
-     *
-     * @var int
-     */
-    const INVALID_SOURCE_SIZE = 1523047851;
+    public function testSourceSizeListInvalid()
+    {
+        new SourceSizeList(['test']);
+    }
 }
