@@ -117,7 +117,6 @@ class LengthFactory extends AbstractLengthFactory
      * @param string $unit  Unit
      *
      * @return UnitLengthInterface AbstractLength with unit
-     * @throws InvalidArgumentException If the unit is invalid
      */
     protected function makeInstance(string $value, string $unit): UnitLengthInterface
     {
@@ -126,24 +125,36 @@ class LengthFactory extends AbstractLengthFactory
             return new AbsoluteLength(floatval($value), $unit, $this->lengthNormalizerService);
         }
 
-        switch ($unit) {
-            case UnitLengthInterface::UNIT_VW: // Viewport unit
-                return new ViewportLength(
-                    $this->calculatorServiceFactory,
-                    $this->calculatorServiceFactory->createCalculatorService()->tokenize(
-                        strval($value / 100).' * viewport()'
-                    ),
-                    $value
-                );
+        return $this->makeRelativeInstance($value, $unit);
+    }
 
-            case UnitLengthInterface::UNIT_PERCENT: // Percentages
-                return new PercentageLength(floatval($value));
+    /**
+     * Create a relative value with unit instance
+     *
+     * @param string $value Value
+     * @param string $unit  Unit
+     *
+     * @return UnitLengthInterface Relative length with unit
+     * @throws InvalidArgumentException If the unit is invalid
+     */
+    protected function makeRelativeInstance(string $value, string $unit): UnitLengthInterface
+    {
+        // Viewport unit
+        if ($unit === UnitLengthInterface::UNIT_VW) {
+            $calculatorService = $this->calculatorServiceFactory->createCalculatorService();
+            $tokens            = $calculatorService->tokenize(strval($value / 100).' *viewport()');
 
-            default: // Invalid unit
-                throw new InvalidArgumentException(
-                    sprintf(InvalidArgumentException::INVALID_UNIT_STR, $unit),
-                    InvalidArgumentException::INVALID_UNIT
-                );
+            return new ViewportLength($this->calculatorServiceFactory, $tokens, $value);
         }
+
+        // Percentages
+        if ($unit === UnitLengthInterface::UNIT_PERCENT) {
+            return new PercentageLength(floatval($value));
+        }
+
+        throw new InvalidArgumentException(
+            sprintf(InvalidArgumentException::INVALID_UNIT_STR, $unit),
+            InvalidArgumentException::INVALID_UNIT
+        );
     }
 }

@@ -72,31 +72,21 @@ class CssRulesetCompilerServiceFactory
         CalculatorServiceFactoryInterface $calculatorServiceFactory,
         int $emPixel
     ): CssRulesetCompilerServiceInterface {
-        $cssRulesetCompiler = null;
-        $lengthFactory      = new LengthFactory($calculatorServiceFactory, $emPixel);
-        switch ($imageCandidates->getType()) {
-            case ImageCandidateInterface::TYPE_DENSITY:
-                $cssRulesetCompiler = new DensityCssRulesetCompilerService(
-                    $cssRuleset,
-                    $breakpoints,
-                    $imageCandidates,
-                    $lengthFactory);
-                break;
-            case ImageCandidateInterface::TYPE_WIDTH:
-                $cssRulesetCompiler = new WidthCssRulesetCompilerService(
-                    $cssRuleset,
-                    $breakpoints,
-                    $imageCandidates,
-                    $lengthFactory
-                );
-                break;
-            default:
-                throw new RuntimeException(
-                    RuntimeException::INVALID_OR_EMPTY_IMAGE_CANDIDATE_SET_STR,
-                    RuntimeException::INVALID_OR_EMPTY_IMAGE_CANDIDATE_SET
-                );
+        $lengthFactory = new LengthFactory($calculatorServiceFactory, $emPixel);
+
+        // If it's a width based image candidate set
+        if ($imageCandidates->getType() === ImageCandidateInterface::TYPE_DENSITY) {
+            return new DensityCssRulesetCompilerService($cssRuleset, $breakpoints, $imageCandidates, $lengthFactory);
         }
 
-        return $cssRulesetCompiler;
+        // If it's a density based image candidate set
+        if ($imageCandidates->getType() === ImageCandidateInterface::TYPE_WIDTH) {
+            return new WidthCssRulesetCompilerService($cssRuleset, $breakpoints, $imageCandidates, $lengthFactory);
+        }
+
+        throw new RuntimeException(
+            RuntimeException::INVALID_OR_EMPTY_IMAGE_CANDIDATE_SET_STR,
+            RuntimeException::INVALID_OR_EMPTY_IMAGE_CANDIDATE_SET
+        );
     }
 }

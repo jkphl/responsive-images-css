@@ -182,25 +182,11 @@ class SourceSizeFactory extends AbstractLengthFactory
             '/((?:min|max)\-)?(?:device\-)?width\s*\:\s*/'
         );
 
-        // width | min-width | max-width
-        // device-width | min-device-width | max-device-width
-        preg_match_all(
-            '/((?:min|max)\-)?(?:device\-)?width\s*\:\s*/',
-            $mediaConditionString,
-            $widthConditionMatches,
-            PREG_OFFSET_CAPTURE
-        );
-
-        // Run through all width condition matches
-        foreach ($widthConditionMatches[0] as $widthConditionIndex => $widthConditionMatch) {
+        foreach ($widthConditionMatches as $match) {
             try {
-                $matchLength              = strlen($widthConditionMatch[0]) + $widthConditionMatch[1];
-                $widthMediaConditionValue = $this->parseWidthMediaConditionValue(
-                    substr($mediaConditionString, $matchLength)
-                );
-                $widthMediaConditions[]   = new WidthMediaCondition(
-                    $widthMediaConditionValue,
-                    $widthConditionMatches[1][$widthConditionIndex][0]
+                $widthMediaConditions[] = new WidthMediaCondition(
+                    $this->parseWidthMediaConditionValue($match[0]),
+                    $match[1]
                 );
             } catch (\Exception $e) {
                 continue;
@@ -283,16 +269,11 @@ class SourceSizeFactory extends AbstractLengthFactory
             '/((?:min|max)\-)?resolution\s*\:\s*/'
         );
 
-        // Run through all width condition matches
-        foreach ($resolutionConditionMatches[0] as $resolutionConditionIndex => $resolutionConditionMatch) {
+        foreach ($resolutionConditionMatches as $match) {
             try {
-                $matchLength                   = strlen($resolutionConditionMatch[0]) + $resolutionConditionMatch[1];
-                $resolutionMediaConditionValue = $this->parseResolutionMediaConditionValue(
-                    substr($mediaConditionString, $matchLength)
-                );
-                $resolutionMediaConditions []  = new ResolutionMediaCondition(
-                    $resolutionMediaConditionValue,
-                    $resolutionConditionMatches[1][$resolutionConditionIndex][0]
+                $resolutionMediaConditions[] = new ResolutionMediaCondition(
+                    $this->parseResolutionMediaConditionValue($match[0]),
+                    $match[1]
                 );
             } catch (\Exception $e) {
                 continue;
@@ -300,6 +281,27 @@ class SourceSizeFactory extends AbstractLengthFactory
         }
 
         return $resolutionMediaConditions;
+    }
+
+    /**
+     * Match a media condition string
+     *
+     * @param string $mediaConditionString Media condition string
+     * @param string $pattern              PCRE pattern
+     *
+     * @return array Matches
+     */
+    protected function matchMediaConditions(string $mediaConditionString, string $pattern): array
+    {
+        preg_match_all($pattern, $mediaConditionString, $matches, PREG_OFFSET_CAPTURE);
+        $refinedMatches = [];
+        foreach ($matches[0] as $index => $match) {
+            $matchLength      = strlen($match[0]) + $match[1];
+            $matchModifier    = is_array($matches[1][$index]) ? $matches[1][$index][0] : '';
+            $refinedMatches[] = [substr($mediaConditionString, $matchLength), $matchModifier];
+        }
+
+        return $refinedMatches;
     }
 
     /**
@@ -314,20 +316,5 @@ class SourceSizeFactory extends AbstractLengthFactory
         $resolutionMediaConditionValueStr = $this->shiftMediaConditionValue($resolutionMediaConditionStr);
 
         return $this->createAbsoluteLength($resolutionMediaConditionValueStr);
-    }
-
-    /**
-     * Match a media condition string
-     *
-     * @param string $mediaConditionString Media condition string
-     * @param string $pattern              PCRE pattern
-     *
-     * @return array Matches
-     */
-    protected function matchMediaConditions(string $mediaConditionString, string $pattern): array
-    {
-        preg_match_all($pattern, $mediaConditionString, $matches, PREG_OFFSET_CAPTURE);
-
-        return $matches;
     }
 }

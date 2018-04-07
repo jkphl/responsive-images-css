@@ -139,6 +139,24 @@ class ViewportCalculatorService extends StringCalc implements CalculatorServiceI
             return $this->handleWordToken($refinedTokens, $emPixel, $token, $previousToken);
         }
 
+        // Handle as simple token
+        return $this->handleSimpleToken($refinedTokens, $token, $previousToken);
+    }
+
+    /**
+     * Handle a simple token
+     *
+     * @param Token[] $refinedTokens    Refined tokens
+     * @param Token $token              Token
+     * @param Token|null $previousToken Previous token
+     *
+     * @return Token|null               Stash token
+     */
+    protected function handleSimpleToken(
+        array &$refinedTokens,
+        Token $token,
+        Token $previousToken = null
+    ): ?Token {
         // In all other cases: Register the previous token (if any)
         if ($previousToken) {
             array_push($refinedTokens, $previousToken);
@@ -181,7 +199,9 @@ class ViewportCalculatorService extends StringCalc implements CalculatorServiceI
         // If the previous token is a number: Try to generate a unit length
         if ($previousToken && ($previousToken->getType() == Token::TYPE_NUMBER)) {
             try {
-                return $this->createAndHandleUnitLengthToken($refinedTokens, $emPixel, $token, $previousToken);
+                $this->createAndHandleUnitLengthToken($refinedTokens, $emPixel, $token, $previousToken);
+
+                return null;
             } catch (ApplicationInvalidArgumentException $e) {
                 // Ignore
             }
@@ -214,24 +234,28 @@ class ViewportCalculatorService extends StringCalc implements CalculatorServiceI
     /**
      * Create and handle a unit length token
      *
-     * @param Token[] $refinedTokens    Refined tokens
-     * @param int $emPixel              EM to pixel ratio
-     * @param Token $token              Token
-     * @param Token|null $previousToken Previous token
-     *
-     * @return null
+     * @param Token[] $refinedTokens Refined tokens
+     * @param int $emPixel           EM to pixel ratio
+     * @param Token $token           Token
+     * @param Token $previousToken   Previous token
      */
     protected function createAndHandleUnitLengthToken(
         array &$refinedTokens,
         int $emPixel,
         Token $token,
-        Token $previousToken = null
-    ) {
-        return $this->handleUnitLengthToken(
-            $refinedTokens,
-            (new LengthFactory(new ViewportCalculatorServiceFactory(), $emPixel))
-                ->createLengthFromString($previousToken->getValue().$token->getValue())
-        );
+        Token $previousToken
+    ): void {
+        $unitLength = (new LengthFactory(new ViewportCalculatorServiceFactory(), $emPixel))
+            ->createLengthFromString($previousToken->getValue().$token->getValue());
+
+        // If it's an absolute value
+        if ($unitLength instanceof AbsoluteLength) {
+            array_push($refinedTokens, new Token(strval($unitLength->getValue()), Token::TYPE_NUMBER, 0));
+
+            return;
+        }
+
+        $this->handleUnitLengthToken($refinedTokens, $unitLength);
     }
 
     /**
@@ -239,21 +263,11 @@ class ViewportCalculatorService extends StringCalc implements CalculatorServiceI
      *
      * @param Token[] $refinedTokens          Refined tokens
      * @param UnitLengthInterface $unitLength Unit length
-     *
-     * @return null
      */
     protected function handleUnitLengthToken(
         array &$refinedTokens,
         UnitLengthInterface $unitLength
-    ) {
-        // If it's an absolute value
-        if ($unitLength instanceof AbsoluteLength) {
-            array_push($refinedTokens, new Token(strval($unitLength->getValue()), Token::TYPE_NUMBER, 0));
-
-            return null;
-        }
-
-        // Else: Substitute with multiplied function expression
+    ): void {
         array_push(
             $refinedTokens,
             new Token('(', Token::TYPE_CHARACTER, 0),
@@ -264,8 +278,6 @@ class ViewportCalculatorService extends StringCalc implements CalculatorServiceI
             new Token(')', Token::TYPE_CHARACTER, 0),
             new Token(')', Token::TYPE_CHARACTER, 0)
         );
-
-        return null;
     }
 
     /**
