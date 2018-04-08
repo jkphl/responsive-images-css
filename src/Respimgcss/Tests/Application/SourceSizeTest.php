@@ -69,6 +69,7 @@ class SourceSizeTest extends AbstractTestBase
         $this->assertEquals($unitLength, $sourceSize->getValue());
         $this->assertInstanceOf(SourceSizeMediaCondition::class, $sourceSize->getMediaCondition());
         $this->assertEquals($sourceSizeMediaCondition, $sourceSize->getMediaCondition());
+        $this->assertFalse($sourceSize->hasConditions());
 
         // Test with an invalid unit type
         new SourceSize($this->createMock(UnitLengthInterface::class), $sourceSizeMediaCondition);

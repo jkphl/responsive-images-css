@@ -37,7 +37,11 @@
 namespace Jkphl\Respimgcss\Tests\Application;
 
 use Jkphl\Respimgcss\Application\Model\SourceSizeMediaCondition;
+use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
+use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
+use Jkphl\Respimgcss\Domain\Model\Css\WidthMediaCondition;
 use Jkphl\Respimgcss\Tests\AbstractTestBase;
+use Jkphl\Respimgcss\Tests\Domain\Mock\AbsoluteLength;
 
 /**
  * Source size media condition tests
@@ -52,9 +56,76 @@ class SourceSizeMediaConditionTest extends AbstractTestBase
      */
     public function testSourceSizeMediaCondition()
     {
-        $sourceMediaCondition = new SourceSizeMediaCondition('value', ['condition']);
-        $this->assertInstanceOf(SourceSizeMediaCondition::class, $sourceMediaCondition);
-        $this->assertEquals('value', $sourceMediaCondition->getValue());
-        $this->assertEquals(['condition'], $sourceMediaCondition->getConditions());
+        $sourceSizeMediaCondition = new SourceSizeMediaCondition('value', ['condition']);
+        $this->assertInstanceOf(SourceSizeMediaCondition::class, $sourceSizeMediaCondition);
+        $this->assertEquals('value', $sourceSizeMediaCondition->getValue());
+        $this->assertEquals(['condition'], $sourceSizeMediaCondition->getConditions());
+    }
+
+    /**
+     * Test the minimum & maximum values of a source size media condition
+     */
+    public function testSourceSizesMinMaxMediaConditions()
+    {
+        $minWidthCondition        = new WidthMediaCondition(
+            new AbsoluteLength(100),
+            CssMinMaxMediaConditionInterface::MIN
+        );
+        $maxWidthCondition        = new WidthMediaCondition(
+            new AbsoluteLength(200),
+            CssMinMaxMediaConditionInterface::MAX
+        );
+        $minResolutionCondition   = new ResolutionMediaCondition(
+            new AbsoluteLength(2),
+            CssMinMaxMediaConditionInterface::MIN
+        );
+        $maxResolutionCondition   = new ResolutionMediaCondition(
+            new AbsoluteLength(3),
+            CssMinMaxMediaConditionInterface::MAX
+        );
+        $sourceSizeMediaCondition = new SourceSizeMediaCondition(
+            'value',
+            [$minWidthCondition, $maxWidthCondition, $minResolutionCondition, $maxResolutionCondition]
+        );
+        $this->assertInstanceOf(SourceSizeMediaCondition::class, $sourceSizeMediaCondition);
+        $this->assertEquals(100, $sourceSizeMediaCondition->getMinimumWidth());
+        $this->assertEquals(200, $sourceSizeMediaCondition->getMaximumWidth());
+        $this->assertEquals(2, $sourceSizeMediaCondition->getMinimumResolution());
+        $this->assertEquals(3, $sourceSizeMediaCondition->getMaximumResolution());
+
+        $this->assertTrue($sourceSizeMediaCondition->matches(new AbsoluteLength(150), 2.5));
+        $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(50), 2.5));
+        $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(250), 2.5));
+        $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(150), 1));
+        $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(150), 4));
+        $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(50), 1));
+        $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(250), 4));
+    }
+
+    /**
+     * Test the equaling values of a source size media condition
+     */
+    public function testSourceSizesEqualsMediaConditions()
+    {
+        $eqWidthCondition         = new WidthMediaCondition(
+            new AbsoluteLength(100),
+            CssMinMaxMediaConditionInterface::EQ
+        );
+        $eqResolutionCondition    = new ResolutionMediaCondition(
+            new AbsoluteLength(2),
+            CssMinMaxMediaConditionInterface::EQ
+        );
+        $sourceSizeMediaCondition = new SourceSizeMediaCondition(
+            'value',
+            [$eqWidthCondition, $eqResolutionCondition]
+        );
+        $this->assertInstanceOf(SourceSizeMediaCondition::class, $sourceSizeMediaCondition);
+        $this->assertEquals(100, $sourceSizeMediaCondition->getMinimumWidth());
+        $this->assertEquals(100, $sourceSizeMediaCondition->getMaximumWidth());
+        $this->assertEquals(2, $sourceSizeMediaCondition->getMinimumResolution());
+        $this->assertEquals(2, $sourceSizeMediaCondition->getMaximumResolution());
+        $this->assertTrue($sourceSizeMediaCondition->matches(new AbsoluteLength(100), 2));
+        $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(50), 2));
+        $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(100), 3));
     }
 }

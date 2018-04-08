@@ -76,15 +76,15 @@ class SourceSizeMediaCondition
     /**
      * Minimum resolution
      *
-     * @var float
+     * @var float|null
      */
-    protected $minimumResolution = 1;
+    protected $minimumResolution = null;
     /**
      * Maximum resolution
      *
-     * @var float
+     * @var float|null
      */
-    protected $maximumResolution = 1;
+    protected $maximumResolution = null;
 
     /**
      * Source size media condition constructor
@@ -218,7 +218,7 @@ class SourceSizeMediaCondition
      *
      * @return float Minimum resolution
      */
-    public function getMinimumResolution(): float
+    public function getMinimumResolution(): ?float
     {
         return $this->minimumResolution;
     }
@@ -228,18 +228,8 @@ class SourceSizeMediaCondition
      *
      * @return float Maximum resolution
      */
-    public function getMaximumResolution(): float
+    public function getMaximumResolution(): ?float
     {
         return $this->maximumResolution;
-    }
-
-    /**
-     * Initialize a resolution media condition
-     *
-     * @param WidthMediaCondition $condition Resolution media condition
-     */
-    protected function initializeResolutionCondition(WidthMediaCondition $condition)
-    {
-
     }
 }
