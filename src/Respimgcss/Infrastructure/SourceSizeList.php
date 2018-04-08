@@ -143,10 +143,11 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
         AbsoluteLengthInterface $minWidth,
         AbsoluteLengthInterface $maxWidth = null
     ): ?SourceSizeImageCandidateMatch {
-        // If there's no upper limit: Use the largest image candidate anyway
+        // If there's no upper limit: Use the largest image candidate in any case
         if ($maxWidth === null) {
             return $this->createLargestImageCandidateMatch($sourceSize, $imageCandidates);
         }
+
         // Calculate the effective minimum image width for the current source size and breakpoint
         $minImageWidth = max(
             $sourceSize->getValue()->getValue($minWidth),
@@ -257,22 +258,41 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
      */
     protected function sortSourceSizesByWidth(SourceSize $sourceSize1, SourceSize $sourceSize2): int
     {
-        // Sort by maximum width
-        $maxWidth1 = $sourceSize1->getMediaCondition()->getMaximumWidth();
-        $maxWidth2 = $sourceSize2->getMediaCondition()->getMaximumWidth();
-        if ($maxWidth1 != $maxWidth2) {
-            return ($maxWidth1 > $maxWidth2) ? -1 : 1;
-        }
-
         // Sort by minimum width
         $minWidth1 = $sourceSize1->getMediaCondition()->getMinimumWidth();
         $minWidth2 = $sourceSize2->getMediaCondition()->getMinimumWidth();
-        if ($minWidth1 != $minWidth2) {
-            return ($minWidth1 > $minWidth2) ? -1 : 1;
+        if ($minWidth1 !== $minWidth2) {
+            return $this->sortSourceSizesByDifferingValues($minWidth1, $minWidth2);
+        }
+
+        // Sort by maximum width
+        $maxWidth1 = $sourceSize1->getMediaCondition()->getMaximumWidth();
+        $maxWidth2 = $sourceSize2->getMediaCondition()->getMaximumWidth();
+        if ($maxWidth1 !== $maxWidth2) {
+            return $this->sortSourceSizesByDifferingValues($maxWidth1, $maxWidth2);
         }
 
         // Sort by resolution
         return $this->sortSourceSizesByResolution($sourceSize1, $sourceSize2);
+    }
+
+    /**
+     * Sort by differing values
+     *
+     * @param int|null $value1 Value 1
+     * @param int|null $value2 Value 2
+     *
+     * @return int Sort order
+     */
+    protected function sortSourceSizesByDifferingValues(int $value1 = null, int $value2 = null): int
+    {
+        if ($value1 === null) {
+            return -1;
+        }
+        if ($value2 === null) {
+            return 1;
+        }
+        return ($value1 > $value2) ? -1 : 1;
     }
 
     /**
@@ -285,18 +305,18 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
      */
     protected function sortSourceSizesByResolution(SourceSize $sourceSize1, SourceSize $sourceSize2): int
     {
-        // Sort by maximum resolution
-        $maxResolution1 = $sourceSize1->getMediaCondition()->getMaximumResolution();
-        $maxResolution2 = $sourceSize2->getMediaCondition()->getMaximumResolution();
-        if ($maxResolution1 != $maxResolution2) {
-            return ($maxResolution1 > $maxResolution2) ? -1 : 1;
-        }
-
         // Sort by minimum resolution
         $minResolution1 = $sourceSize1->getMediaCondition()->getMinimumResolution();
         $minResolution2 = $sourceSize2->getMediaCondition()->getMinimumResolution();
-        if ($minResolution1 != $minResolution2) {
-            return ($minResolution1 > $minResolution2) ? -1 : 1;
+        if ($minResolution1 !== $minResolution2) {
+            return $this->sortSourceSizesByDifferingValues($minResolution1, $minResolution2);
+        }
+
+        // Sort by maximum resolution
+        $maxResolution1 = $sourceSize1->getMediaCondition()->getMaximumResolution();
+        $maxResolution2 = $sourceSize2->getMediaCondition()->getMaximumResolution();
+        if ($maxResolution1 !== $maxResolution2) {
+            return $this->sortSourceSizesByDifferingValues($maxResolution1, $maxResolution2);
         }
 
         return 0;

@@ -67,16 +67,21 @@ class SourceSizeListTest extends AbstractTestBase
         $sourceSize2       = $sourceSizeFactory->createFromSourceSizeStr('(min-width: 800px) 50vw');
         $sourceSize3       = $sourceSizeFactory->createFromSourceSizeStr('100vw');
         $sourceSize4       = $sourceSizeFactory->createFromSourceSizeStr('(min-width: 400px) 80vw');
+        $sourceSize5       = $sourceSizeFactory->createFromSourceSizeStr(
+            '((min-width: 800px) and (max-width: 1200px)) 50vw'
+        );
         $sourceSizeList    = new SourceSizeList(
-            [$sourceSize1, $sourceSize2, $sourceSize3, $sourceSize4],
+            [$sourceSize1, $sourceSize2, $sourceSize3, $sourceSize4, $sourceSize5],
             $sourceSizeFactory
         );
         $this->assertInstanceOf(SourceSizeList::class, $sourceSizeList);
-        $this->assertEquals(4, count($sourceSizeList));
+
+        $this->assertEquals(5, count($sourceSizeList));
         $this->assertEquals($sourceSize2, $sourceSizeList[0]);
-        $this->assertEquals($sourceSize4, $sourceSizeList[1]);
-        $this->assertEquals($sourceSize1, $sourceSizeList[2]);
-        $this->assertEquals($sourceSize3, $sourceSizeList[3]);
+        $this->assertEquals($sourceSize5, $sourceSizeList[1]);
+        $this->assertEquals($sourceSize4, $sourceSizeList[2]);
+        $this->assertEquals($sourceSize1, $sourceSizeList[3]);
+        $this->assertEquals($sourceSize3, $sourceSizeList[4]);
 
         $this->matchImageCandidates(
             $sourceSizeList,
@@ -128,5 +133,104 @@ class SourceSizeListTest extends AbstractTestBase
     {
         $lengthFactory = new LengthFactory($this->createMock(CalculatorServiceFactoryInterface::class), 16);
         new SourceSizeList(['test'], $lengthFactory);
+    }
+
+    /**
+     * Test empty source size list
+     */
+    public function testEmptySourceSizeList()
+    {
+        $imageCandidateSet = new ImageCandidateSet(new WidthImageCandidate('small.jpg', 400));
+        $this->assertInstanceOf(ImageCandidateSet::class, $imageCandidateSet);
+
+        $imageCandidateSet[] = new WidthImageCandidate('medium.jpg', 800);
+        $imageCandidateSet[] = new WidthImageCandidate('large.jpg', 1200);
+        $imageCandidateSet[] = new WidthImageCandidate('extralarge.jpg', 1600);
+
+        $sourceSizeFactory = new SourceSizeFactory(new ViewportCalculatorServiceFactory(), 16);
+        $sourceSizeList    = new SourceSizeList([], $sourceSizeFactory);
+        $this->assertInstanceOf(SourceSizeList::class, $sourceSizeList);
+        $this->assertEquals(0, count($sourceSizeList));
+        $this->assertNull(
+            $sourceSizeList->findImageCandidate(
+                $imageCandidateSet,
+                $sourceSizeFactory->createAbsoluteLength(0),
+                1
+            )
+        );
+    }
+
+    /**
+     * Test a non matching set of image candidates
+     */
+    public function testNonMatchingImageCandidates()
+    {
+        $imageCandidateSet = new ImageCandidateSet(new WidthImageCandidate('small.jpg', 400));
+        $sourceSizeFactory = new SourceSizeFactory(new ViewportCalculatorServiceFactory(), 16);
+        $sourceSize        = $sourceSizeFactory->createFromSourceSizeStr(
+            '((min-width: 1000px) and (max-width: 2000px)) 100vw'
+        );
+        $sourceSizeList    = new SourceSizeList([$sourceSize], $sourceSizeFactory);
+        $this->assertInstanceOf(SourceSizeList::class, $sourceSizeList);
+        $this->assertEquals(1, count($sourceSizeList));
+        $this->assertNull(
+            $sourceSizeList->findImageCandidate(
+                $imageCandidateSet,
+                $sourceSizeFactory->createAbsoluteLength(1500),
+                1
+            )
+        );
+    }
+
+    /**
+     * Test empty image candidate set
+     */
+    public function testEmptyImageCandidateSet()
+    {
+        $imageCandidateSet = $this->createMock(ImageCandidateSet::class);
+        $sourceSizeFactory = new SourceSizeFactory(new ViewportCalculatorServiceFactory(), 16);
+        $sourceSize        = $sourceSizeFactory->createFromSourceSizeStr('(min-width: 1px) 100vw');
+        $sourceSizeList    = new SourceSizeList([$sourceSize], $sourceSizeFactory);
+        $this->assertInstanceOf(SourceSizeList::class, $sourceSizeList);
+        $this->assertEquals(1, count($sourceSizeList));
+        $this->assertNull(
+            $sourceSizeList->findImageCandidate(
+                $imageCandidateSet,
+                $sourceSizeFactory->createAbsoluteLength(100),
+                1
+            )
+        );
+    }
+
+    /**
+     * Test the sorting of the source sizes list
+     */
+    public function testSourceSizeListSorting()
+    {
+        $sourceSizeFactory = new SourceSizeFactory(new ViewportCalculatorServiceFactory(), 16);
+        $sourceSize1       = $sourceSizeFactory->createFromSourceSizeStr(
+            '((min-resolution: 1) and (max-resolution: 3)) 100vw'
+        );
+        $sourceSize2       = $sourceSizeFactory->createFromSourceSizeStr('(resolution: 1) 100vw');
+        $sourceSize3       = $sourceSizeFactory->createFromSourceSizeStr(
+            '((min-resolution: 1) and (max-resolution: 2)) 100vw'
+        );
+        $sourceSize4       = $sourceSizeFactory->createFromSourceSizeStr('(min-resolution: 1) 100vw');
+        $sourceSize5       = $sourceSizeFactory->createFromSourceSizeStr(
+            '((min-resolution: 2) and (max-resolution: 3)) 100vw'
+        );
+        $sourceSize6       = $sourceSizeFactory->createFromSourceSizeStr('(resolution: 1) 100vw');
+        $sourceSizeList    = new SourceSizeList(
+            [$sourceSize1, $sourceSize2, $sourceSize3, $sourceSize4, $sourceSize5, $sourceSize6],
+            $sourceSizeFactory
+        );
+        $this->assertInstanceOf(SourceSizeList::class, $sourceSizeList);
+        $this->assertEquals(6, count($sourceSizeList));
+        $this->assertEquals($sourceSize5, $sourceSizeList[0]);
+        $this->assertEquals($sourceSize4, $sourceSizeList[1]);
+        $this->assertEquals($sourceSize1, $sourceSizeList[2]);
+        $this->assertEquals($sourceSize3, $sourceSizeList[3]);
+        $this->assertEquals($sourceSize2, $sourceSizeList[4]);
+        $this->assertEquals($sourceSize6, $sourceSizeList[5]);
     }
 }
