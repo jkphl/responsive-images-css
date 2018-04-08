@@ -124,10 +124,12 @@ class WidthCssRulesetCompilerServiceTest extends AbstractTestBase
         $imageCandidates = [];
         foreach ($imageCandidateSet as $imageCandidate) {
             $imageCandidateReturn = $this->createMock(SourceSizeImageCandidateMatch::class);
-            $imageCandidateReturn->method('getMediaCondition')->willReturn(
+            $imageCandidateReturn->/** @scrutinizer ignore-call */
+            method('getMediaCondition')->willReturn(
                 new MediaCondition('', '(min-width: '.$imageCandidate->getValue().'px)')
             );
-            $imageCandidateReturn->method('getImageCandidate')->willReturn($imageCandidate);
+            $imageCandidateReturn->/** @scrutinizer ignore-call */
+            method('getImageCandidate')->willReturn($imageCandidate);
             $imageCandidates[] = $imageCandidateReturn;
         }
 

@@ -101,7 +101,7 @@ class CssMediaConditionFactoryTest extends AbstractTestBase
     {
         $lengthFactory       = new LengthFactory(new ViewportCalculatorServiceFactory(), 16);
         $widthMediaCondition = new WidthMediaCondition(
-            $lengthFactory->createLengthFromString('1000px'),
+            $lengthFactory->createAbsoluteLengthFromString('1000px'),
             CssMinMaxMediaConditionInterface::MAX
         );
         $mediaConditions     = CssMediaConditionFactory::createFromMediaCondition($widthMediaCondition);

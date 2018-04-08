@@ -60,15 +60,6 @@ class LengthFactoryTest extends AbstractTestBase
     protected $lengthFactory;
 
     /**
-     * Test setup
-     */
-    protected function setUp()/* The :void return type declaration that should be here would cause a BC issue */
-    {
-        parent::setUp();
-        $this->lengthFactory = new LengthFactory(new ViewportCalculatorServiceFactory(), 16);
-    }
-
-    /**
      * Test the length factory
      */
     public function testLengthFactory()
@@ -102,6 +93,7 @@ class LengthFactoryTest extends AbstractTestBase
         $length = $this->lengthFactory->createLengthFromString('1px');
         $this->assertInstanceOf(AbsoluteLength::class, $length);
         $this->assertInstanceOf(AbsoluteLength::class, $this->lengthFactory->createAbsoluteLength(1));
+        $this->assertInstanceOf(AbsoluteLength::class, $this->lengthFactory->createAbsoluteLengthFromString('1px'));
     }
 
     /**
@@ -127,14 +119,11 @@ class LengthFactoryTest extends AbstractTestBase
     }
 
     /**
-     * Test an invalid length unit
-     *
-     * @depends               testLengthFactory
-     * @expectedException \Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException
-     * @expectedExceptionCode 1522493474
+     * Test setup
      */
-    public function testInvalidLengthUnit()
+    protected function setUp()/* The :void return type declaration that should be here would cause a BC issue */
     {
-        $this->lengthFactory->createLengthFromString('123xp');
+        parent::setUp();
+        $this->lengthFactory = new LengthFactory(new ViewportCalculatorServiceFactory(), 16);
     }
 }

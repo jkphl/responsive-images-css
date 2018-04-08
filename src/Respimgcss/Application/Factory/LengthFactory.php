@@ -84,23 +84,31 @@ class LengthFactory extends AbstractLengthFactory
      */
     public function createLengthFromString(string $length): UnitLengthInterface
     {
-        $valueAndUnit = $this->matchValueAndUnit($length);
+        $valueAndUnit = $this->matchValueAndUnit(
+            $length,
+            array_merge(self::UNITS_ABSOLUTE, self::UNITS_RELATIVE)
+        );
 
-        return $this->makeInstance($valueAndUnit[1], $valueAndUnit[2]);
+        // If it's an absolute unit
+        if (in_array($valueAndUnit[2], self::UNITS_ABSOLUTE)) {
+            return new AbsoluteLength(floatval($valueAndUnit[1]), $valueAndUnit[2], $this->lengthNormalizerService);
+        }
+
+        return $this->makeRelativeInstance($valueAndUnit[1], $valueAndUnit[2]);
     }
 
     /**
      * Match the value and unit of a length descriptor
      *
      * @param string $length AbstractLength descriptor
+     * @param array $units   Allowed units
      *
      * @return array Value and unit (PCRE match)
-     * @throws InvalidArgumentException If the length string is invalid
      */
-    protected function matchValueAndUnit($length): array
+    protected function matchValueAndUnit(string $length, array $units): array
     {
         $length = trim(strtolower($length));
-        if (!strlen($length) || !preg_match('/^(\d+(?:\.\d+)?)([pxremcintvw%]+)$/i', $length, $valueAndUnit)) {
+        if (!strlen($length) || !preg_match('/^(\d+(?:\.\d+)?)('.implode('|', $units).')$/i', $length, $valueAndUnit)) {
             throw new InvalidArgumentException(
                 sprintf(InvalidArgumentException::INVALID_LENGTH_STR, $length),
                 InvalidArgumentException::INVALID_LENGTH
@@ -111,31 +119,12 @@ class LengthFactory extends AbstractLengthFactory
     }
 
     /**
-     * Create a value with unit instance
-     *
-     * @param string $value Value
-     * @param string $unit  Unit
-     *
-     * @return UnitLengthInterface AbstractLength with unit
-     */
-    protected function makeInstance(string $value, string $unit): UnitLengthInterface
-    {
-        // If it's an absolute unit
-        if (in_array($unit, self::UNITS_ABSOLUTE)) {
-            return new AbsoluteLength(floatval($value), $unit, $this->lengthNormalizerService);
-        }
-
-        return $this->makeRelativeInstance($value, $unit);
-    }
-
-    /**
      * Create a relative value with unit instance
      *
      * @param string $value Value
      * @param string $unit  Unit
      *
      * @return UnitLengthInterface Relative length with unit
-     * @throws InvalidArgumentException If the unit is invalid
      */
     protected function makeRelativeInstance(string $value, string $unit): UnitLengthInterface
     {
@@ -148,13 +137,20 @@ class LengthFactory extends AbstractLengthFactory
         }
 
         // Percentages
-        if ($unit === UnitLengthInterface::UNIT_PERCENT) {
-            return new PercentageLength(floatval($value));
-        }
+        return new PercentageLength(floatval($value));
+    }
 
-        throw new InvalidArgumentException(
-            sprintf(InvalidArgumentException::INVALID_UNIT_STR, $unit),
-            InvalidArgumentException::INVALID_UNIT
-        );
+    /**
+     * Parse a length string and return an absolute length with unit instance
+     *
+     * @param string $length AbstractLength string
+     *
+     * @return AbsoluteLength Absolute length with unit
+     */
+    public function createAbsoluteLengthFromString(string $length): AbsoluteLength
+    {
+        $valueAndUnit = $this->matchValueAndUnit($length, self::UNITS_ABSOLUTE);
+
+        return new AbsoluteLength(floatval($valueAndUnit[1]), $valueAndUnit[2], $this->lengthNormalizerService);
     }
 }

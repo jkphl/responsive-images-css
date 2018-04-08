@@ -38,6 +38,7 @@ namespace Jkphl\Respimgcss\Application\Factory;
 
 use Jkphl\Respimgcss\Application\Contract\UnitLengthInterface;
 use Jkphl\Respimgcss\Application\Exceptions\InvalidArgumentException;
+use Jkphl\Respimgcss\Application\Model\AbsoluteLength;
 use Jkphl\Respimgcss\Application\Model\SourceSize;
 use Jkphl\Respimgcss\Application\Model\SourceSizeMediaCondition;
 use Jkphl\Respimgcss\Domain\Contract\LengthInterface;
@@ -222,16 +223,16 @@ class SourceSizeFactory extends AbstractLengthFactory
      *
      * @param string $widthMediaConditionStr Width media condition string
      *
-     * @return UnitLengthInterface Width media condition value
+     * @return AbsoluteLength Width media condition value
      */
-    protected function parseWidthMediaConditionValue(string $widthMediaConditionStr): UnitLengthInterface
+    protected function parseWidthMediaConditionValue(string $widthMediaConditionStr): AbsoluteLength
     {
         $widthMediaConditionValueStr = $this->shiftMediaConditionValue($widthMediaConditionStr);
 
         // Try to parse as simple unit length
         try {
             return (new LengthFactory($this->calculatorServiceFactory, $this->emPixel))
-                ->createLengthFromString($widthMediaConditionValueStr);
+                ->createAbsoluteLengthFromString($widthMediaConditionValueStr);
         } catch (InvalidArgumentException $e) {
             // Skip
         }
@@ -312,7 +313,7 @@ class SourceSizeFactory extends AbstractLengthFactory
      * @return LengthInterface Resolution media condition value
      * @throws InvalidArgumentException If the value is not numeric
      */
-    protected function parseResolutionMediaConditionValue(string $resolutionMediaConditionStr): LengthInterface
+    protected function parseResolutionMediaConditionValue(string $resolutionMediaConditionStr): AbsoluteLength
     {
         $resolutionMediaConditionValueStr = $this->shiftMediaConditionValue($resolutionMediaConditionStr);
 
