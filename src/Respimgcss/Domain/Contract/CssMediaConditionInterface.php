@@ -54,7 +54,7 @@ interface CssMediaConditionInterface
     /**
      * Return the property value
      *
-     * @return mixed Propery value
+     * @return mixed Property value
      */
     public function getValue();
 }

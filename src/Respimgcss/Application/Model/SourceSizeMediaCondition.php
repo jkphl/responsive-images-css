@@ -135,17 +135,39 @@ class SourceSizeMediaCondition
 
         // Minimum value
         if ($modifier == CssMinMaxMediaConditionInterface::MIN) {
-            $this->$minProperty = ($this->$minProperty === null) ? $value : (min($value, $this->$minProperty));
+            $this->initializeMinProperty($minProperty, $value);
             return;
         }
 
         // Maximum value
         if ($modifier == CssMinMaxMediaConditionInterface::MAX) {
-            $this->$maxProperty = ($this->$maxProperty === null) ? $value : (max($value, $this->$maxProperty));
+            $this->initializeMaxProperty($maxProperty, $value);
             return;
         }
 
         $this->$minProperty = $this->$maxProperty = $value;
+    }
+
+    /**
+     * Initialize a minimum property
+     *
+     * @param string $minProperty Property name
+     * @param float $value        Property Value
+     */
+    protected function initializeMinProperty(string $minProperty, float $value): void
+    {
+        $this->$minProperty = ($this->$minProperty === null) ? $value : (min($value, $this->$minProperty));
+    }
+
+    /**
+     * Initialize a maximum property
+     *
+     * @param string $maxProperty Property name
+     * @param float $value        Property Value
+     */
+    protected function initializeMaxProperty(string $maxProperty, float $value): void
+    {
+        $this->$maxProperty = ($this->$maxProperty === null) ? $value : (max($value, $this->$maxProperty));
     }
 
     /**

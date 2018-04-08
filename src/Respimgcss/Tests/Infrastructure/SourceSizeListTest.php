@@ -56,32 +56,51 @@ use Jkphl\Respimgcss\Tests\AbstractTestBase;
 class SourceSizeListTest extends AbstractTestBase
 {
     /**
+     * Source size widths
+     *
+     * @var array
+     */
+    const SOURCE_SIZE_WIDTHS = [
+        '((min-width: 200px) and (min-resolution: 2)) 80vw',
+        '(min-width: 800px) 50vw',
+        '100vw',
+        '(min-width: 400px) 80vw',
+        '((min-width: 800px) and (max-width: 1200px)) 50vw'
+    ];
+    /**
+     * Source size resolutions
+     *
+     * @var array
+     */
+    const SOURCE_SIZE_RESOLUTIONS = [
+        '((min-resolution: 1) and (max-resolution: 3)) 100vw',
+        '(resolution: 1) 100vw',
+        '((min-resolution: 1) and (max-resolution: 2)) 100vw',
+        '(min-resolution: 1) 100vw',
+        '((min-resolution: 2) and (max-resolution: 3)) 100vw',
+        '(resolution: 1) 100vw'
+    ];
+
+    /**
      * Test the source size list
      */
     public function testSourceSizeList()
     {
         $sourceSizeFactory = new SourceSizeFactory(new ViewportCalculatorServiceFactory(), 16);
-        $sourceSize1       = $sourceSizeFactory->createFromSourceSizeStr(
-            '((min-width: 200px) and (min-resolution: 2)) 80vw'
+        $sourceSizes       = array_map(
+            function ($sourceSize) use ($sourceSizeFactory) {
+                return $sourceSizeFactory->createFromSourceSizeStr($sourceSize);
+            },
+            self::SOURCE_SIZE_WIDTHS
         );
-        $sourceSize2       = $sourceSizeFactory->createFromSourceSizeStr('(min-width: 800px) 50vw');
-        $sourceSize3       = $sourceSizeFactory->createFromSourceSizeStr('100vw');
-        $sourceSize4       = $sourceSizeFactory->createFromSourceSizeStr('(min-width: 400px) 80vw');
-        $sourceSize5       = $sourceSizeFactory->createFromSourceSizeStr(
-            '((min-width: 800px) and (max-width: 1200px)) 50vw'
-        );
-        $sourceSizeList    = new SourceSizeList(
-            [$sourceSize1, $sourceSize2, $sourceSize3, $sourceSize4, $sourceSize5],
-            $sourceSizeFactory
-        );
+        $sourceSizeList    = new SourceSizeList($sourceSizes, $sourceSizeFactory);
         $this->assertInstanceOf(SourceSizeList::class, $sourceSizeList);
-
         $this->assertEquals(5, count($sourceSizeList));
-        $this->assertEquals($sourceSize2, $sourceSizeList[0]);
-        $this->assertEquals($sourceSize5, $sourceSizeList[1]);
-        $this->assertEquals($sourceSize4, $sourceSizeList[2]);
-        $this->assertEquals($sourceSize1, $sourceSizeList[3]);
-        $this->assertEquals($sourceSize3, $sourceSizeList[4]);
+        $this->assertEquals($sourceSizes[1], $sourceSizeList[0]);
+        $this->assertEquals($sourceSizes[4], $sourceSizeList[1]);
+        $this->assertEquals($sourceSizes[3], $sourceSizeList[2]);
+        $this->assertEquals($sourceSizes[0], $sourceSizeList[3]);
+        $this->assertEquals($sourceSizes[2], $sourceSizeList[4]);
 
         $this->matchImageCandidates(
             $sourceSizeList,
@@ -208,29 +227,20 @@ class SourceSizeListTest extends AbstractTestBase
     public function testSourceSizeListSorting()
     {
         $sourceSizeFactory = new SourceSizeFactory(new ViewportCalculatorServiceFactory(), 16);
-        $sourceSize1       = $sourceSizeFactory->createFromSourceSizeStr(
-            '((min-resolution: 1) and (max-resolution: 3)) 100vw'
+        $sourceSizes       = array_map(
+            function ($sourceSize) use ($sourceSizeFactory) {
+                return $sourceSizeFactory->createFromSourceSizeStr($sourceSize);
+            },
+            self::SOURCE_SIZE_RESOLUTIONS
         );
-        $sourceSize2       = $sourceSizeFactory->createFromSourceSizeStr('(resolution: 1) 100vw');
-        $sourceSize3       = $sourceSizeFactory->createFromSourceSizeStr(
-            '((min-resolution: 1) and (max-resolution: 2)) 100vw'
-        );
-        $sourceSize4       = $sourceSizeFactory->createFromSourceSizeStr('(min-resolution: 1) 100vw');
-        $sourceSize5       = $sourceSizeFactory->createFromSourceSizeStr(
-            '((min-resolution: 2) and (max-resolution: 3)) 100vw'
-        );
-        $sourceSize6       = $sourceSizeFactory->createFromSourceSizeStr('(resolution: 1) 100vw');
-        $sourceSizeList    = new SourceSizeList(
-            [$sourceSize1, $sourceSize2, $sourceSize3, $sourceSize4, $sourceSize5, $sourceSize6],
-            $sourceSizeFactory
-        );
+        $sourceSizeList    = new SourceSizeList($sourceSizes, $sourceSizeFactory);
         $this->assertInstanceOf(SourceSizeList::class, $sourceSizeList);
         $this->assertEquals(6, count($sourceSizeList));
-        $this->assertEquals($sourceSize5, $sourceSizeList[0]);
-        $this->assertEquals($sourceSize4, $sourceSizeList[1]);
-        $this->assertEquals($sourceSize1, $sourceSizeList[2]);
-        $this->assertEquals($sourceSize3, $sourceSizeList[3]);
-        $this->assertEquals($sourceSize2, $sourceSizeList[4]);
-        $this->assertEquals($sourceSize6, $sourceSizeList[5]);
+        $this->assertEquals($sourceSizes[4], $sourceSizeList[0]);
+        $this->assertEquals($sourceSizes[3], $sourceSizeList[1]);
+        $this->assertEquals($sourceSizes[0], $sourceSizeList[2]);
+        $this->assertEquals($sourceSizes[2], $sourceSizeList[3]);
+        $this->assertEquals($sourceSizes[1], $sourceSizeList[4]);
+        $this->assertEquals($sourceSizes[5], $sourceSizeList[5]);
     }
 }

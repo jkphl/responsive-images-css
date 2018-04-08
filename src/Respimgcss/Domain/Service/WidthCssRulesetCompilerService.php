@@ -110,6 +110,7 @@ class WidthCssRulesetCompilerService extends AbstractCssRulesetCompilerService
         // Run through all breakpoints
         /** @var AbsoluteLengthInterface $breakpoint */
         foreach ($this->breakpoints as $breakpoint) {
+            /** @scrutinizer ignore-call */
             $imageCandidateMatch = $this->sourceSizeList->findImageCandidate(
                 $this->imageCandidates,
                 $breakpoint,
@@ -121,6 +122,43 @@ class WidthCssRulesetCompilerService extends AbstractCssRulesetCompilerService
                 );
             }
         }
+    }
+
+    /**
+     * Create a source size based CSS rule
+     *
+     * @param SourceSizeImageCandidateMatch $imageCandidateMatch Source size match
+     * @param float $density                                     Density
+     *
+     * @return Rule Source size based CSS rule
+     */
+    protected function createSourceSizeMatchRule(SourceSizeImageCandidateMatch $imageCandidateMatch, float $density)
+    {
+        $rule = new Rule($imageCandidateMatch->getImageCandidate(), [$imageCandidateMatch->getMediaCondition()]);
+
+        return $this->addDensityCondition($rule, $density);
+    }
+
+    /**
+     * Add a density condition to a CSS rule
+     *
+     * @param Rule $rule     CSS rule
+     * @param float $density Density
+     *
+     * @return Rule CSS rule
+     */
+    protected function addDensityCondition(Rule $rule, float $density): Rule
+    {
+        // If this is not the default density: Add a resolution condition
+        if ($density > 1) {
+            $resolutionMediaCondition = new ResolutionMediaCondition(
+                new AbsoluteLength($density),
+                CssMinMaxMediaConditionInterface::MIN
+            );
+            $rule                     = $rule->appendCondition($resolutionMediaCondition);
+        }
+
+        return $rule;
     }
 
     /**
@@ -166,21 +204,6 @@ class WidthCssRulesetCompilerService extends AbstractCssRulesetCompilerService
     }
 
     /**
-     * Create a source size based CSS rule
-     *
-     * @param SourceSizeImageCandidateMatch $imageCandidateMatch Source size match
-     * @param float $density                                     Density
-     *
-     * @return Rule Source size based CSS rule
-     */
-    protected function createSourceSizeMatchRule(SourceSizeImageCandidateMatch $imageCandidateMatch, float $density)
-    {
-        $rule = new Rule($imageCandidateMatch->getImageCandidate(), [$imageCandidateMatch->getMediaCondition()]);
-
-        return $this->addDensityCondition($rule, $density);
-    }
-
-    /**
      * Add a width condition to a CSS rule
      *
      * @param Rule $rule               CSS rule
@@ -196,28 +219,6 @@ class WidthCssRulesetCompilerService extends AbstractCssRulesetCompilerService
             $breakpoint          = new AbsoluteLength(round($imageCandidateWidth) / $density);
             $widthMediaCondition = new WidthMediaCondition($breakpoint, CssMinMaxMediaConditionInterface::MIN);
             $rule                = $rule->appendCondition($widthMediaCondition);
-        }
-
-        return $rule;
-    }
-
-    /**
-     * Add a density condition to a CSS rule
-     *
-     * @param Rule $rule     CSS rule
-     * @param float $density Density
-     *
-     * @return Rule CSS rule
-     */
-    protected function addDensityCondition(Rule $rule, float $density): Rule
-    {
-        // If this is not the default density: Add a resolution condition
-        if ($density > 1) {
-            $resolutionMediaCondition = new ResolutionMediaCondition(
-                new AbsoluteLength($density),
-                CssMinMaxMediaConditionInterface::MIN
-            );
-            $rule                     = $rule->appendCondition($resolutionMediaCondition);
         }
 
         return $rule;

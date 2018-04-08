@@ -56,6 +56,7 @@ use Jkphl\Respimgcss\Ports\InvalidArgumentException;
  * @see        http://w3c.github.io/html/semantics-embedded-content.html#ref-for-viewport-based-selection%E2%91%A0
  * @see        http://w3c.github.io/html/semantics-embedded-content.html#valid-source-size-list
  * @see        http://w3c.github.io/html/semantics-embedded-content.html#parse-a-sizes-attribute
+ * @see        https://www.sitepoint.com/community/t/pixels-or-percentages-for-media-queries/37487
  */
 class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
 {
@@ -148,21 +149,12 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
             return $this->createLargestImageCandidateMatch($sourceSize, $imageCandidates);
         }
 
-        // Calculate the effective minimum image width for the current source size and breakpoint
-        $minImageWidth = max(
-            $sourceSize->getValue()->getValue($minWidth),
-            $sourceSize->getValue()->getValue($maxWidth)
+        // Run through all image candidates for the effective minimum image, current source size and current breakpoint
+        return $this->findImageCandidateForMinImageWidth(
+            $sourceSize,
+            $imageCandidates,
+            max($sourceSize->getValue()->getValue($minWidth), $sourceSize->getValue()->getValue($maxWidth))
         );
-
-        // Run through all image candidates
-        /** @var ImageCandidateInterface $imageCandidate */
-        foreach ($imageCandidates as $imageCandidate) {
-            if ($imageCandidate->getValue() >= $minImageWidth) {
-                return $this->createImageCandidateMatch($sourceSize, $imageCandidate);
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -203,6 +195,31 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
     }
 
     /**
+     * Find an image candidate for a particular source size
+     *
+     * @param SourceSize $sourceSize                      Matching source size
+     * @param ImageCandidateSetInterface $imageCandidates Image candidates
+     * @param int $minImageWidth                          Minimum image width
+     *
+     * @return SourceSizeImageCandidateMatch|null Image candidate
+     */
+    protected function findImageCandidateForMinImageWidth(
+        SourceSize $sourceSize,
+        ImageCandidateSetInterface $imageCandidates,
+        int $minImageWidth
+    ): ?SourceSizeImageCandidateMatch {
+        // Run through all image candidates
+        /** @var ImageCandidateInterface $imageCandidate */
+        foreach ($imageCandidates as $imageCandidate) {
+            if ($imageCandidate->getValue() >= $minImageWidth) {
+                return $this->createImageCandidateMatch($sourceSize, $imageCandidate);
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Get the maximum width for a source size
      *
      * @param SourceSizeMediaCondition $condition Source size media condition
@@ -214,10 +231,7 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
         SourceSizeMediaCondition $condition,
         float $lastMinimumWidth = null
     ): ?AbsoluteLengthInterface {
-        $maximumWidth = $condition->getMaximumWidth();
-        if (($maximumWidth === null) && ($lastMinimumWidth !== null)) {
-            $maximumWidth = max(0, $lastMinimumWidth - 1);
-        }
+        $maximumWidth = $this->considerLastMinimumWidth($condition->getMaximumWidth(), $lastMinimumWidth);
         if ($maximumWidth === null) {
             return null;
         }
@@ -225,6 +239,22 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
             $maximumWidth = max(0, min($maximumWidth, $lastMinimumWidth - 1));
         }
         return $this->lengthFactory->createAbsoluteLength($maximumWidth);
+    }
+
+    /**
+     * Consider the last minimum width in case the maximum width is undefined
+     *
+     * @param int|null $maximumWidth       Maximum width
+     * @param float|null $lastMinimumWidth Last minimum width
+     *
+     * @return float|null Maximum width
+     */
+    protected function considerLastMinimumWidth(int $maximumWidth = null, float $lastMinimumWidth = null): ?float
+    {
+        if (($maximumWidth === null) && ($lastMinimumWidth !== null)) {
+            $maximumWidth = max(0, $lastMinimumWidth - 1);
+        }
+        return $maximumWidth;
     }
 
     /**
@@ -279,12 +309,12 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
     /**
      * Sort by differing values
      *
-     * @param int|null $value1 Value 1
-     * @param int|null $value2 Value 2
+     * @param float|null $value1 Value 1
+     * @param float|null $value2 Value 2
      *
      * @return int Sort order
      */
-    protected function sortSourceSizesByDifferingValues(int $value1 = null, int $value2 = null): int
+    protected function sortSourceSizesByDifferingValues(float $value1 = null, float $value2 = null): int
     {
         if ($value1 === null) {
             return -1;

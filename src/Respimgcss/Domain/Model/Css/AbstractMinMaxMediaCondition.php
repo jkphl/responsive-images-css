@@ -38,8 +38,6 @@ namespace Jkphl\Respimgcss\Domain\Model\Css;
 
 use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
-use Jkphl\Respimgcss\Domain\Contract\LengthInterface;
-use Jkphl\Respimgcss\Domain\Contract\RelativeLengthInterface;
 use Jkphl\Respimgcss\Domain\Exceptions\InvalidArgumentException;
 
 /**
@@ -65,18 +63,18 @@ abstract class AbstractMinMaxMediaCondition extends MediaCondition implements Cs
     /**
      * Property value
      *
-     * @var AbsoluteLengthInterface|RelativeLengthInterface
+     * @var AbsoluteLengthInterface
      */
     protected $value;
 
     /**
      * Min/Max CSS media condition constructor
      *
-     * @param AbsoluteLengthInterface|RelativeLengthInterface $value Property value
-     * @param string $modifier                                       Condition modifier
+     * @param AbsoluteLengthInterface $value Property value
+     * @param string $modifier               Condition modifier
      *
      */
-    public function __construct(LengthInterface $value, string $modifier = self::EQ)
+    public function __construct(AbsoluteLengthInterface $value, string $modifier = self::EQ)
     {
         parent::__construct(static::PROPERTY, $value);
 
@@ -107,9 +105,9 @@ abstract class AbstractMinMaxMediaCondition extends MediaCondition implements Cs
     /**
      * Return the property value
      *
-     * @return AbsoluteLengthInterface|RelativeLengthInterface Property value
+     * @return AbsoluteLengthInterface Property value
      */
-    public function getValue()
+    public function getValue(): AbsoluteLengthInterface
     {
         return $this->value;
     }

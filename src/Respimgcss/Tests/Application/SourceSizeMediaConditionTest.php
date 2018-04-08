@@ -67,26 +67,7 @@ class SourceSizeMediaConditionTest extends AbstractTestBase
      */
     public function testSourceSizesMinMaxMediaConditions()
     {
-        $minWidthCondition        = new WidthMediaCondition(
-            new AbsoluteLength(100),
-            CssMinMaxMediaConditionInterface::MIN
-        );
-        $maxWidthCondition        = new WidthMediaCondition(
-            new AbsoluteLength(200),
-            CssMinMaxMediaConditionInterface::MAX
-        );
-        $minResolutionCondition   = new ResolutionMediaCondition(
-            new AbsoluteLength(2),
-            CssMinMaxMediaConditionInterface::MIN
-        );
-        $maxResolutionCondition   = new ResolutionMediaCondition(
-            new AbsoluteLength(3),
-            CssMinMaxMediaConditionInterface::MAX
-        );
-        $sourceSizeMediaCondition = new SourceSizeMediaCondition(
-            'value',
-            [$minWidthCondition, $maxWidthCondition, $minResolutionCondition, $maxResolutionCondition]
-        );
+        $sourceSizeMediaCondition = $this->makeSourceSizeMediaCondition();
         $this->assertInstanceOf(SourceSizeMediaCondition::class, $sourceSizeMediaCondition);
         $this->assertEquals(100, $sourceSizeMediaCondition->getMinimumWidth());
         $this->assertEquals(200, $sourceSizeMediaCondition->getMaximumWidth());
@@ -100,6 +81,35 @@ class SourceSizeMediaConditionTest extends AbstractTestBase
         $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(150), 4));
         $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(50), 1));
         $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(250), 4));
+    }
+
+    /**
+     * Create a source size media condition for testing purposes
+     *
+     * @return SourceSizeMediaCondition Source size media condition
+     */
+    protected function makeSourceSizeMediaCondition(): SourceSizeMediaCondition
+    {
+        $minWidthCondition      = new WidthMediaCondition(
+            new AbsoluteLength(100),
+            CssMinMaxMediaConditionInterface::MIN
+        );
+        $maxWidthCondition      = new WidthMediaCondition(
+            new AbsoluteLength(200),
+            CssMinMaxMediaConditionInterface::MAX
+        );
+        $minResolutionCondition = new ResolutionMediaCondition(
+            new AbsoluteLength(2),
+            CssMinMaxMediaConditionInterface::MIN
+        );
+        $maxResolutionCondition = new ResolutionMediaCondition(
+            new AbsoluteLength(3),
+            CssMinMaxMediaConditionInterface::MAX
+        );
+        return new SourceSizeMediaCondition(
+            'value',
+            [$minWidthCondition, $maxWidthCondition, $minResolutionCondition, $maxResolutionCondition]
+        );
     }
 
     /**

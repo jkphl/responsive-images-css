@@ -94,7 +94,9 @@ class WidthCssRulesetCompilerServiceTest extends AbstractTestBase
         $imageCandidateSet[] = new WidthImageCandidate('extralarge.jpg', 1600);
         $lengthFactory       = new LengthFactory(new ViewportCalculatorServiceFactory(), 16);
         $sourceSizeList      = $this->createMock(SourceSizeListInterface::class);
-        $sourceSizeList->method('findImageCandidate')->will($this->getImageCandidateMatches($imageCandidateSet));
+        $sourceSizeList->/** @scrutinizer ignore-call */
+        method('findImageCandidate')
+            ->will($this->getImageCandidateMatches($imageCandidateSet));
 
         $compiler = new WidthCssRulesetCompilerService(
             $ruleset,
