@@ -74,9 +74,9 @@ class ViewportFunction extends AbstractFunction
 //        $this->name = rand();
 //        echo 'init '.$this->name;
 //        try {
-//        	throw new \Exception;
+//          throw new \Exception;
 //        } catch (\Exception $e) {
-//        	echo $e->getMessage().PHP_EOL.$e->getTraceAsString().PHP_EOL;
+//          echo $e->getMessage().PHP_EOL.$e->getTraceAsString().PHP_EOL;
 //        }
 //        echo PHP_EOL.PHP_EOL;
 //        print_r($this->viewport);

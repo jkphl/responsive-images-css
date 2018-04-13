@@ -61,7 +61,9 @@ class CssRulesetTest extends AbstractTestBase
         $ruleset        = (new Ruleset())->appendRule(new Rule($imageCandidate, [$mediaCondition]));
         $cssRuleset     = new CssRuleset($ruleset);
         $this->assertInstanceOf(CssRuleset::class, $cssRuleset);
-        $this->assertEquals('@media (property: value) {.test {background-image: url("image.jpg");}}',
-            $cssRuleset->toCss('.test'));
+        $this->assertEquals(
+            '@media (property: value) {.test {background-image: url("image.jpg");}}',
+            $cssRuleset->toCss('.test')
+        );
     }
 }

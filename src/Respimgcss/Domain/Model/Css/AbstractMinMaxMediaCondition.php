@@ -78,8 +78,7 @@ abstract class AbstractMinMaxMediaCondition extends MediaCondition implements Cs
     {
         parent::__construct(static::PROPERTY, $value);
 
-        if (
-            ($modifier !== self::EQ)
+        if (($modifier !== self::EQ)
             && ($modifier !== self::MIN)
             && ($modifier !== self::MAX)
         ) {

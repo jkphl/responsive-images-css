@@ -58,21 +58,15 @@ class SourceSizeFactoryTest extends AbstractTestBase
     protected $sourceSizeFactory;
 
     /**
-     * Test setup
-     */
-    protected function setUp()/* The :void return type declaration that should be here would cause a BC issue */
-    {
-        $this->sourceSizeFactory = new SourceSizeFactory(new ViewportCalculatorServiceFactory(), 16);
-    }
-
-    /**
      * Test the source size factory with a viewport size value
      */
     public function testSourceSizeFactoryViewport()
     {
         $this->assertInstanceOf(SourceSizeFactory::class, $this->sourceSizeFactory);
 
-        $sourceSize = $this->sourceSizeFactory->createFromSourceSizeStr('((max-width: 500px) and (resolution: 1)) 100vw');
+        $sourceSize = $this->sourceSizeFactory->createFromSourceSizeStr(
+            '((max-width: 500px) and (resolution: 1)) 100vw'
+        );
         $this->assertInstanceOf(SourceSize::class, $sourceSize);
     }
 
@@ -125,7 +119,9 @@ class SourceSizeFactoryTest extends AbstractTestBase
      */
     public function testSourceSizeFactoryInvalidWidthResolution()
     {
-        $sourceSize = $this->sourceSizeFactory->createFromSourceSizeStr('((min-width: 123abc) and (min-resolution: 456abc)) 100vw');
+        $sourceSize = $this->sourceSizeFactory->createFromSourceSizeStr(
+            '((min-width: 123abc) and (min-resolution: 456abc)) 100vw'
+        );
         $this->assertInstanceOf(SourceSize::class, $sourceSize);
         $this->assertTrue(is_array($sourceSize->getMediaCondition()->getConditions()));
         $this->assertEquals([], $sourceSize->getMediaCondition()->getConditions());
@@ -157,5 +153,13 @@ class SourceSizeFactoryTest extends AbstractTestBase
         $this->assertInstanceOf(SourceSize::class, $sourceSize);
         $this->assertTrue(is_array($sourceSize->getMediaCondition()->getConditions()));
         $this->assertEquals([], $sourceSize->getMediaCondition()->getConditions());
+    }
+
+    /**
+     * Test setup
+     */
+    protected function setUp()/* The :void return type declaration that should be here would cause a BC issue */
+    {
+        $this->sourceSizeFactory = new SourceSizeFactory(new ViewportCalculatorServiceFactory(), 16);
     }
 }

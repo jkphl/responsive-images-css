@@ -39,10 +39,8 @@ namespace Jkphl\Respimgcss\Domain\Service;
 use Jkphl\Respimgcss\Domain\Contract\CssMinMaxMediaConditionInterface;
 use Jkphl\Respimgcss\Domain\Contract\CssRulesetInterface;
 use Jkphl\Respimgcss\Domain\Contract\ImageCandidateInterface;
-use Jkphl\Respimgcss\Domain\Contract\LengthFactoryInterface;
 use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
 use Jkphl\Respimgcss\Domain\Model\Css\Rule;
-use Jkphl\Respimgcss\Domain\Model\AbstractLength;
 
 /**
  * Pixel density CSS ruleset compiler service
