@@ -13,16 +13,16 @@ The rendering sequence of a standard HTML5 responsive (foreground) image is a hi
 In contrast, *responsive-images-css* generates CSS code on the server-side — that is, long before the browser gets to interpret the generated output. To make this work, some asumptions have to be made:
 
 * The generator needs a fixed **em to pixel ratio** in order to predictably deal with `em` / `rem` values.
-* The generator utilizes the given breakpoints only, even if the image candidates suggest additional steps.
-* The device densities (resolutions) for which the CSS should be rendered must be explictly provided.
+* The generator utilizes the **specified breakpoints** only, even if the image candidates suggest additional steps.
+* The **device densities** (resolutions) for which the CSS should be rendered must be explictly provided.
 
 ## Usage
 
 The main entry point for the creation of a responsive background image is the **Generator**. You will want to use it like this:
 
-1. Create a **Generator** instance and let it know the **CSS breakpoints** (ignored for resolution based rulesets) and the `em`-to-`px` ratio for your project.
-2. Register a set of **Image Candidates**, each candidate coming with either a **width** or **resolution descriptor** (corresponds to `srcset` in HTML5).
-3. Trigger the creation of a CSS ruleset by passing in a **list of resolutions** to render the ruleset for. Optionally a **`sizes` specification** can be provided to further specify the image candidate relevance (width based image candidates only).
+1. Create a **Generator** instance and specifiy the **CSS breakpoints** (ignored for resolution based rulesets) and the `em`-to-`px` ratio used for your project.
+2. Register a set of **Image Candidates**, each coming with a **width** or **resolution descriptor** (corresponds to `srcset` in HTML5).
+3. Trigger the creation of a CSS ruleset by passing in a **list of resolutions** to render the ruleset for. Additionally, a **`sizes` specification** can be provided to further narrow down the image candidate relevance for particular viewport widths (width based image candidates only).
 
 ### Resolution based responsive image
 
