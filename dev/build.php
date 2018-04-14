@@ -46,9 +46,39 @@ ob_start();
             body {
                 margin: 0;
                 font-family: Arial, Helvetica, sans-serif;
+                padding-bottom: 4em;
+                line-height: 1.4;
             }
 
-            #container {
+            header {
+                padding: 1em;
+            }
+
+            table {
+                width: 100%;
+            }
+
+            td, th {
+                vertical-align: top;
+            }
+
+            th {
+                text-align: left;
+                width: 11em;
+            }
+
+            ul {
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+                display: flex;
+            }
+
+            li:not(:first-child)::before {
+                content: ', ';
+            }
+
+            .container {
                 position: relative;
                 height: 0;
                 padding-top: calc(200% / 3);
@@ -57,36 +87,213 @@ ob_start();
                 background-size: cover;
             }
 
-            #size {
+            @media (min-width: 32em) {
+                #container-3 {
+                    width: 50%;
+                    padding-top: calc(100% / 3);
+                }
+            }
+
+            @media (min-width: 64em) {
+                #container-3 {
+                    width: 33.3333%;
+                    padding-top: calc(200% / 9);
+                }
+            }
+
+            .size {
                 position: absolute;
                 top: 1em;
                 left: 1em;
             }
 
-            /* jkphl/reponsive-images-css */
+            pre {
+                width: calc(100vw - 13em);
+                margin: 0;
+                overflow-x: scroll;
+            }
+
+            /* Full-width image, width based srcset */
             <?php
 
-                $generator = new \Jkphl\Respimgcss\Ports\Generator(['400px', '800px', '1200px', '1600px'], 16);
-                $generator->registerImageCandidate('../src/Respimgcss/Tests/Fixture/Images/400x267.png', '400w');
-                $generator->registerImageCandidate('../src/Respimgcss/Tests/Fixture/Images/800x534.png', '800w');
-                $generator->registerImageCandidate('../src/Respimgcss/Tests/Fixture/Images/1200x800.png', '1200w');
-                $generator->registerImageCandidate('../src/Respimgcss/Tests/Fixture/Images/1600x1067.png', '1600w');
+                $generator1 = new \Jkphl\Respimgcss\Ports\Generator(['400px', '800px', '1200px', '1600px'], 16);
+                $generator1->registerImageCandidate('../src/Respimgcss/Tests/Fixture/Images/400x267.png', '400w');
+                $generator1->registerImageCandidate('../src/Respimgcss/Tests/Fixture/Images/800x534.png', '800w');
+                $generator1->registerImageCandidate('../src/Respimgcss/Tests/Fixture/Images/1200x800.png', '1200w');
+                $generator1->registerImageCandidate('../src/Respimgcss/Tests/Fixture/Images/1600x1067.png', '1600w');
 
-                $css = $generator->make([1, 2]);
-                echo $css->toCss('#container');
+                $css1 = $generator1->make([1, 2]);
+                echo $css1 = $css1->toCss('#container-1');
+
+                ?>
+
+            /* Full-width image, density based srcset */
+            <?php
+
+                $generator2 = new \Jkphl\Respimgcss\Ports\Generator([], 16);
+                $generator2->registerImageCandidate('../src/Respimgcss/Tests/Fixture/Images/800x534.png', '1x');
+                $generator2->registerImageCandidate('../src/Respimgcss/Tests/Fixture/Images/1600x1067.png', '2x');
+
+                $css2 = $generator2->make([1, 2]);
+                echo $css2 = $css2->toCss('#container-2');
+
+            ?>
+
+            /* 1-2-3 column layout, width based srcset with sizes */
+            <?php
+
+                $generator3 = new \Jkphl\Respimgcss\Ports\Generator(['32em', '64em'], 16);
+                $generator3->registerImageCandidate('../src/Respimgcss/Tests/Fixture/Images/400x267.png', '400w');
+                $generator3->registerImageCandidate('../src/Respimgcss/Tests/Fixture/Images/800x534.png', '800w');
+                $generator3->registerImageCandidate('../src/Respimgcss/Tests/Fixture/Images/1200x800.png', '1200w');
+                $generator3->registerImageCandidate('../src/Respimgcss/Tests/Fixture/Images/1600x1067.png', '1600w');
+
+                $css3= $generator3->make([1, 2], '(min-width: 32em) 50vw, (min-width: 64em) 33.3333vw, 100vw');
+                echo $css3= $css3->toCss('#container-3');
 
             ?>
         </style>
     </head>
     <body>
-        <div id="container">
-            <div id="size"></div>
-        </div>
+        <header>
+            <h1>Responsive background images</h1>
+            <p>Device pixel ratio:
+                <script>document.write(window.devicePixelRatio)</script>
+            </p>
+        </header>
+
+        <section>
+            <header>
+                <h2>A) Full-width image, width based srcset</h2>
+                <table>
+                    <tr>
+                        <th>Breakpoints</th>
+                        <td>
+                            <ul>
+                                <li>400px</li>
+                                <li>800px</li>
+                                <li>1200px</li>
+                                <li>1600px</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Densities</th>
+                        <td>
+                            <ul>
+                                <li>1</li>
+                                <li>2</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>srcset</th>
+                        <td><code>400x267.png 400w, 800x534.png 800w, 1200x800.png 1200w, 1600x1067.png 600w</code></td>
+                    </tr>
+                    <tr>
+                        <th>sizes</th>
+                        <td>—</td>
+                    </tr>
+                    <tr>
+                        <th>CSS</th>
+                        <td>
+                            <pre><code><?= $css1; ?></code></pre>
+                        </td>
+                    </tr>
+                </table>
+            </header>
+            <div class="container" id="container-1">
+                <div class="size"></div>
+            </div>
+        </section>
+
+        <section>
+            <header>
+                <h2>B) Full-width image, density based srcset</h2>
+                <table>
+                    <tr>
+                        <th>Breakpoints</th>
+                        <td>(ignored)</td>
+                    </tr>
+                    <tr>
+                        <th>Densities</th>
+                        <td>
+                            <ul>
+                                <li>1</li>
+                                <li>2</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>srcset</th>
+                        <td><code>800x534.png 1x, 1600x1067.png 2x</code></td>
+                    </tr>
+                    <tr>
+                        <th>sizes</th>
+                        <td>—</td>
+                    </tr>
+                    <tr>
+                        <th>CSS</th>
+                        <td>
+                            <pre><code><?= $css2; ?></code></pre>
+                        </td>
+                    </tr>
+                </table>
+            </header>
+            <div class="container" id="container-2">
+                <div class="size"></div>
+            </div>
+        </section>
+
+        <section>
+            <header>
+                <h2>C) 1-2-3 column layout, width based srcset with sizes</h2>
+                <table>
+                    <tr>
+                        <th>Breakpoints</th>
+                        <td>
+                            <ul>
+                                <li>32em</li>
+                                <li>64em</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Densities</th>
+                        <td>
+                            <ul>
+                                <li>1</li>
+                                <li>2</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>srcset</th>
+                        <td><code>800x534.png 1x, 1600x1067.png 2x</code></td>
+                    </tr>
+                    <tr>
+                        <th>sizes</th>
+                        <td><code>(min-width: 32em) 50vw, (min-width: 64em) 33.3333vw, 100vw</code></td>
+                    </tr>
+                    <tr>
+                        <th>CSS</th>
+                        <td>
+                            <pre><code><?= $css3; ?></code></pre>
+                        </td>
+                    </tr>
+                </table>
+            </header>
+            <div class="container" id="container-3">
+                <div class="size"></div>
+            </div>
+        </section>
+
         <script>
-            var container = document.getElementById('container');
-            var size = document.getElementById('size');
+            var sizes = document.querySelectorAll('.size');
             (window.onresize = function () {
-                size.innerHTML = 'Device pixel ratio: ' + window.devicePixelRatio + '<br>Container size: ' + container.clientWidth + '×' + container.clientHeight + ' px';
+                sizes.forEach(function (size) {
+                    size.innerHTML = 'Container size: ' + size.parentNode.clientWidth + '×' + size.parentNode.clientHeight + ' px';
+                })
             })();
         </script>
     </body>
