@@ -54,7 +54,7 @@ class Generator extends \Jkphl\Respimgcss\Infrastructure\Generator
      *
      * @api
      */
-    public function __construct($breakpoints, int $emPixel = 16)
+    public function __construct(array $breakpoints = [], int $emPixel = 16)
     {
         parent::__construct($breakpoints, $emPixel);
     }

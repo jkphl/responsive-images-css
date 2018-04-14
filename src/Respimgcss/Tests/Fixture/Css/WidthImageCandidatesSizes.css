@@ -1,0 +1,6 @@
+.example {background-image: url("small-400.jpg");}
+@media (min-width: 400px) {.example {background-image: url("medium-800.jpg");}}
+@media (min-width: 1200px) {.example {background-image: url("extralarge-1600.jpg");}}
+@media (-webkit-min-device-pixel-ratio: 2),(min-resolution: 192dpi),(min-resolution: 2ddpx) {.example {background-image: url("medium-800.jpg");}}
+@media (min-width: 400px) and (-webkit-min-device-pixel-ratio: 2),(min-width: 400px) and (min-resolution: 192dpi),(min-width: 400px) and (min-resolution: 2ddpx) {.example {background-image: url("large-1200.jpg");}}
+@media (min-width: 1200px) and (-webkit-min-device-pixel-ratio: 2),(min-width: 1200px) and (min-resolution: 192dpi),(min-width: 1200px) and (min-resolution: 2ddpx) {.example {background-image: url("extralarge-1600.jpg");}}

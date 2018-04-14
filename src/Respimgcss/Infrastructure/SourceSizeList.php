@@ -109,15 +109,18 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
         float $density
     ): ?SourceSizeImageCandidateMatch {
 
-        // Run through the source sizes
+        // Run through the source sizes (from biggest to smallest)
         /** @var SourceSize $sourceSize */
         $lastMinimumWidth = null;
         foreach ($this->getArrayCopy() as $sourceSize) {
             $mediaCondition = $sourceSize->getMediaCondition();
-            if ($mediaCondition->matches($breakpoint, $density)) {
+
+            // If the current breakpoint and density matches the source size condition
+            if ($mediaCondition->matches($breakpoint, $density, $lastMinimumWidth)) {
                 return $this->findImageCandidateForSourceSize(
                     $sourceSize,
                     $imageCandidates,
+                    $density,
                     $breakpoint,
                     $this->getSourceSizeMaximumWidth($mediaCondition, $lastMinimumWidth)
                 );
@@ -133,6 +136,7 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
      *
      * @param SourceSize $sourceSize                      Matching source size
      * @param ImageCandidateSetInterface $imageCandidates Image candidates
+     * @param float $density                              Density
      * @param AbsoluteLengthInterface $minWidth           Minimum viewport width
      * @param AbsoluteLengthInterface|null $maxWidth      Maximum viewport width
      *
@@ -141,6 +145,7 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
     protected function findImageCandidateForSourceSize(
         SourceSize $sourceSize,
         ImageCandidateSetInterface $imageCandidates,
+        float $density,
         AbsoluteLengthInterface $minWidth,
         AbsoluteLengthInterface $maxWidth = null
     ): ?SourceSizeImageCandidateMatch {
@@ -153,7 +158,7 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
         return $this->findImageCandidateForMinImageWidth(
             $sourceSize,
             $imageCandidates,
-            max($sourceSize->getValue()->getValue($minWidth), $sourceSize->getValue()->getValue($maxWidth))
+            max($sourceSize->getValue()->getValue($minWidth), $sourceSize->getValue()->getValue($maxWidth)) * $density
         );
     }
 

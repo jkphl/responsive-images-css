@@ -131,4 +131,33 @@ class GeneratorTest extends AbstractTestBase
         $this->assertTrue(is_string($css));
         $this->assertStringEqualsFile(dirname(__DIR__).'/Fixture/Css/WidthImageCandidates.css', $css);
     }
+
+    /**
+     * Test the internal generator with width based image candidates
+     */
+    public function testGeneratorWidthImageCandidatesSourceSizes()
+    {
+        $generator = new Generator(['400px', '1200px'], 16);
+        $this->assertInstanceOf(InternalGenerator::class, $generator);
+        $this->runGeneratorWidthImageCandidatesSourceSizesAssertions($generator);
+    }
+
+    /**
+     * Run the generator assertions for density based image candidates
+     *
+     * @param InternalGenerator $generator
+     */
+    protected function runGeneratorWidthImageCandidatesSourceSizesAssertions(InternalGenerator $generator)
+    {
+        $generator->registerImageCandidate('small-400.jpg 400w');
+        $generator->registerImageCandidate('medium-800.jpg', '800w');
+        $generator->registerImageCandidate('large-1200.jpg', '1200w');
+        $generator->registerImageCandidate('extralarge-1600.jpg', '1600w');
+
+        $cssRuleset = $generator->make([1, 2], '(min-width: 400px) 50vw, (min-width: 1200px) 33.333vw, 100vw');
+        $this->assertInstanceOf(CssRulesetInterface::class, $cssRuleset);
+        $css = $cssRuleset->toCss('.example');
+        $this->assertTrue(is_string($css));
+        $this->assertStringEqualsFile(dirname(__DIR__).'/Fixture/Css/WidthImageCandidatesSizes.css', $css);
+    }
 }

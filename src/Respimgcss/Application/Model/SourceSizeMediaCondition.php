@@ -136,12 +136,14 @@ class SourceSizeMediaCondition
         // Minimum value
         if ($modifier == CssMinMaxMediaConditionInterface::MIN) {
             $this->initializeMinProperty($minProperty, $value);
+
             return;
         }
 
         // Maximum value
         if ($modifier == CssMinMaxMediaConditionInterface::MAX) {
             $this->initializeMaxProperty($maxProperty, $value);
+
             return;
         }
 
@@ -195,18 +197,20 @@ class SourceSizeMediaCondition
      *
      * @param AbsoluteLengthInterface $width Width
      * @param float $density                 Density
+     * @param int|null $lastMinimumWidth     Minimum width of the next higher breakpoint
      *
      * @return bool This source size condition matches
      */
-    public function matches(AbsoluteLengthInterface $width, float $density): bool
+    public function matches(AbsoluteLengthInterface $width, float $density, int $lastMinimumWidth = null): bool
     {
         $match = true;
 
         // Run through all conditions
         /** @var CssMinMaxMediaConditionInterface $condition */
         foreach ($this->conditions as $condition) {
-            $value = ($condition instanceof WidthMediaCondition) ? $width->getValue() : $density;
-            if (!$condition->matches($value)) {
+            $rangeLower = ($condition instanceof WidthMediaCondition) ? ($width->getValue() * $density) : $density;
+            $rangeUpper = ($lastMinimumWidth === null) ? $rangeLower : ($lastMinimumWidth * $density - 1);
+            if (!$condition->matches($rangeLower) || !$condition->matches($rangeUpper)) {
                 $match = false;
                 break;
             }

@@ -90,9 +90,44 @@ abstract class AbstractCssRulesetCompilerService implements CssRulesetCompilerSe
         LengthFactoryInterface $lengthFactory
     ) {
         $this->cssRuleset      = $cssRuleset;
-        $this->breakpoints     = $breakpoints;
         $this->imageCandidates = $imageCandidates;
         $this->lengthFactory   = $lengthFactory;
-        array_unshift($this->breakpoints, $this->lengthFactory->createAbsoluteLength(0));
+        $this->breakpoints     = $this->prepareBreakpoints($breakpoints);
+    }
+
+    /**
+     * Prepare the list of breakpoints
+     *
+     * @param AbsoluteLengthInterface[] $breakpoints Breakpoints
+     *
+     * @return AbsoluteLengthInterface[] Prepared breakpoints
+     */
+    protected function prepareBreakpoints(array $breakpoints): array
+    {
+        usort($breakpoints, [$this, 'sortBreakpoints']);
+
+        // Add a virtual zero-width breakpoint to the beginning of the list if necessary
+        if (count($breakpoints) && ($breakpoints[0]->getValue() != 0)) {
+            array_unshift($breakpoints, $this->lengthFactory->createAbsoluteLength(0));
+        }
+
+        return $breakpoints;
+    }
+
+    /**
+     * Sort two breakpoints by size
+     *
+     * @param AbsoluteLengthInterface $breakpoint1 Breakpoint 1
+     * @param AbsoluteLengthInterface $breakpoint2 Breakpoint 2
+     *
+     * @return int Sorting
+     */
+    protected function sortBreakpoints(AbsoluteLengthInterface $breakpoint1, AbsoluteLengthInterface $breakpoint2): int
+    {
+        if ($breakpoint1->getValue() == $breakpoint2->getValue()) {
+            return 0;
+        }
+
+        return ($breakpoint1->getValue() > $breakpoint2->getValue()) ? 1 : -1;
     }
 }

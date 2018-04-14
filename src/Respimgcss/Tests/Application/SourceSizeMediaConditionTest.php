@@ -74,9 +74,9 @@ class SourceSizeMediaConditionTest extends AbstractTestBase
         $this->assertEquals(2, $sourceSizeMediaCondition->getMinimumResolution());
         $this->assertEquals(3, $sourceSizeMediaCondition->getMaximumResolution());
 
-        $this->assertTrue($sourceSizeMediaCondition->matches(new AbsoluteLength(150), 2.5));
-        $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(50), 2.5));
-        $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(250), 2.5));
+        $this->assertTrue($sourceSizeMediaCondition->matches(new AbsoluteLength(60), 2.5));
+        $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(20), 2.5));
+        $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(100), 2.5));
         $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(150), 1));
         $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(150), 4));
         $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(50), 1));
@@ -134,8 +134,8 @@ class SourceSizeMediaConditionTest extends AbstractTestBase
         $this->assertEquals(100, $sourceSizeMediaCondition->getMaximumWidth());
         $this->assertEquals(2, $sourceSizeMediaCondition->getMinimumResolution());
         $this->assertEquals(2, $sourceSizeMediaCondition->getMaximumResolution());
-        $this->assertTrue($sourceSizeMediaCondition->matches(new AbsoluteLength(100), 2));
-        $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(50), 2));
-        $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(100), 3));
+        $this->assertTrue($sourceSizeMediaCondition->matches(new AbsoluteLength(50), 2));
+        $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(100), 2));
+        $this->assertFalse($sourceSizeMediaCondition->matches(new AbsoluteLength(50), 3));
     }
 }

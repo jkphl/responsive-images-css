@@ -107,9 +107,10 @@ class WidthCssRulesetCompilerService extends AbstractCssRulesetCompilerService
      */
     protected function compileForSourceSizes(float $density): void
     {
-        // Run through all breakpoints
+        // Run through all breakpoints (from lowest to highest)
         /** @var AbsoluteLengthInterface $breakpoint */
         foreach ($this->breakpoints as $breakpoint) {
+            // Try to find a matching image candidate
             /** @scrutinizer ignore-call */
             $imageCandidateMatch = $this->sourceSizeList->findImageCandidate(
                 $this->imageCandidates,

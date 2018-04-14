@@ -133,8 +133,8 @@ abstract class Generator implements GeneratorInterface
         $cssRuleset = new CssRuleset();
 
         // If all necessary properties are given
-        if (count($this->breakpoints) && count($this->getImageCandidates()) && count($densities)) {
-            $cssRuleset = $this->compileCssRuleset($cssRuleset, $densities, $sizes);
+        if (count($this->getImageCandidates())) {
+            $cssRuleset = $this->compileCssRuleset($cssRuleset, count($densities) ? $densities : [1], $sizes);
         }
 
         return $cssRuleset;
@@ -218,7 +218,13 @@ abstract class Generator implements GeneratorInterface
             },
             $unparsedSourceSizes
         );
-        $legthFactory        = new LengthFactory(new ViewportCalculatorServiceFactory(), $this->emPixel);
-        return count($sourceSizes) ? new SourceSizeList($sourceSizes, $legthFactory) : null;
+        if (count($sourceSizes)) {
+            return new SourceSizeList(
+                $sourceSizes,
+                new LengthFactory(new ViewportCalculatorServiceFactory(), $this->emPixel)
+            );
+        }
+
+        return null;
     }
 }
