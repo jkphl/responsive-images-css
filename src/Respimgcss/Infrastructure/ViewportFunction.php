@@ -71,15 +71,6 @@ class ViewportFunction extends AbstractFunction
     {
         parent::__construct($stringHelper);
         $this->viewport = $viewport;
-//        $this->name = rand();
-//        echo 'init '.$this->name;
-//        try {
-//          throw new \Exception;
-//        } catch (\Exception $e) {
-//          echo $e->getMessage().PHP_EOL.$e->getTraceAsString().PHP_EOL;
-//        }
-//        echo PHP_EOL.PHP_EOL;
-//        print_r($this->viewport);
     }
 
     /**
@@ -91,14 +82,6 @@ class ViewportFunction extends AbstractFunction
      */
     public function execute(array $arguments)
     {
-//        echo 'exec '.$this->name;
-//        try {
-//            throw new \Exception;
-//        } catch (\Exception $e) {
-//            echo $e->getMessage().PHP_EOL.$e->getTraceAsString().PHP_EOL;
-//        }
-//        print_r($this->viewport);
-//        echo PHP_EOL.PHP_EOL;
         return $this->viewport->getValue();
     }
 }
