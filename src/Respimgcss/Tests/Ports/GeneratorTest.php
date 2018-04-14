@@ -65,4 +65,14 @@ class GeneratorTest extends \Jkphl\Respimgcss\Tests\Infrastructure\GeneratorTest
         $this->assertInstanceOf(Generator::class, $generator);
         $this->runGeneratorWidthImageCandidatesAssertions($generator);
     }
+
+    /**
+     * Test the internal generator with width based image candidates
+     */
+    public function testGeneratorWidthImageCandidatesSourceSizes()
+    {
+        $generator = new Generator(['400px', '1200px'], 16);
+        $this->assertInstanceOf(Generator::class, $generator);
+        $this->runGeneratorWidthImageCandidatesSourceSizesAssertions($generator);
+    }
 }

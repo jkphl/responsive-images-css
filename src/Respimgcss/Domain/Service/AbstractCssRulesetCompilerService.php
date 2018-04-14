@@ -124,10 +124,7 @@ abstract class AbstractCssRulesetCompilerService implements CssRulesetCompilerSe
      */
     protected function sortBreakpoints(AbsoluteLengthInterface $breakpoint1, AbsoluteLengthInterface $breakpoint2): int
     {
-        if ($breakpoint1->getValue() == $breakpoint2->getValue()) {
-            return 0;
-        }
-
-        return ($breakpoint1->getValue() > $breakpoint2->getValue()) ? 1 : -1;
+        return ($breakpoint1->getValue() == $breakpoint2->getValue()) ? 0 :
+            ($breakpoint1->getValue() > $breakpoint2->getValue()) ? 1 : -1;
     }
 }
