@@ -2,6 +2,8 @@
 # https://www.kernel.org/pub/software/scm/git/docs/gitattributes.html
 # Auto detect text files and perform LF normalization
 * text eol=lf
+*.png binary
+*.jpg binary
 # Ignore all test and documentation with "export-ignore".
 /.editorconfig export-ignore
 /.gitattributes export-ignore
