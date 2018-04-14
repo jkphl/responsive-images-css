@@ -171,6 +171,7 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
     ): ?SourceSizeImageCandidateMatch {
         if (count($imageCandidates)) {
             $largestImageCandidate = $imageCandidates[count($imageCandidates) - 1];
+
             return $this->createImageCandidateMatch($sourceSize, $largestImageCandidate);
         }
 
@@ -238,6 +239,7 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
         if ($lastMinimumWidth !== null) {
             $maximumWidth = max(0, min($maximumWidth, $lastMinimumWidth - 1));
         }
+
         return $this->lengthFactory->createAbsoluteLength($maximumWidth);
     }
 
@@ -254,6 +256,7 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
         if (($maximumWidth === null) && ($lastMinimumWidth !== null)) {
             $maximumWidth = max(0, $lastMinimumWidth - 1);
         }
+
         return $maximumWidth;
     }
 
@@ -322,6 +325,7 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
         if ($value2 === null) {
             return 1;
         }
+
         return ($value1 > $value2) ? -1 : 1;
     }
 

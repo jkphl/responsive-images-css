@@ -66,14 +66,13 @@ class CssMediaConditionFactory
             case $mediaCondition instanceof WidthMediaCondition:
                 $renderableMediaConditions = self::createFromWidthMediaCondition($mediaCondition);
                 break;
-            default:
+            case (strlen($mediaCondition->getProperty()) > 0):
                 $renderableMediaConditions = [
-                    self::createMediaCondition(
-                        $mediaCondition->getProperty(),
-                        '',
-                        $mediaCondition->getValue()
-                    )
+                    self::createMediaCondition($mediaCondition->getProperty(), '', $mediaCondition->getValue())
                 ];
+                break;
+            default:
+                $renderableMediaConditions = [self::createLiteralMediaCondition($mediaCondition->getValue())];
         }
 
         return $renderableMediaConditions;
@@ -125,6 +124,18 @@ class CssMediaConditionFactory
         $rule->setValue($value);
 
         return new CssMediaCondition($rule);
+    }
+
+    /**
+     * Create a literal media condition
+     *
+     * @param string $value Condition value
+     *
+     * @return CssLiteralMediaCondition Literal media condition
+     */
+    protected static function createLiteralMediaCondition(string $value): CssLiteralMediaCondition
+    {
+        return new CssLiteralMediaCondition($value);
     }
 
     /**
