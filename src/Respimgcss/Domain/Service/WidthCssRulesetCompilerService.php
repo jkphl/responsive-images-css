@@ -44,6 +44,7 @@ use Jkphl\Respimgcss\Domain\Contract\ImageCandidateSetInterface;
 use Jkphl\Respimgcss\Domain\Contract\LengthFactoryInterface;
 use Jkphl\Respimgcss\Domain\Contract\SourceSizeImageCandidateMatch;
 use Jkphl\Respimgcss\Domain\Contract\SourceSizeListInterface;
+use Jkphl\Respimgcss\Domain\Model\Css\MediaCondition;
 use Jkphl\Respimgcss\Domain\Model\Css\ResolutionMediaCondition;
 use Jkphl\Respimgcss\Domain\Model\Css\Rule;
 use Jkphl\Respimgcss\Domain\Model\Css\WidthMediaCondition;
@@ -133,7 +134,12 @@ class WidthCssRulesetCompilerService extends AbstractCssRulesetCompilerService
      */
     protected function createSourceSizeMatchRule(SourceSizeImageCandidateMatch $imageCandidateMatch, float $density)
     {
-        $rule = new Rule($imageCandidateMatch->getImageCandidate(), [$imageCandidateMatch->getMediaCondition()]);
+        $rule = new Rule(
+            $imageCandidateMatch->getImageCandidate(),
+            array_filter([$imageCandidateMatch->getMediaCondition()], function (MediaCondition $mediaCondition) {
+                return !!$mediaCondition->getValue();
+            })
+        );
 
         return $this->addDensityCondition($rule, $density);
     }
