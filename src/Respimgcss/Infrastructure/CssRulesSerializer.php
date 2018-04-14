@@ -94,12 +94,67 @@ class CssRulesSerializer
 
         $cssDocument = new Document();
 
-        /** @var CssRuleInterface $rule */
-        foreach ($this->rules as $rule) {
-            $cssDocument->append($this->exportCssRule($rule, $selector));
+        // Run through and export all rules
+        foreach ($this->exportCssRules($selector) as $rule) {
+            $cssDocument->append($rule);
         }
 
         return $cssDocument->render();
+    }
+
+    /**
+     * Export all registered CSS rules
+     *
+     * @param string $selector CSS selector
+     *
+     * @return Renderable[] Exported CSS rules
+     */
+    protected function exportCssRules(string $selector): array
+    {
+        $rulesByImageCandidate = [];
+
+        /** @var CssRuleInterface $rule */
+        foreach ($this->rules as $rule) {
+            $ruleImageCandidate = $rule->getImageCandidate()->getFile();
+            if (!array_key_exists($ruleImageCandidate, $rulesByImageCandidate)) {
+                $rulesByImageCandidate[$ruleImageCandidate] = [];
+            }
+            $rulesByImageCandidate[$ruleImageCandidate][] = $this->exportCssRule($rule, $selector);
+        }
+
+        // Return aggregated rules
+        return array_map([$this, 'optimizeCssRulesByImageCandidate'], $rulesByImageCandidate);
+    }
+
+    /**
+     * Optimize a list of CSS rules by aggregating for @media blocks
+     *
+     * @param Renderable[] $rulesByImageCandidate CSS rules
+     *
+     * @return Renderable Optimized CSS rules
+     */
+    protected function optimizeCssRulesByImageCandidate(array $rulesByImageCandidate): Renderable
+    {
+        // If there's only one ruleset: Return
+        if (count($rulesByImageCandidate) === 1) {
+            return $rulesByImageCandidate[0];
+        }
+
+        // Collect all @media conditions
+        $atRuleConditions = array_map(
+            function (Renderable $renderable) {
+                return ($renderable instanceof AtRuleBlockList) ? $renderable->atRuleArgs() : 'screen';
+            },
+            $rulesByImageCandidate
+        );
+
+        $renderable      = array_pop($rulesByImageCandidate);
+        $atRuleBlockList = new AtRuleBlockList('media', implode(',', $atRuleConditions));
+        ($renderable instanceof AtRuleBlockList) ?
+            $atRuleBlockList->setContents($renderable->getContents()) :
+            $atRuleBlockList->append($renderable);
+
+        return $atRuleBlockList;
     }
 
     /**
