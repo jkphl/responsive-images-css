@@ -86,14 +86,10 @@ class WidthCssRulesetCompilerServiceTest extends AbstractTestBase
      */
     public function testWidthCssRulesetCompilerServiceSourceSizes()
     {
-        $ruleset             = new Ruleset();
-        $imageCandidateSet   = new ImageCandidateSet();
-        $imageCandidateSet[] = new WidthImageCandidate('small.jpg', 400);
-        $imageCandidateSet[] = new WidthImageCandidate('medium.jpg', 800);
-        $imageCandidateSet[] = new WidthImageCandidate('large.jpg', 1200);
-        $imageCandidateSet[] = new WidthImageCandidate('extralarge.jpg', 1600);
-        $lengthFactory       = new LengthFactory(new ViewportCalculatorServiceFactory(), 16);
-        $sourceSizeList      = $this->createMock(SourceSizeListInterface::class);
+        $ruleset           = new Ruleset();
+        $imageCandidateSet = $this->createImageCandidateSet();
+        $lengthFactory     = new LengthFactory(new ViewportCalculatorServiceFactory(), 16);
+        $sourceSizeList    = $this->createMock(SourceSizeListInterface::class);
         $sourceSizeList->/** @scrutinizer ignore-call */
         method('findImageCandidate')
             ->will($this->getImageCandidateMatches($imageCandidateSet));
@@ -109,6 +105,21 @@ class WidthCssRulesetCompilerServiceTest extends AbstractTestBase
 
         $cssRuleset = $compiler->compile(1);
         $this->assertInstanceOf(CssRulesetInterface::class, $cssRuleset);
+    }
+
+    /**
+     * Create and return an image candidate set
+     *
+     * @return ImageCandidateSet Image candidate set
+     */
+    protected function createImageCandidateSet(): ImageCandidateSet
+    {
+        $imageCandidateSet   = new ImageCandidateSet();
+        $imageCandidateSet[] = new WidthImageCandidate('small.jpg', 400);
+        $imageCandidateSet[] = new WidthImageCandidate('medium.jpg', 800);
+        $imageCandidateSet[] = new WidthImageCandidate('large.jpg', 1200);
+        $imageCandidateSet[] = new WidthImageCandidate('extralarge.jpg', 1600);
+        return $imageCandidateSet;
     }
 
     /**

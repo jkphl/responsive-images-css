@@ -50,6 +50,15 @@ use Jkphl\Respimgcss\Domain\Model\Css\WidthMediaCondition;
 class SourceSizeMediaCondition
 {
     /**
+     * Condition properties
+     *
+     * @var array
+     */
+    const CONDITION_PROPERTIES = [
+        WidthMediaCondition::class => ['minimumWidth', 'maximumWidth'],
+        ResolutionMediaCondition::class => ['minimumResolution', 'maximumResolution'],
+    ];
+    /**
      * Media condition string
      *
      * @var string
@@ -106,16 +115,118 @@ class SourceSizeMediaCondition
     {
         /** @var CssMinMaxMediaConditionInterface $condition */
         foreach ($this->conditions as $condition) {
-            // If this is a width condition
-            if ($condition instanceof WidthMediaCondition) {
-                $this->initializeCondition($condition, 'minimumWidth', 'maximumWidth');
-                continue;
-            }
-            // If this is a resolution condition
-            if ($condition instanceof ResolutionMediaCondition) {
-                $this->initializeCondition($condition, 'minimumResolution', 'maximumResolution');
+            if (($condition instanceof CssMinMaxMediaConditionInterface)
+                && array_key_exists(get_class($condition), self::CONDITION_PROPERTIES)
+            ) {
+                $conditionProperties = self::CONDITION_PROPERTIES[get_class($condition)];
+                call_user_func([$this, 'initializeCondition'], $condition, ...$conditionProperties);
             }
         }
+    }
+
+    /**
+     * Return the media condition string
+     *
+     * @return string Media condition string
+     */
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+
+    /**
+     * Return the size and resolution conditions
+     *
+     * @return CssMinMaxMediaConditionInterface[] Size and resolution conditions
+     */
+    public function getConditions(): array
+    {
+        return $this->conditions;
+    }
+
+    /**
+     * Test if this source size condition matches a particular width and density
+     *
+     * @param AbsoluteLengthInterface $width Width
+     * @param float $density                 Density
+     * @param int|null $lastMinimumWidth     Minimum width of the next higher breakpoint
+     *
+     * @return bool This source size condition matches
+     */
+    public function matches(AbsoluteLengthInterface $width, float $density, int $lastMinimumWidth = null): bool
+    {
+        $match = true;
+
+        // Run through all conditions
+        /** @var CssMinMaxMediaConditionInterface $condition */
+        foreach ($this->conditions as $condition) {
+            if (!($match = $this->testCondition($condition, $width, $density, $lastMinimumWidth))) {
+                break;
+            }
+        }
+
+        return $match;
+    }
+
+    /**
+     * Test whether a media condition matches a breakpoint range
+     *
+     * @param CssMinMaxMediaConditionInterface $condition Media condition
+     * @param AbsoluteLengthInterface $width              Width
+     * @param float $density                              Density
+     * @param int|null $lastMinimumWidth                  Minimum width of the next higher breakpoint
+     *
+     * @return bool Media condition matches
+     */
+    protected function testCondition(
+        CssMinMaxMediaConditionInterface $condition,
+        AbsoluteLengthInterface $width,
+        float $density,
+        int $lastMinimumWidth = null
+    ): bool {
+        $rangeLower = ($condition instanceof WidthMediaCondition) ? ($width->getValue() * $density) : $density;
+        $rangeUpper = ($lastMinimumWidth === null) ? $rangeLower : ($lastMinimumWidth * $density - 1);
+        return $condition->matches($rangeLower) && $condition->matches($rangeUpper);
+    }
+
+    /**
+     * Return the minimum width
+     *
+     * @return int|null Minimum width
+     */
+    public function getMinimumWidth(): ?int
+    {
+        return $this->minimumWidth;
+    }
+
+    /**
+     * Return the maximum width
+     *
+     * @return int|null Maximum width
+     */
+    public function getMaximumWidth(): ?int
+    {
+        return $this->maximumWidth;
+    }
+
+    /**
+     * Return the minimum resolution
+     *
+     * @return float Minimum resolution
+     */
+    public function getMinimumResolution(): ?float
+    {
+        return $this->minimumResolution;
+    }
+
+    /**
+     * Return the maximum resolution
+     *
+     * @return float Maximum resolution
+     */
+    public function getMaximumResolution(): ?float
+    {
+        return $this->maximumResolution;
     }
 
     /**
@@ -170,92 +281,5 @@ class SourceSizeMediaCondition
     protected function initializeMaxProperty(string $maxProperty, float $value): void
     {
         $this->$maxProperty = ($this->$maxProperty === null) ? $value : (max($value, $this->$maxProperty));
-    }
-
-    /**
-     * Return the media condition string
-     *
-     * @return string Media condition string
-     */
-    public function getValue(): string
-    {
-        return $this->value;
-    }
-
-    /**
-     * Return the size and resolution conditions
-     *
-     * @return CssMinMaxMediaConditionInterface[] Size and resolution conditions
-     */
-    public function getConditions(): array
-    {
-        return $this->conditions;
-    }
-
-    /**
-     * Test if this source size condition matches a particular width and density
-     *
-     * @param AbsoluteLengthInterface $width Width
-     * @param float $density                 Density
-     * @param int|null $lastMinimumWidth     Minimum width of the next higher breakpoint
-     *
-     * @return bool This source size condition matches
-     */
-    public function matches(AbsoluteLengthInterface $width, float $density, int $lastMinimumWidth = null): bool
-    {
-        $match = true;
-
-        // Run through all conditions
-        /** @var CssMinMaxMediaConditionInterface $condition */
-        foreach ($this->conditions as $condition) {
-            $rangeLower = ($condition instanceof WidthMediaCondition) ? ($width->getValue() * $density) : $density;
-            $rangeUpper = ($lastMinimumWidth === null) ? $rangeLower : ($lastMinimumWidth * $density - 1);
-            if (!$condition->matches($rangeLower) || !$condition->matches($rangeUpper)) {
-                $match = false;
-                break;
-            }
-        }
-
-        return $match;
-    }
-
-    /**
-     * Return the minimum width
-     *
-     * @return int|null Minimum width
-     */
-    public function getMinimumWidth(): ?int
-    {
-        return $this->minimumWidth;
-    }
-
-    /**
-     * Return the maximum width
-     *
-     * @return int|null Maximum width
-     */
-    public function getMaximumWidth(): ?int
-    {
-        return $this->maximumWidth;
-    }
-
-    /**
-     * Return the minimum resolution
-     *
-     * @return float Minimum resolution
-     */
-    public function getMinimumResolution(): ?float
-    {
-        return $this->minimumResolution;
-    }
-
-    /**
-     * Return the maximum resolution
-     *
-     * @return float Maximum resolution
-     */
-    public function getMaximumResolution(): ?float
-    {
-        return $this->maximumResolution;
     }
 }

@@ -108,7 +108,6 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
         AbsoluteLengthInterface $breakpoint,
         float $density
     ): ?SourceSizeImageCandidateMatch {
-
         // Run through the source sizes (from biggest to smallest)
         /** @var SourceSize $sourceSize */
         $lastMinimumWidth = null;
@@ -117,18 +116,55 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
 
             // If the current breakpoint and density matches the source size condition
             if ($mediaCondition->matches($breakpoint, $density, $lastMinimumWidth)) {
+                $maximum = $this->getSourceSizeMaximumWidth($mediaCondition, $lastMinimumWidth);
                 return $this->findImageCandidateForSourceSize(
-                    $sourceSize,
-                    $imageCandidates,
-                    $density,
-                    $breakpoint,
-                    $this->getSourceSizeMaximumWidth($mediaCondition, $lastMinimumWidth)
+                    $sourceSize, $imageCandidates, $density, $breakpoint, $maximum
                 );
             }
             $lastMinimumWidth = $mediaCondition->getMinimumWidth();
         }
 
         return null;
+    }
+
+    /**
+     * Get the maximum width for a source size
+     *
+     * @param SourceSizeMediaCondition $condition Source size media condition
+     * @param float|null $lastMinimumWidth        Last source size minimum width
+     *
+     * @return AbsoluteLengthInterface Maximum width
+     */
+    protected function getSourceSizeMaximumWidth(
+        SourceSizeMediaCondition $condition,
+        float $lastMinimumWidth = null
+    ): ?AbsoluteLengthInterface {
+        $maximumWidth = $this->considerLastMinimumWidth($condition->getMaximumWidth(), $lastMinimumWidth);
+        if ($maximumWidth === null) {
+            return null;
+        }
+        if ($lastMinimumWidth !== null) {
+            $maximumWidth = max(0, min($maximumWidth, $lastMinimumWidth - 1));
+        }
+
+        return $this->lengthFactory->createAbsoluteLength($maximumWidth);
+    }
+
+    /**
+     * Consider the last minimum width in case the maximum width is undefined
+     *
+     * @param int|null $maximumWidth       Maximum width
+     * @param float|null $lastMinimumWidth Last minimum width
+     *
+     * @return float|null Maximum width
+     */
+    protected function considerLastMinimumWidth(int $maximumWidth = null, float $lastMinimumWidth = null): ?float
+    {
+        if (($maximumWidth === null) && ($lastMinimumWidth !== null)) {
+            $maximumWidth = max(0, $lastMinimumWidth - 1);
+        }
+
+        return $maximumWidth;
     }
 
     /**
@@ -158,7 +194,12 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
         return $this->findImageCandidateForMinImageWidth(
             $sourceSize,
             $imageCandidates,
-            max($sourceSize->getValue()->getValue($minWidth), $sourceSize->getValue()->getValue($maxWidth)) * $density
+            round(
+                max(
+                    $sourceSize->getValue()->getValue($minWidth),
+                    $sourceSize->getValue()->getValue($maxWidth)
+                ) * $density
+            )
         );
     }
 
@@ -223,46 +264,6 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
         }
 
         return null;
-    }
-
-    /**
-     * Get the maximum width for a source size
-     *
-     * @param SourceSizeMediaCondition $condition Source size media condition
-     * @param float|null $lastMinimumWidth        Last source size minimum width
-     *
-     * @return AbsoluteLengthInterface Maximum width
-     */
-    protected function getSourceSizeMaximumWidth(
-        SourceSizeMediaCondition $condition,
-        float $lastMinimumWidth = null
-    ): ?AbsoluteLengthInterface {
-        $maximumWidth = $this->considerLastMinimumWidth($condition->getMaximumWidth(), $lastMinimumWidth);
-        if ($maximumWidth === null) {
-            return null;
-        }
-        if ($lastMinimumWidth !== null) {
-            $maximumWidth = max(0, min($maximumWidth, $lastMinimumWidth - 1));
-        }
-
-        return $this->lengthFactory->createAbsoluteLength($maximumWidth);
-    }
-
-    /**
-     * Consider the last minimum width in case the maximum width is undefined
-     *
-     * @param int|null $maximumWidth       Maximum width
-     * @param float|null $lastMinimumWidth Last minimum width
-     *
-     * @return float|null Maximum width
-     */
-    protected function considerLastMinimumWidth(int $maximumWidth = null, float $lastMinimumWidth = null): ?float
-    {
-        if (($maximumWidth === null) && ($lastMinimumWidth !== null)) {
-            $maximumWidth = max(0, $lastMinimumWidth - 1);
-        }
-
-        return $maximumWidth;
     }
 
     /**

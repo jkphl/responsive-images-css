@@ -40,6 +40,7 @@ use Jkphl\Respimgcss\Application\Contract\CalculatorServiceFactoryInterface;
 use Jkphl\Respimgcss\Application\Factory\LengthFactory;
 use Jkphl\Respimgcss\Application\Factory\SourceSizeFactory;
 use Jkphl\Respimgcss\Application\Model\ImageCandidateSet;
+use Jkphl\Respimgcss\Application\Model\SourceSize;
 use Jkphl\Respimgcss\Domain\Contract\AbsoluteLengthInterface;
 use Jkphl\Respimgcss\Domain\Model\ImageCandidateMatch;
 use Jkphl\Respimgcss\Domain\Model\WidthImageCandidate;
@@ -94,13 +95,7 @@ class SourceSizeListTest extends AbstractTestBase
             self::SOURCE_SIZE_WIDTHS
         );
         $sourceSizeList    = new SourceSizeList($sourceSizes, $sourceSizeFactory);
-        $this->assertInstanceOf(SourceSizeList::class, $sourceSizeList);
-        $this->assertEquals(5, count($sourceSizeList));
-        $this->assertEquals($sourceSizes[1], $sourceSizeList[0]);
-        $this->assertEquals($sourceSizes[4], $sourceSizeList[1]);
-        $this->assertEquals($sourceSizes[3], $sourceSizeList[2]);
-        $this->assertEquals($sourceSizes[0], $sourceSizeList[3]);
-        $this->assertEquals($sourceSizes[2], $sourceSizeList[4]);
+        $this->runSourceSizeListAssertions($sourceSizes, $sourceSizeList);
 
         $this->matchImageCandidates(
             $sourceSizeList,
@@ -110,6 +105,23 @@ class SourceSizeListTest extends AbstractTestBase
                 $sourceSizeFactory->createAbsoluteLength(800),
             ]
         );
+    }
+
+    /**
+     * Run source size list assertions
+     *
+     * @param SourceSize[] $sourceSizes      List of source sizes
+     * @param SourceSizeList $sourceSizeList Source size list
+     */
+    protected function runSourceSizeListAssertions(array $sourceSizes, $sourceSizeList)
+    {
+        $this->assertInstanceOf(SourceSizeList::class, $sourceSizeList);
+        $this->assertEquals(5, count($sourceSizeList));
+        $this->assertEquals($sourceSizes[1], $sourceSizeList[0]);
+        $this->assertEquals($sourceSizes[4], $sourceSizeList[1]);
+        $this->assertEquals($sourceSizes[3], $sourceSizeList[2]);
+        $this->assertEquals($sourceSizes[0], $sourceSizeList[3]);
+        $this->assertEquals($sourceSizes[2], $sourceSizeList[4]);
     }
 
     /**
