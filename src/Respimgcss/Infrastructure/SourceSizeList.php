@@ -194,12 +194,7 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
         return $this->findImageCandidateForMinImageWidth(
             $sourceSize,
             $imageCandidates,
-            round(
-                max(
-                    $sourceSize->getValue()->getValue($minWidth),
-                    $sourceSize->getValue()->getValue($maxWidth)
-                ) * $density
-            )
+            max($sourceSize->getValue()->getValue($minWidth), $sourceSize->getValue()->getValue($maxWidth)) * $density
         );
     }
 
@@ -246,14 +241,14 @@ class SourceSizeList extends \ArrayObject implements SourceSizeListInterface
      *
      * @param SourceSize $sourceSize                      Matching source size
      * @param ImageCandidateSetInterface $imageCandidates Image candidates
-     * @param int $minImageWidth                          Minimum image width
+     * @param float $minImageWidth                        Minimum image width
      *
      * @return SourceSizeImageCandidateMatch|null Image candidate
      */
     protected function findImageCandidateForMinImageWidth(
         SourceSize $sourceSize,
         ImageCandidateSetInterface $imageCandidates,
-        int $minImageWidth
+        float $minImageWidth
     ): ?SourceSizeImageCandidateMatch {
         // Run through all image candidates
         /** @var ImageCandidateInterface $imageCandidate */
