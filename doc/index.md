@@ -18,6 +18,8 @@ In contrast, *responsive-images-css* generates CSS code on the server-side — t
 
 ## Usage
 
+### The generator
+
 Creating a responsive background image always starts with a fresh `Generator` instance:
 
 ```php
@@ -30,6 +32,8 @@ $generator = new Generator($breakpoints, $emToPixel);
 ```
 
 As you see in the example, the `Generator` accepts a list of **CSS breakpoints** and an **`em` to `px` ratio** as constructor arguments. The latter defaults to `16` if omitted. The breakpoints only get used in combination with a width based image candidates set and [a `sizes` specification](#using-sizes) (you can pass in an empty array in all other cases).
+
+### Image candidates
 
 Next, you have to register a couple of **image candidates** for the various states of the responsive image. The file names don't get validated in any way — they will be used as-is for the generated CSS.
 
@@ -49,6 +53,8 @@ As with HTML5 responsive images, you can use **resolution** or **width based des
 $generator->registerImageCandidate('small-400.jpg', '1x');
 $generator->registerImageCandidate('medium-800.jpg', '2x');
 ```
+
+### Compiling the CSS ruleset 
 
 Finally, to create the responsive image CSS, call the generator's `make()` method and apply a **CSS selector** of your choice to the resulting CSS ruleset:
 
@@ -71,6 +77,8 @@ The list of floating point numbers passed to the `make()` method are the **devic
 ```
 
 As you see in the example, **only the `background-image` property is specified** for the image candidates. For a fully functional responsive image you will need some more lines of CSS — in order to give you full control, however, it's up to you to add this to your overall CSS.
+
+### Example
 
 A minimal, all-things-inlined HTML / PHP example document with responsive background image could look like this:
 
