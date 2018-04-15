@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Application\Contract
+ * @subpackage Jkphl\Respimgcss\Application
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -40,7 +40,7 @@ namespace Jkphl\Respimgcss\Application\Contract;
  * Extended length factory interface
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Application\Contract
+ * @subpackage Jkphl\Respimgcss\Application
  */
 interface LengthFactoryInterface extends \Jkphl\Respimgcss\Domain\Contract\LengthFactoryInterface
 {

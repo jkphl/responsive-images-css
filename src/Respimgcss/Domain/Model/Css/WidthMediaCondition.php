@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Model\Css
+ * @subpackage Jkphl\Respimgcss\Domain
  * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -40,7 +40,7 @@ namespace Jkphl\Respimgcss\Domain\Model\Css;
  * Width based min/max media condition
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Model\Css
+ * @subpackage Jkphl\Respimgcss\Domain
  */
 class WidthMediaCondition extends AbstractMinMaxMediaCondition
 {

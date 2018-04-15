@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Contract
+ * @subpackage Jkphl\Respimgcss\Domain
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -40,7 +40,7 @@ namespace Jkphl\Respimgcss\Domain\Contract;
  * Source size list interface
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Domain\Contract
+ * @subpackage Jkphl\Respimgcss\Domain
  */
 interface SourceSizeListInterface extends \IteratorAggregate, \ArrayAccess, \Serializable, \Countable
 {

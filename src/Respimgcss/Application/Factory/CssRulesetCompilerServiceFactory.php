@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Application\Factory
+ * @subpackage Jkphl\Respimgcss\Application
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -51,7 +51,7 @@ use Jkphl\Respimgcss\Domain\Service\WidthCssRulesetCompilerService;
  * CSS Ruleset compiler factory
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Application\Factory
+ * @subpackage Jkphl\Respimgcss\Application
  */
 class CssRulesetCompilerServiceFactory
 {

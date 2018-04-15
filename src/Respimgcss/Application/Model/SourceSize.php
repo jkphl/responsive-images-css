@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Application\Model
+ * @subpackage Jkphl\Respimgcss\Application
  * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -44,7 +44,7 @@ use Jkphl\Respimgcss\Domain\Contract\RelativeLengthInterface;
  * Source size
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Application\Model
+ * @subpackage Jkphl\Respimgcss\Application
  */
 class SourceSize
 {

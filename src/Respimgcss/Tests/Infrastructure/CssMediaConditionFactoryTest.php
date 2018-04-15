@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Infrastructure
+ * @subpackage Jkphl\Respimgcss\Tests
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -51,7 +51,7 @@ use Jkphl\Respimgcss\Tests\AbstractTestBase;
  * CSS media condition factory tests
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Infrastructure
+ * @subpackage Jkphl\Respimgcss\Tests
  */
 class CssMediaConditionFactoryTest extends AbstractTestBase
 {

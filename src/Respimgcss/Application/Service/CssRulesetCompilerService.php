@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Application\Service
+ * @subpackage Jkphl\Respimgcss\Application
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -47,7 +47,7 @@ use Jkphl\Respimgcss\Infrastructure\SourceSizeList;
  * CSS Ruleset Compiler Service
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Application\Service
+ * @subpackage Jkphl\Respimgcss\Application
  */
 class CssRulesetCompilerService
 {

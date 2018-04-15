@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Application\Factory
+ * @subpackage Jkphl\Respimgcss\Application
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -46,7 +46,7 @@ use Jkphl\Respimgcss\Application\Model\ViewportLength;
  * AbstractLength factory for calc() based values
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Application\Factory
+ * @subpackage Jkphl\Respimgcss\Application
  */
 class CalcLengthFactory extends AbstractLengthFactory
 {

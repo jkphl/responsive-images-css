@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Application
+ * @subpackage Jkphl\Respimgcss\Tests
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -46,7 +46,7 @@ use Jkphl\Respimgcss\Tests\AbstractTestBase;
  * Calculation length factory tests
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Application
+ * @subpackage Jkphl\Respimgcss\Tests
  */
 class CalcLengthFactoryTest extends AbstractTestBase
 {

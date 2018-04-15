@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Domain
+ * @subpackage Jkphl\Respimgcss\Tests
  * @author     Joschi Kuphal <joschi@kuphal.net> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@kuphal.net> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -46,7 +46,7 @@ use Jkphl\Respimgcss\Tests\Domain\Mock\AbsoluteLength;
  * Width media condition test
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Domain
+ * @subpackage Jkphl\Respimgcss\Tests
  */
 class WidthMediaConditionTest extends AbstractTestBase
 {

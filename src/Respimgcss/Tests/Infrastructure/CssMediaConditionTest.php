@@ -5,7 +5,7 @@
  *
  * @category   Jkphl
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Infrastructure
+ * @subpackage Jkphl\Respimgcss\Tests
  * @author     Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @copyright  Copyright © 2018 Joschi Kuphal <joschi@tollwerk.de> / @jkphl
  * @license    http://opensource.org/licenses/MIT The MIT License (MIT)
@@ -44,7 +44,7 @@ use Sabberworm\CSS\Rule\Rule;
  * CSS media condition tests
  *
  * @package    Jkphl\Respimgcss
- * @subpackage Jkphl\Respimgcss\Tests\Infrastructure
+ * @subpackage Jkphl\Respimgcss\Tests
  */
 class CssMediaConditionTest extends AbstractTestBase
 {
