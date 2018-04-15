@@ -129,7 +129,13 @@ The `Generator` will try to calculate the anticipated image sizes for the regist
 
 ## Installation
 
-This library requires PHP 7.1 or later. I recommend using the latest available version of PHP as a matter of principle. It has no userland dependencies.
+This library requires PHP 7.1 or later. I recommend using the latest available version of PHP as a matter of principle. It has no userland dependencies. It's installable and autoloadable via [Composer](https://getcomposer.org/) as [jkphl/responsive-images-css](https://packagist.org/packages/jkphl/responsive-images-css).
+
+```bash
+composer require jkphl/responsive-images-css
+```
+
+Alternatively, [download a release](https://github.com/jkphl/responsive-images-css/releases) or clone this repository, then require or include its [`autoload.php`](autoload.php) file.
 
 ## Dependencies
 
