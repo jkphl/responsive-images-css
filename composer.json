@@ -1,6 +1,6 @@
 {
   "name": "jkphl/responsive-images-css",
-  "description": "PHP library for translating HTML responsive images to CSS (sort of ...)",
+  "description": "HTML5-like responsive background images in CSS (sort of …)",
   "homepage": "https://github.com/jkphl/responsive-images-css",
   "minimum-stability": "RC",
   "license": "MIT",
